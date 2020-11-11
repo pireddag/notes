@@ -73,6 +73,11 @@
       (define pB (pt 2 0))
     </input>
 
+    <\textput>
+      Then the third point of the triangle, on the circumference, defined
+      with the help of two variables <verbatim|xC> and <verbatim|yC>:
+    </textput>
+
     <\input|Scheme] >
       (define xC (- (* 2 (cos (/ pi 3)))))
     </input>
@@ -84,6 +89,11 @@
     <\input|Scheme] >
       (define pC (pt xC yC))
     </input>
+
+    <\textput>
+      Finally the points at which we will mark the triangle's vertices with
+      letters:
+    </textput>
 
     <\input|Scheme] >
       (define tA (pt -2.3 -0.5))
