@@ -1,9 +1,18 @@
 <TeXmacs|1.99.14>
 
-<style|<tuple|generic|old-lengths>>
+<style|<tuple|notes|old-lengths>>
 
 <\body>
   Let us generate a drawing with TeXmacs graphic primitives using Scheme.
+
+  The most comfortable way is in a Scheme session, so that is the first way
+  we'll take. Once we have a graphics through a Scheme session, we'll see as
+  well how to blend it in a document.
+
+  The first step is opening the session, with
+  <menu|Insert-\<gtr\>Session-\<gtr\>Scheme>
+
+  \;
 
   <\session|scheme|default>
     <\input|Scheme] >
@@ -148,3 +157,19 @@
     <associate|src-style|functional>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|auto-1|<tuple|?|?|../../../../../../../media/giovanni/Windows
+    - Data/Varie/Lezioni di Fisica - ETess/2020-04-23/2020-04-24
+    esercizi/2020-04-24 esercizi inviati da Eleonora/diagrammi_caduta.tm>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|idx>
+      <tuple|<tuple|<with|font-family|<quote|ss>|Insert-\<gtr\>Session-\<gtr\>Scheme>>|<pageref|auto-1>>
+    </associate>
+  </collection>
+</auxiliary>
