@@ -1,6 +1,6 @@
 <TeXmacs|1.99.14>
 
-<style|<tuple|notes|old-lengths>>
+<style|<tuple|notes|old-lengths|framed-session>>
 
 <\body>
   Let us generate a drawing with TeXmacs graphic primitives using Scheme. In
@@ -42,6 +42,10 @@
         (define (pt x y)
 
         \ \ `(point ,(number-\<gtr\>string x) ,(number-\<gtr\>string y)))
+      </input>
+
+      <\input|Scheme] >
+        \;
       </input>
     </session>
   </framed>
@@ -112,244 +116,91 @@
       <\input|Scheme] >
         (define tC (pt (- xC 0.2) (+ yC 0.2)))
       </input>
+
+      <\textput>
+        Let us take a look at the points we just defined. To display them as
+        a TeXmacs graphics, we need to insert them in a canvas with the
+        <inactive|<hybrid|graphics>> primitive <mouse-over-balloon|(how to
+        show this in blue?)||left|Bottom>, entered in Scheme as
+        <verbatim|graphics>. Since <inactive|<hybrid|graphics>> by itself
+        yields a rather large canvas, we size it down enclosing it in a
+        <inactive|<with|>> primitive which specifies the geometry. The
+        <verbatim|with> <text-dots> <verbatim|graphics> construct needs to be
+        quasiquoted as <verbatim|with> and <verbatim|graphics> are Scheme
+        symbols, so that the <verbatim|pA>, <verbatim|pB> and <verbatim|pC>
+        variables, which represent the points, must be unquoted. Finally,
+        everything has to be wrapped in the <verbatim|stree-\<gtr\>tree>
+        function to become a TeXmacs tree. The result is a garphical
+        representation of the three points
+      </textput>
+
+      <\unfolded-io|Scheme] >
+        (stree-\<gtr\>tree
+
+        `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
+
+        \ \ \ (graphics ,pA ,pB ,pC
+
+        \ \ \ \ )))
+      <|unfolded-io>
+        <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>>
+      </unfolded-io>
+
+      <\input|Scheme] >
+        \;
+      </input>
     </session>
   </framed>
 
-  \;
+  <\session|scheme|default>
+    <\input>
+      Scheme]\ 
+    <|input>
+      \;
+    </input>
+  </session>
+
+  The next step is composing more complex graphical objects using the points
+  we defined.
+
+  We will use the following TeXmacs graphical objects:
+
+  <tabular|<tformat|<cwith|2|-1|2|2|cell-hyphen|t>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-tsep|3sep>|<table|<row|<cell|object>|<cell|description>|<cell|syntax>>|<row|<cell|<verbatim|arc>>|<\cell>
+    an arc of circle, defined by three points
+  </cell>|<cell|<verbatim|(arc point<rsub|1> point<rsub|2>
+  point<rsub|3>)>>>|<row|<cell|<verbatim|line>>|<\cell>
+    a polyline, defined by two or more points
+  </cell>|<cell|<verbatim|(line point<rsub|1> point<rsub|2> <text-dots>
+  point<rsub|n>)>>>|<row|<cell|<verbatim|cline>>|<\cell>
+    a closed polyline, defined by three or more points
+  </cell>|<cell|<verbatim|(cline point<rsub|1> point<rsub|2>
+  point<rsub|3><text-dots> point<rsub|n>)>>>|<row|<cell|<verbatim|text-at>>|<\cell>
+    a text box, whose position is defined with a single point
+  </cell>|<cell|<verbatim|(text-at string point)>>>>>>
 
   <\session|scheme|default>
-    <\input|Scheme] >
-      (define decoration\ 
-
-      \ \ `((with "color" "blue" \ (text-at (TeXmacs) ,(pt -0.55 -0.75)))))
-    </input>
-
-    <\input|Scheme] >
-      (define semicircle\ 
-
-      \ \ `(
-
-      (with "color" "black" (arc ,pA ,pC ,pB))
-
-      (with "color" "black" (line ,pA ,pB))))
-    </input>
-
-    <\input|Scheme] >
-      (define triangle
-
-      \ \ `(
-
-      (with "color" "red" \ \ (cline ,pA ,pB ,pC))
-
-      (with "color" "black" (text-at "A" ,tA))
-
-      (with "color" "black" (text-at "B" ,tB))
-
-      (with "color" "black" (text-at "C" ,tC))))
-    </input>
-
     <\unfolded-io|Scheme] >
       (stree-\<gtr\>tree
 
-      `(with "gr-geometry"\ 
+      `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
 
-      \ \ \ \ \ (tuple "geometry" "400px" "300px" "center")\ 
+      \ \ \ (graphics
 
-      ,(append\ 
-
-      \ \ `(graphics)
-
-      \ \ decoration
-
-      \ \ semicircle
-
-      \ \ triangle
-
-      )))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>
-    </unfolded-io>
-
-    <\input|Scheme] >
-      (define (texmacsGraphics xSize ySize alignment . graphicalObjects)
-
-      \ \ (stree-\<gtr\>tree
-
-      `(with "gr-geometry"\ 
-
-      \ \ \ \ \ (tuple "geometry" ,xSize ,ySize ,alignment)\ 
-
-      ,(append\ 
-
-      \ \ `(graphics)
-
-      \ \ (apply append graphicalObjects)
-
-      ))))
-    </input>
-
-    <\input|Scheme] >
-      (define dec\ 
-
-      \ \ `(with "color" "blue" \ (text-at (TeXmacs) ,(pt -0.55 -0.75))))
-    </input>
-
-    <\input|Scheme] >
-      (define semic\ 
-
-      \ \ `(
+      \ \ \ \ (with "color" "blue" \ (text-at (TeXmacs) ,(pt -0.55 -0.75)))
 
       (with "color" "black" (arc ,pA ,pC ,pB))
 
-      (with "color" "black" (line ,pA ,pB))))
-    </input>
+      (with "color" "black" (line ,pA ,pB))
 
-    <\unfolded-io|Scheme] >
-      (texmacsGraphics "14cm" "9cm" "center"\ 
+      (with "color" "red" \ \ (cline ,pA ,pB ,pC)) \ \ 
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ decoration\ 
+      (with "color" "black" (text-at "A" ,tA)) \ 
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ semicircle\ 
+      (with "color" "black" (text-at "B" ,tB)) \ 
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangle)
+      (with "color" "black" (text-at "C" ,tC)))))
     <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|14cm|9cm|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      (append\ 
-
-      \ \ `(graphics)
-
-      \ \ (apply append (list decoration semicircle triangle))
-
-      )
-    <|unfolded-io>
-      (graphics (with "color" "blue" (text-at (TeXmacs) (point "-0.55"
-      "-0.75"))) (with "color" "black" (arc (point "-2" "0") (point "-1.0"
-      "1.73205080756888") (point "2" "0"))) (with "color" "black" (line
-      (point "-2" "0") (point "2" "0"))) (with "color" "red" (cline (point
-      "-2" "0") (point "2" "0") (point "-1.0" "1.73205080756888"))) (with
-      "color" "black" (text-at "A" (point "-2.3" "-0.5"))) (with "color"
-      "black" (text-at "B" (point "2.1" "-0.5"))) (with "color" "black"
-      (text-at "C" (point "-1.2" "1.93205080756888"))))
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      (apply append (list decoration semicircle triangle))
-    <|unfolded-io>
-      ((with "color" "blue" (text-at (TeXmacs) (point "-0.55" "-0.75")))
-      (with "color" "black" (arc (point "-2" "0") (point "-1.0"
-      "1.73205080756888") (point "2" "0"))) (with "color" "black" (line
-      (point "-2" "0") (point "2" "0"))) (with "color" "red" (cline (point
-      "-2" "0") (point "2" "0") (point "-1.0" "1.73205080756888"))) (with
-      "color" "black" (text-at "A" (point "-2.3" "-0.5"))) (with "color"
-      "black" (text-at "B" (point "2.1" "-0.5"))) (with "color" "black"
-      (text-at "C" (point "-1.2" "1.93205080756888"))))
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      decoration
-    <|unfolded-io>
-      ((with "color" "blue" (text-at (TeXmacs) (point "-0.55" "-0.75"))))
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      semicircle
-    <|unfolded-io>
-      ((with "color" "black" (arc (point "-2" "0") (point "-1.0"
-      "1.73205080756888") (point "2" "0"))) (with "color" "black" (line
-      (point "-2" "0") (point "2" "0"))))
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      triangle
-    <|unfolded-io>
-      ((with "color" "red" (cline (point "-2" "0") (point "2" "0") (point
-      "-1.0" "1.73205080756888"))) (with "color" "black" (text-at "A" (point
-      "-2.3" "-0.5"))) (with "color" "black" (text-at "B" (point "2.1"
-      "-0.5"))) (with "color" "black" (text-at "C" (point "-1.2"
-      "1.93205080756888"))))
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree `(with "gr-geometry"\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (tuple "geometry" "14cm" "9cm"
-      "center")\ 
-
-      ,(append\ 
-
-      \ \ `(graphics)
-
-      \ \ (apply append (list decoration semicircle triangle))
-
-      )))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|14cm|9cm|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>
-    </unfolded-io>
-
-    <\input|Scheme] >
-      (define (rep . args) args)
-    </input>
-
-    <\unfolded-io|Scheme] >
-      (rep 1 2 3)
-    <|unfolded-io>
-      (1 2 3)
-    </unfolded-io>
-
-    <\textput>
-      <verbatim|graphicalObjects> are parameters each of which is a
-      <strong|list> of graphical objects.
-
-      This allows me to keep objects that consist of more than one
-      \Pgraphical unit\Q together; I have then to insert inside a list also
-      objects that are made of one \Pgraphical unit\Q only
-    </textput>
-
-    <\input|Scheme] >
-      (define (texmacsGraphList xSize ySize alignment . graphicalObjects)
-
-      `(with "gr-geometry" (tuple "geometry" ,xSize ,ySize ,alignment)\ 
-
-      ,(append\ 
-
-      \ \ `(graphics)
-
-      \ \ (apply append graphicalObjects) ;; graphicalObjects is a list of
-      lists, which we join together with apply append; and we append in front
-      of the list we obtain the list consisting of the single symbol graphics
-
-      )))
-    </input>
-
-    <\unfolded-io|Scheme] >
-      (texmacsGraphList "14cm" "9cm" "center" decoration semicircle triangle)
-    <|unfolded-io>
-      (with "gr-geometry" (tuple "geometry" "14cm" "9cm" "center") (graphics
-      (with "color" "blue" (text-at (TeXmacs) (point "-0.55" "-0.75"))) (with
-      "color" "black" (arc (point "-2" "0") (point "-1.0" "1.73205080756888")
-      (point "2" "0"))) (with "color" "black" (line (point "-2" "0") (point
-      "2" "0"))) (with "color" "red" (cline (point "-2" "0") (point "2" "0")
-      (point "-1.0" "1.73205080756888"))) (with "color" "black" (text-at "A"
-      (point "-2.3" "-0.5"))) (with "color" "black" (text-at "B" (point "2.1"
-      "-0.5"))) (with "color" "black" (text-at "C" (point "-1.2"
-      "1.93205080756888")))))
-    </unfolded-io>
-
-    <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree\ 
-
-      \ (texmacsGraphList "14cm" "9cm" "center"\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ decoration\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ semicircle\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangle))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|14cm|9cm|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>
     </unfolded-io>
 
     <\input|Scheme] >
@@ -383,8 +234,33 @@
 <\initial>
   <\collection>
     <associate|page-screen-margin|false>
-    <associate|preamble|true>
+    <associate|preamble|false>
     <associate|src-compact|normal>
     <associate|src-style|functional>
   </collection>
 </initial>
+
+<\references>
+  <\collection>
+    <associate|auto-1|<tuple|?|?>>
+    <associate|auto-2|<tuple|?|?>>
+    <associate|auto-3|<tuple|?|?>>
+    <associate|auto-4|<tuple|?|?>>
+  </collection>
+</references>
+
+<\auxiliary>
+  <\collection>
+    <\associate|idx>
+      <tuple|<tuple|<with|font-family|<quote|ss>|Insert-\<gtr\>Session-\<gtr\>Scheme>>|<pageref|auto-1>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Program bracket
+      matching>>|<pageref|auto-2>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Edit-\<gtr\>Preferences-\<gtr\>Other>>|<pageref|auto-3>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Insert text field
+      below>>|<pageref|auto-4>>
+    </associate>
+  </collection>
+</auxiliary>
