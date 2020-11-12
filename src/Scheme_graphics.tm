@@ -28,27 +28,25 @@
   the contextual menu, while longer explanations fit better in breaks between
   sessions.
 
-  <\framed>
-    <\session|scheme|default>
-      <\input|Scheme] >
-        (define pi (acos -1))
-      </input>
+  <\session|scheme|default>
+    <\input|Scheme] >
+      (define pi (acos -1))
+    </input>
 
-      <\textput>
-        We will work with a circle so we need \<pi\>!
-      </textput>
+    <\textput>
+      We will work with a circle so we need \<pi\>!
+    </textput>
 
-      <\input|Scheme] >
-        (define (pt x y)
+    <\input|Scheme] >
+      (define (pt x y)
 
-        \ \ `(point ,(number-\<gtr\>string x) ,(number-\<gtr\>string y)))
-      </input>
+      \ \ `(point ,(number-\<gtr\>string x) ,(number-\<gtr\>string y)))
+    </input>
 
-      <\input|Scheme] >
-        \;
-      </input>
-    </session>
-  </framed>
+    <\input|Scheme] >
+      \;
+    </input>
+  </session>
 
   The Scheme function <verbatim|pt> we just defined generates a TeXmacs
   graphics point parametrized by its x- and y- coordinates.
@@ -68,60 +66,58 @@
   in separate prompts; the code in external Scheme programs is\Vof
   course\Vmore compact.
 
-  <\framed>
-    <\session|scheme|default>
-      <\textput>
-        First of all, coordinates for the end points of the diameter, which
-        is 4 units long while the center of the circle is at the origin:
-      </textput>
+  <\session|scheme|default>
+    <\textput>
+      First of all, coordinates for the end points of the diameter, which is
+      4 units long while the center of the circle is at the origin:
+    </textput>
 
-      <\input|Scheme] >
-        (define pA (pt -2 0))
-      </input>
+    <\input|Scheme] >
+      (define pA (pt -2 0))
+    </input>
 
-      <\input|Scheme] >
-        (define pB (pt 2 0))
-      </input>
+    <\input|Scheme] >
+      (define pB (pt 2 0))
+    </input>
 
-      <\textput>
-        Then the third point of the triangle, on the circumference, defined
-        with the help of two variables <verbatim|xC> and <verbatim|yC>:
-      </textput>
+    <\textput>
+      Then the third point of the triangle, on the circumference, defined
+      with the help of two variables <verbatim|xC> and <verbatim|yC>:
+    </textput>
 
-      <\input|Scheme] >
-        (define xC (- (* 2 (cos (/ pi 3)))))
-      </input>
+    <\input|Scheme] >
+      (define xC (- (* 2 (cos (/ pi 3)))))
+    </input>
 
-      <\input|Scheme] >
-        (define yC (* 2 (sin (/ pi 3))))
-      </input>
+    <\input|Scheme] >
+      (define yC (* 2 (sin (/ pi 3))))
+    </input>
 
-      <\input|Scheme] >
-        (define pC (pt xC yC))
-      </input>
+    <\input|Scheme] >
+      (define pC (pt xC yC))
+    </input>
 
-      <\textput>
-        Finally the points at which we will mark the triangle's vertices with
-        letters:
-      </textput>
+    <\textput>
+      Finally the points at which we will mark the triangle's vertices with
+      letters:
+    </textput>
 
-      <\input|Scheme] >
-        (define tA (pt -2.3 -0.5))
-      </input>
+    <\input|Scheme] >
+      (define tA (pt -2.3 -0.5))
+    </input>
 
-      <\input|Scheme] >
-        (define tB (pt 2.1 -0.5))
-      </input>
+    <\input|Scheme] >
+      (define tB (pt 2.1 -0.5))
+    </input>
 
-      <\input|Scheme] >
-        (define tC (pt (- xC 0.2) (+ yC 0.2)))
-      </input>
+    <\input|Scheme] >
+      (define tC (pt (- xC 0.2) (+ yC 0.2)))
+    </input>
 
-      <\input|Scheme] >
-        \;
-      </input>
-    </session>
-  </framed>
+    <\input|Scheme] >
+      \;
+    </input>
+  </session>
 
   Let us take a look at the points we just defined. To display them as a
   TeXmacs graphics, we need to insert them in a canvas with the
@@ -145,7 +141,7 @@
 
   <\session|scheme|default>
     <\unfolded-io|Scheme] >
-      w(stree-\<gtr\>tree
+      (stree-\<gtr\>tree
 
       `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
 
@@ -157,8 +153,8 @@
     </unfolded-io>
 
     <\textput>
-      We can modify the appearance of the points using the <inactive|<with|>>
-      (Scheme <verbatim|with>) primitive
+      We can modify the appearance of the points enclosing each of them in
+      the <inactive|<with|>> (Scheme symbol <verbatim|with>) primitive
     </textput>
 
     <\unfolded-io|Scheme] >
@@ -187,7 +183,9 @@
   The next step is composing more complex graphical objects using the points
   we defined.
 
-  We will use the following TeXmacs graphical objects:
+  We will use the TeXmacs graphical objects <verbatim|arc>, <verbatim|line>,
+  <verbatim|cline> and <verbatim|text-at>. Their meaning and Scheme syntax is
+  described in the following table:
 
   <tabular|<tformat|<cwith|2|-1|2|2|cell-hyphen|t>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-tsep|3sep>|<table|<row|<cell|object>|<cell|description>|<cell|syntax>>|<row|<cell|<verbatim|arc>>|<\cell>
     an arc of circle, defined by three points
@@ -202,6 +200,12 @@
     a text box, whose position is defined with a single point
   </cell>|<cell|<verbatim|(text-at string point)>>>>>>
 
+  Before composing the full drawing, let us take a look at one of the
+  constructs; as an example we choose <verbatim|cline>. We place it as usual
+  inside the <verbatim|graphics> primitive, which is in turn enclosed in a
+  <verbatim|with> and <verbatim|stree-\<gtr\>tree> primitives, while being
+  itself enclosed in its own <verbatim|with> primitive:\ 
+
   <\session|scheme|default>
     <\unfolded-io|Scheme] >
       (stree-\<gtr\>tree
@@ -210,21 +214,63 @@
 
       \ \ \ (graphics
 
-      \ \ \ \ (with "color" "blue" \ (text-at (TeXmacs) ,(pt -0.55 -0.75)))
+      (with "color" "red" \ \ (cline ,pA ,pB ,pC))
+
+      )))
+    <|unfolded-io>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>>>>
+    </unfolded-io>
+
+    <\input|Scheme] >
+      \;
+    </input>
+  </session>
+
+  This example, with constructs boxed inside each other, is typical of Scheme
+  and illustrates one characteristic of functional programming: programs are
+  compositions of functions.
+
+  We are ready to compose our drawing; as usual the syntax is\ 
+
+  <\scm-code>
+    (graphics object_1 object_2 <text-dots> objectn_)
+  </scm-code>
+
+  properly enclosed in other constructs, with the appropriate sequence of
+  quasiquoting and unquotings:
+
+  <\session|scheme|default>
+    <\unfolded-io|Scheme] >
+      (stree-\<gtr\>tree
+
+      `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
+
+      \ \ \ (graphics
+
+      ;; the arc and the line together make the semicircle
 
       (with "color" "black" (arc ,pA ,pC ,pB))
 
       (with "color" "black" (line ,pA ,pB))
 
-      (with "color" "red" \ \ (cline ,pA ,pB ,pC)) \ \ 
+      ;; a closed polyline for the triangle
+
+      (with "color" "red" \ \ (cline ,pA ,pB ,pC))
+
+      ;; add letters using text-at
 
       (with "color" "black" (text-at "A" ,tA)) \ 
 
       (with "color" "black" (text-at "B" ,tB)) \ 
 
-      (with "color" "black" (text-at "C" ,tC)))))
+      (with "color" "black" (text-at "C" ,tC))
+
+      ;; finally decorate with the TeXmacs symbol
+
+      (with "color" "blue" \ (text-at (TeXmacs) ,(pt -0.55 -0.75)))))) ; and
+      close all of the parentheses!!!
     <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
     </unfolded-io>
 
     <\input|Scheme] >
