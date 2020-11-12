@@ -117,45 +117,69 @@
         (define tC (pt (- xC 0.2) (+ yC 0.2)))
       </input>
 
-      <\textput>
-        Let us take a look at the points we just defined. To display them as
-        a TeXmacs graphics, we need to insert them in a canvas with the
-        <inactive|<hybrid|graphics>> primitive <mouse-over-balloon|(how to
-        show this in blue?)||left|Bottom>, entered in Scheme as
-        <verbatim|graphics>. Since <inactive|<hybrid|graphics>> by itself
-        yields a rather large canvas, we size it down enclosing it in a
-        <inactive|<with|>> primitive which specifies the geometry. The
-        <verbatim|with> <text-dots> <verbatim|graphics> construct needs to be
-        quasiquoted as <verbatim|with> and <verbatim|graphics> are Scheme
-        symbols, so that the <verbatim|pA>, <verbatim|pB> and <verbatim|pC>
-        variables, which represent the points, must be unquoted. Finally,
-        everything has to be wrapped in the <verbatim|stree-\<gtr\>tree>
-        function to become a TeXmacs tree. The result is a garphical
-        representation of the three points
-      </textput>
-
-      <\unfolded-io|Scheme] >
-        (stree-\<gtr\>tree
-
-        `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
-
-        \ \ \ (graphics ,pA ,pB ,pC
-
-        \ \ \ \ )))
-      <|unfolded-io>
-        <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>>
-      </unfolded-io>
-
       <\input|Scheme] >
         \;
       </input>
     </session>
   </framed>
 
+  Let us take a look at the points we just defined. To display them as a
+  TeXmacs graphics, we need to insert them in a canvas with the
+  <inactive|<hybrid|graphics>> primitive <mouse-over-balloon|(how to show
+  this in blue?)||left|Bottom>, entered in Scheme as <verbatim|graphics>. The
+  Scheme expression that starts with <verbatim|graphics>
+  <mouse-over-balloon|this is a Scheme tree, but I do not have clear what is
+  the status in Scheme of the symbol graphics: is it a function, or only a
+  symbol?||left|Bottom> is a list of graphical objects, so that we will write
+  the canvas with our points as <verbatim|`(graphics ,pA ,pB ,pC)> with
+  proper quoting (slightly different in the final form of the expression).
+  Since <inactive|<hybrid|graphics>> by itself yields a rather large canvas,
+  we size it down enclosing it in a <inactive|<with|>> primitive which
+  specifies the geometry. The <verbatim|with> <text-dots> <verbatim|graphics>
+  construct needs to be quasiquoted as <verbatim|with> and
+  <verbatim|graphics> are Scheme symbols, so that the <verbatim|pA>,
+  <verbatim|pB> and <verbatim|pC> variables, which represent the points, must
+  be unquoted. Finally, everything has to be wrapped in the
+  <verbatim|stree-\<gtr\>tree> function to become a TeXmacs tree. The result
+  is a graphical representation of the three points:
+
   <\session|scheme|default>
-    <\input>
-      Scheme]\ 
-    <|input>
+    <\unfolded-io|Scheme] >
+      w(stree-\<gtr\>tree
+
+      `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
+
+      \ \ \ (graphics ,pA ,pB ,pC
+
+      \ \ \ \ )))
+    <|unfolded-io>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>>
+    </unfolded-io>
+
+    <\textput>
+      We can modify the appearance of the points using the <inactive|<with|>>
+      (Scheme <verbatim|with>) primitive
+    </textput>
+
+    <\unfolded-io|Scheme] >
+      (stree-\<gtr\>tree
+
+      `(with "gr-geometry" (tuple "geometry" "400px" "300px" "center")
+
+      \ \ \ (graphics\ 
+
+      \ \ \ \ (with "color" "blue" ,pA)
+
+      \ \ \ \ (with "color" "red" ,pB)
+
+      \ \ \ \ (with "color" "green" ,pC)
+
+      \ \ \ \ )))
+    <|unfolded-io>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|<graphics|<with|color|blue|<point|-2|0>>|<with|color|red|<point|2|0>>|<with|color|green|<point|-1.0|1.73205080756888>>>>>
+    </unfolded-io>
+
+    <\input|Scheme] >
       \;
     </input>
   </session>
