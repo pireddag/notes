@@ -187,7 +187,8 @@
   <verbatim|cline> and <verbatim|text-at>. Their meaning and Scheme syntax is
   described in the following table:
 
-  <tabular|<tformat|<cwith|2|-1|2|2|cell-hyphen|t>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-tsep|3sep>|<table|<row|<cell|object>|<cell|description>|<cell|syntax>>|<row|<cell|<verbatim|arc>>|<\cell>
+  <tabular|<tformat|<cwith|2|-1|2|2|cell-hyphen|t>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-tsep|3sep>|<table|<row|<cell|object>|<cell|description>|<cell|Scheme
+  syntax>>|<row|<cell|<verbatim|arc>>|<\cell>
     an arc of circle, defined by three points
   </cell>|<cell|<verbatim|(arc point<rsub|1> point<rsub|2>
   point<rsub|3>)>>>|<row|<cell|<verbatim|line>>|<\cell>
@@ -278,19 +279,12 @@
     </input>
   </session>
 
-  In <name|Fold> <name|Executable> form:
+  In follow-up tutorials we will see how to embed seamlessly Scheme graphics
+  in a document using the <name|Fold> <name|Executable> environment and how
+  to generate them from external files.
 
-  <\script-output|scheme|default>
-    (texmacsGraphics "14cm" "9cm" "center"\ 
-
-    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ decoration\ 
-
-    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ semicircle\ 
-
-    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triangle)
-  </script-output|<text|<with|gr-geometry|<tuple|geometry|14cm|9cm|center>|<graphics|<with|color|blue|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>>>>>
-
-  A collection of TeXmacs graphical objects
+  As a conclusion of this note, here is a collection of TeXmacs graphical
+  objects, illustrating a few possibilities:
 
   <with|gr-mode|<tuple|group-edit|edit-props>|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.5gh>>|gr-geometry|<tuple|geometry|1par|0.6par>45|<graphics|<\document-at>
     <rotate|45|linee>
