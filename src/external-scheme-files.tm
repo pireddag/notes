@@ -50,10 +50,12 @@
   We start from the symbols (functions and variables) we developed in the
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
   Let us list them together with a short description; next to each we note
-  whether it serves as a building block for oter symbols (\Paux\Q for
+  whether it serves as a building block for other symbols (\Paux\Q for
   auxiliary) or it is meant for graphics compositions by users (\Pusers\Q)
 
-  <\big-table|<tabular|<tformat|<cwith|1|-1|3|3|cell-hyphen|t>|<cwith|1|-1|3|3|cell-hmode|min>|<cwith|1|-1|3|3|cell-width|0.6par>|<cwith|1|-1|3|3|cell-hpart|>|<cwith|1|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-tsep|2sep>|<table|<row|<cell|<scm|objects-list>>|<cell|aux>|<\cell>
+  <\big-table|<tabular|<tformat|<cwith|1|-1|3|3|cell-hyphen|t>|<cwith|1|-1|3|3|cell-hmode|min>|<cwith|1|-1|3|3|cell-hpart|>|<cwith|1|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-tsep|2sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tsep|5sep>|<cwith|1|1|1|-1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|3|3|cell-rsep|0spc>|<cwith|1|-1|3|3|cell-width|0.5par>|<table|<row|<cell|<strong|Function>>|<cell|<strong|Purpose>>|<\cell>
+    <strong|Description>
+  </cell>>|<row|<cell|<scm|objects-list>>|<cell|aux>|<\cell>
     a list of native graphical objects
   </cell>>|<row|<cell|<scm|object-test>>|<cell|aux>|<\cell>
     \;
@@ -62,7 +64,7 @@
   </cell>>|<row|<cell|<scm|denestify-conditional>>|<cell|aux>|<\cell>
     turns a nested list of graphical objects into a flat one
   </cell>>|<row|<cell|<scm|pt>>|<cell|user>|<\cell>
-    define a <scm|point> graphical object though its coordinates
+    defines a <scm|point> graphical object through its coordinates
   </cell>>|<row|<cell|<scm|pi>>|<cell|user>|<\cell>
     <math|\<pi\>>
   </cell>>|<row|<cell|<scm|scheme-graphics>>|<cell|user>|<\cell>
@@ -74,7 +76,8 @@
   </cell>>|<row|<cell|<scm|apply-property>>|<cell|user>|<\cell>
     \;
   </cell>>>>>>
-    The <name|Scheme> functions for modular graphics we defined
+    The <name|Scheme> functions for modular graphics we defined in
+    <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
   </big-table>
 
   <TeXmacs> graphics provide a set of elementary objects (points, polylines,
