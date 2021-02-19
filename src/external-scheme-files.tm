@@ -5,19 +5,77 @@
 <\body>
   <notes-header>
 
-  <chapter*|Modular graphics with <name|Scheme>>
+  <chapter*|<name|Scheme> graphics with external files>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
-  Other posts in the same series are <hlink|Composing TeXmacs graphics with
-  Scheme|./scheme-graphics.tm> and <hlink|Embedding graphics composed with
-  Scheme into documents|./scheme-graphics-embedding.tm>; we also plan to
-  write a post on how to generate <name|Scheme> graphics with external files.
+  Other posts in the same series are <hlink|Composing <TeXmacs> graphics with
+  <name|Scheme>|./scheme-graphics.tm>, <hlink|Embedding graphics composed
+  with <name|Scheme> into documents|./scheme-graphics-embedding.tm> and
+  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
+
+  In this post, we describe how to place the graphical functions we defined
+  in the previous posts in <name|Scheme> files and make them available inside
+  <TeXmacs> documents; our descriptions repeats the concepts presented in the
+  <hlink|<TeXmacs> manual|http://www.texmacs.org/tmweb/documents/manuals/texmacs-manual.en.pdf>
+  and <hlink|<TeXmacs> <name|Scheme> developer
+  guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
+  putting them in the context of our graphics example.
+
+  We are going to use the modules system in <verbatim|progs>, and leave aside
+  the pluging functionality. Our aim is to have <name|Scheme> forms available
+  inside our <TeXmacs> document; we will be able to use them inside macros,
+  with the <markup|extern> tag, by clicking on text, with the <markup|action>
+  tag, inside <name|Executable fold> environments (a way to embed graphics in
+  documents) or in <name|Scheme> sessions.
 
   Like in the other posts of the series, we assume that the reader is
   familiar with simple Scheme syntax. We link again to the <name|Wikipedia>
   book <hlink|Scheme programming|https://en.wikibooks.org/wiki/Scheme_Programming>
   and to <hlink|Yet Another Scheme Tutorial|http://www.shido.info/lisp/idx_scm_e.html>
   by Takafumi Shido as two possible web resources for learning <name|Scheme>.
+
+  This post is accompanied by the <name|Scheme> source files <todo|complete>
+  in the <verbatim|resources> directory<todo|complete>. To be able to run the
+  examples of this post on your computer, you will have to download the
+  <name|Scheme> source files <todo|complete> and place them <todo|complete>;
+  the location is controlled through the <markup|use-modules> macro that is
+  in the preamble of the present files, and that I have set to
+  <todo|complete>. The manual placement of <name|Scheme> files is necessary
+  as I did not find a way to make the <name|Scheme> files automatically
+  available at the download of this file; their location is specified in
+  <TeXmacs> relative to the user's <verbatim|prog> directory, and I did not
+  find a way to specify their location relative to the location of the file
+  one is editing.
+
+  We start from the symbols (functions and variables) we developed in the
+  post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
+  Let us list them together with a short description; next to each we note
+  whether it serves as a building block for oter symbols (\Paux\Q for
+  auxiliary) or it is meant for graphics compositions by users (\Pusers\Q)
+
+  <\big-table|<tabular|<tformat|<cwith|1|-1|3|3|cell-hyphen|t>|<cwith|1|-1|3|3|cell-hmode|min>|<cwith|1|-1|3|3|cell-width|0.6par>|<cwith|1|-1|3|3|cell-hpart|>|<cwith|1|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-tsep|2sep>|<table|<row|<cell|<scm|objects-list>>|<cell|aux>|<\cell>
+    a list of native graphical objects
+  </cell>>|<row|<cell|<scm|object-test>>|<cell|aux>|<\cell>
+    \;
+  </cell>>|<row|<cell|<scm|denest-test>>|<cell|aux>|<\cell>
+    \;
+  </cell>>|<row|<cell|<scm|denestify-conditional>>|<cell|aux>|<\cell>
+    turns a nested list of graphical objects into a flat one
+  </cell>>|<row|<cell|<scm|pt>>|<cell|user>|<\cell>
+    define a <scm|point> graphical object though its coordinates
+  </cell>>|<row|<cell|<scm|pi>>|<cell|user>|<\cell>
+    <math|\<pi\>>
+  </cell>>|<row|<cell|<scm|scheme-graphics>>|<cell|user>|<\cell>
+    \;
+  </cell>>|<row|<cell|<scm|translate-point>>|<cell|aux>|<\cell>
+    \;
+  </cell>>|<row|<cell|<scm|translate-element>>|<cell|user>|<\cell>
+    \;
+  </cell>>|<row|<cell|<scm|apply-property>>|<cell|user>|<\cell>
+    \;
+  </cell>>>>>>
+    The <name|Scheme> functions for modular graphics we defined
+  </big-table>
 
   <TeXmacs> graphics provide a set of elementary objects (points, polylines,
   splines and so on). It would be nice to have at hand functions to deal with
@@ -901,16 +959,17 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|?|3>>
-    <associate|auto-10|<tuple|2|11>>
-    <associate|auto-11|<tuple|3|14>>
-    <associate|auto-2|<tuple|?|3>>
+    <associate|auto-10|<tuple|1|11>>
+    <associate|auto-11|<tuple|2|14>>
+    <associate|auto-12|<tuple|3|?>>
+    <associate|auto-2|<tuple|1|3>>
     <associate|auto-3|<tuple|1|3>>
     <associate|auto-4|<tuple|1|4>>
-    <associate|auto-5|<tuple|2|5>>
-    <associate|auto-6|<tuple|3|7>>
-    <associate|auto-7|<tuple|4|8>>
-    <associate|auto-8|<tuple|2|9>>
-    <associate|auto-9|<tuple|1|9>>
+    <associate|auto-5|<tuple|1|5>>
+    <associate|auto-6|<tuple|2|7>>
+    <associate|auto-7|<tuple|3|8>>
+    <associate|auto-8|<tuple|4|9>>
+    <associate|auto-9|<tuple|2|9>>
     <associate|footnote-1|<tuple|1|9>>
     <associate|footnr-1|<tuple|1|9>>
   </collection>
