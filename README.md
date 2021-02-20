@@ -38,6 +38,15 @@ It is necessary to perform a few actions using the terminal. The sequence is for
     * The web interface gives further helpful hints. Follow the link `compare across forks` above the pulldown menus to have them show forks, from which you can select yours.
   * The pull request on github asks the maintainers to integrate your changes into the public repository.
 
+***The `notes` style***
+
+Blog posts are written using the `notes` style; you can find the `notes.ts` file in the `src` directory. To use the `notes` style, place the `notes.ts` file where TeXmacs can find it (e.g. under `styles` in the TeXmacs user directory) and set to it the style of your document. To obtain the same look for your document as the other ones in `src`, follow these suggestions:
+
+- Mark the title of the post as `chapter`, not as `title`
+- For your abstract, use the `notes-abstract` tag (not the usual `abstract` tag), and place it just after the chapter tag which serves as title
+
+An easy way to obtain the same look as the other posts is to use one of the already existing documents as starting point for yours.
+
 **To keep your fork up to date:**
   * Configure the upstream remote repository with `git remote add upstream https://github.com/texmacs/notes.git` (instructions at https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork)
   * follow the steps at https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/syncing-a-fork, that is:
