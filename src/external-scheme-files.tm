@@ -21,7 +21,13 @@
   <todo|can I link to the online manual in the html and to the local help
   files in the .tm file? If so, I have to review the document for all links
   to the \ <hlink|<TeXmacs> <scheme> developer
-  manual|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
+  guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
+
+  <todo|Do I need a small discussion of the organization of Scheme within
+  TeXmacs or do I refer to the developer guide? If the second, then I need to
+  say it in the post (together with an extremely synthetic description, i.e.
+  \PWhen and how to use Scheme\Q and \PGeneral architecture of the Scheme
+  API\Q>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
   Other posts in the same series are <hlink|Composing <TeXmacs> graphics with
@@ -35,7 +41,11 @@
   <hlink|<TeXmacs> manual|http://www.texmacs.org/tmweb/documents/manuals/texmacs-manual.en.pdf>
   and <hlink|<TeXmacs> <name|Scheme> developer
   guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
-  putting them in the context of our graphics example.
+  putting them in the context of our graphics example. An overall guide to
+  controlling and extending <TeXmacs> with <scheme> is the \P<TeXmacs>
+  <scheme> developer guide\Q, available at <hlink|<TeXmacs> <scheme>
+  developer guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf><todo|improve
+  harmonizing better with what I have written above or delete>.
 
   We are going to use the modules system in <verbatim|progs>, and leave aside
   the plugin functionality. Our aim is to have <name|Scheme> forms available
@@ -45,9 +55,6 @@
   <markup|action> tag, inside <name|Executable fold> environments (a way to
   embed graphics in documents) or in <name|Scheme> sessions.
 
-  An overall guide to controlling and extending <TeXmacs> with <scheme> is
-  the \P<TeXmacs> <scheme> developer guide\Q, available at <hlink|<TeXmacs>
-  <scheme> developer guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>.
   Like in the other posts of the series, we assume that the reader is
   familiar with simple Scheme syntax. We link again to the <name|Wikipedia>
   book <hlink|Scheme programming|https://en.wikibooks.org/wiki/Scheme_Programming>
@@ -259,9 +266,122 @@
     \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cdr lst)))))))
   </scm-code>
 
-  The file starts (<hlink|<TeXmacs> <scheme> developer
+  The file\V which is a <TeXmacs> module<todo|introduce in a more \Pupfront\Q
+  way the concept of modules>\Vstarts (<hlink|<TeXmacs> <scheme> developer
   guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
-  section 1.4)
+  section 1.4) with the <scm|texmacs-module> form that allows <TeXmacs> to
+  locate the code <todo|does it do that?> and optionally allows inclusion of
+  other code (so implementing a modular system). The argument of the
+  <scm|texmacs-module> form is a list which corresponds to the location of
+  the corresponding le<todo|these words are copied from the developer
+  guide>, starting from the <TeXmacs> user home directory <todo|why
+  $<math|TEXMACS_HOME_PATH> is not defined in bash and yet it works? There
+  are several possible paths TeXmacs is looking the files in, see sect 1.4>.
+
+  There are two variations of the <scm|define> form in <TeXmacs>: the
+  standard <scm|define>, which makes functions and variables available within
+  one module, and <scm|tm-define> which makes them available to the calling
+  modules <todo|do I have to qualify like in the guide?> and to <TeXmacs>
+  documents in this case.
+
+  We have now the <scm|pt> and <scm|denestify-conditional> functions and we
+  use them to compose the \Ptriangle\Q example of <hlink|Modular graphics
+  with <name|Scheme>|./modular-scheme-graphics.tm>; please refer to that post
+  for a step-by-step discussion of the code
+
+  <\session|scheme|default>
+    <\textput>
+      Define a constant for <math|\<pi\>> and points for composing the
+      drawing (using the <scm|pt> function)
+    </textput>
+
+    <\input|Scheme] >
+      (begin
+
+      \ \ (define pi (acos -1))
+
+      \ \ (define pA (pt -2 0))
+
+      \ \ (define pB (pt 2 0))
+
+      \ \ (define xC (- (* 2 (cos (/ pi 3)))))
+
+      \ \ (define yC (* 2 (sin (/ pi 3))))
+
+      \ \ (define pC (pt xC yC))
+
+      \ \ (define tA (pt -2.3 -0.5))
+
+      \ \ (define tB (pt 2.1 -0.5))
+
+      \ \ (define tC (pt (- xC 0.2) (+ yC 0.2))))
+    </input>
+
+    <\textput>
+      Use the points to build up the graphics objects (lists which are
+      parsable by \ <scm|denestify-conditional>)\ 
+    </textput>
+
+    <\input|Scheme] >
+      (begin
+
+      \ \ (define triangle\ 
+
+      \ \ \ \ `(with "color" "red" "line-width" "1pt"
+
+      \ \ \ \ \ \ \ \ \ \ \ (cline ,pA ,pB ,pC)))
+
+      \ \ (define half-circle\ 
+
+      \ \ \ \ `((with "color" "black" (arc ,pA ,pC ,pB))
+
+      \ \ \ \ \ \ (with "color" "black" (line ,pA ,pB))))
+
+      \ \ (define letters\ 
+
+      \ \ \ \ `((with "color" "black" \ (text-at "A" ,tA))
+
+      \ \ \ \ \ \ (with "color" "black" \ (text-at "B" ,tB))
+
+      \ \ \ \ \ \ (with "color" "black" \ (text-at "C" ,tC))))
+
+      \ \ (define caption\ 
+
+      \ \ \ \ `((with "color" "blue" "font-shape" "upright"
+
+      \ \ \ \ \ \ \ \ \ \ \ \ (text-at (TeXmacs) ,(pt -0.55 -0.75))))))
+    </input>
+
+    <\textput>
+      Finally apply <scm|denestify-conditional> to show the drawing
+    </textput>
+
+    <\unfolded-io|Scheme] >
+      (stree-\<gtr\>tree
+
+      \ `(with "gr-geometry"
+
+      \ \ \ \ \ \ (tuple "geometry" "400px" "300px" "center")
+
+      \ \ \ \ "font-shape" "italic"
+
+      \ \ \ \ ,(denestify-conditional `(graphics
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,letters
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,half-circle
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,caption))))
+    <|unfolded-io>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
+    </unfolded-io>
+
+    <\input|Scheme] >
+      \;
+    </input>
+  </session>
 
   <section|Composing complex objects>
 
@@ -456,7 +576,7 @@
     </textput>
 
     <\input|Scheme] >
-      (define pi (acos -1))
+      \;
     </input>
 
     <\textput>
@@ -464,11 +584,11 @@
     </textput>
 
     <\input|Scheme] >
-      (define pA (pt -2 0))
+      \;
     </input>
 
     <\input|Scheme] >
-      (define pB (pt 2 0))
+      \;
     </input>
 
     <\textput>
@@ -477,15 +597,15 @@
     </textput>
 
     <\input|Scheme] >
-      (define xC (- (* 2 (cos (/ pi 3)))))
+      \;
     </input>
 
     <\input|Scheme] >
-      (define yC (* 2 (sin (/ pi 3))))
+      \;
     </input>
 
     <\input|Scheme] >
-      (define pC (pt xC yC))
+      \;
     </input>
 
     <\textput>
@@ -494,15 +614,15 @@
     </textput>
 
     <\input|Scheme] >
-      (define tA (pt -2.3 -0.5))
+      \;
     </input>
 
     <\input|Scheme] >
-      (define tB (pt 2.1 -0.5))
+      \;
     </input>
 
     <\input|Scheme] >
-      (define tC (pt (- xC 0.2) (+ yC 0.2)))
+      \;
     </input>
 
     <\textput>
@@ -602,72 +722,7 @@
     </input>
   </session>
 
-  <paragraph|Combination of individual graphical objects into complex
-  objects>
-
-  Let us join graphical objects as lists to form complex graphical objects.
-  We will use the conditional flattening inside the graphical list to express
-  our complex objects in the way <TeXmacs> expects them.
-
-  <\session|scheme|default>
-    <\input|Scheme] >
-      (define triangle `(with "color" "red" "line-width" "1pt"
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cline ,pA ,pB ,pC)))
-    </input>
-
-    <\input|Scheme] >
-      (define half-circle `(
-
-      (with "color" "black" (arc ,pA ,pC ,pB))
-
-      (with "color" "black" (line ,pA ,pB))))
-    </input>
-
-    <\input|Scheme] >
-      (define letters `((with "color" "black" \ (text-at "A" ,tA))
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (with "color" "black" \ (text-at
-      "B" ,tB))
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (with "color" "black" \ (text-at
-      "C" ,tC))))
-    </input>
-
-    <\input|Scheme] >
-      (define caption `((with "color" "blue" \ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "font-shape" "upright"
-
-      \ \ \ \ \ \ \ \ \ \ \ \ (text-at (TeXmacs) ,(pt -0.55 -0.75)))))
-    </input>
-
-    <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree
-
-      \ `(with "gr-geometry"
-
-      \ \ \ \ \ \ (tuple "geometry" "400px" "300px" "center")
-
-      \ \ \ \ "font-shape" "italic"
-
-      \ \ \ \ ,(denestify-conditional `(graphics
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,letters
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,half-circle
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,caption))))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
-    </unfolded-io>
-
-    <\input|Scheme] >
-      \;
-    </input>
-  </session>
+  \;
 
   <paragraph|A function for complex graphics>
 
@@ -1174,30 +1229,25 @@
 
 <\references>
   <\collection>
-    <associate|auto-1|<tuple|?|?>>
-    <associate|auto-10|<tuple|2|?>>
-    <associate|auto-11|<tuple|3|?>>
+    <associate|auto-1|<tuple|?|3>>
+    <associate|auto-10|<tuple|3|15>>
+    <associate|auto-11|<tuple|3|19>>
     <associate|auto-12|<tuple|3|?>>
-    <associate|auto-2|<tuple|1|?>>
-    <associate|auto-3|<tuple|1|?>>
-    <associate|auto-4|<tuple|1|?>>
-    <associate|auto-5|<tuple|2|?>>
-    <associate|auto-6|<tuple|3|?>>
-    <associate|auto-7|<tuple|4|?>>
-    <associate|auto-8|<tuple|2|?>>
-    <associate|auto-9|<tuple|1|?>>
-    <associate|footnote-1|<tuple|1|?>>
-    <associate|footnr-1|<tuple|1|?>>
+    <associate|auto-2|<tuple|1|4>>
+    <associate|auto-3|<tuple|1|6>>
+    <associate|auto-4|<tuple|1|6>>
+    <associate|auto-5|<tuple|2|9>>
+    <associate|auto-6|<tuple|3|11>>
+    <associate|auto-7|<tuple|2|12>>
+    <associate|auto-8|<tuple|1|13>>
+    <associate|auto-9|<tuple|2|13>>
+    <associate|footnote-1|<tuple|1|13>>
+    <associate|footnr-1|<tuple|1|13>>
   </collection>
 </references>
 
 <\auxiliary>
   <\collection>
-    <\associate|idx>
-      <tuple|<tuple|<with|font-family|<quote|ss>|Help>|<with|font-family|<quote|ss>|Scheme
-      extensions>|<with|font-family|<quote|ss>|Scheme interface for the
-      graphical mode>>|<pageref|auto-3>>
-    </associate>
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
@@ -1212,39 +1262,39 @@
 
       1.<space|2spc>Composing complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-4>
+      <no-break><pageref|auto-3>
 
       <with|par-left|<quote|4tab>|Flattening nested lists of graphical
       objects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-5><vspace|0.15fn>>
+      <no-break><pageref|auto-4><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|Definition of basic graphical objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-6><vspace|0.15fn>>
+      <no-break><pageref|auto-5><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|Combination of individual graphical objects
       into complex objects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-7><vspace|0.15fn>>
+      <no-break><pageref|auto-6><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|A function for complex graphics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-8><vspace|0.15fn>>
+      <no-break><pageref|auto-7><vspace|0.15fn>>
 
       2.<space|2spc>Manipulation of complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-9>
+      <no-break><pageref|auto-8>
 
       <with|par-left|<quote|4tab>|Translate complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-10><vspace|0.15fn>>
+      <no-break><pageref|auto-9><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|Manipulate object properties
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-11><vspace|0.15fn>>
+      <no-break><pageref|auto-10><vspace|0.15fn>>
 
       3.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
       that show what we mean <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-12>
+      <no-break><pageref|auto-11>
     </associate>
   </collection>
 </auxiliary>
