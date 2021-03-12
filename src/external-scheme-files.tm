@@ -15,6 +15,14 @@
 
   <chapter*|<name|Scheme> graphics with external files>
 
+  <todo|See test-parsing-points.tm in <verbatim|/home/giovanni/test/test
+  TeXmacs/4 - Wiki/Working files/>>
+
+  <todo|can I link to the online manual in the html and to the local help
+  files in the .tm file? If so, I have to review the document for all links
+  to the \ <hlink|<TeXmacs> <scheme> developer
+  manual|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
+
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
   Other posts in the same series are <hlink|Composing <TeXmacs> graphics with
   <name|Scheme>|./scheme-graphics.tm>, <hlink|Embedding graphics composed
@@ -37,6 +45,9 @@
   <markup|action> tag, inside <name|Executable fold> environments (a way to
   embed graphics in documents) or in <name|Scheme> sessions.
 
+  An overall guide to controlling and extending <TeXmacs> with <scheme> is
+  the \P<TeXmacs> <scheme> developer guide\Q, available at <hlink|<TeXmacs>
+  <scheme> developer guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>.
   Like in the other posts of the series, we assume that the reader is
   familiar with simple Scheme syntax. We link again to the <name|Wikipedia>
   book <hlink|Scheme programming|https://en.wikibooks.org/wiki/Scheme_Programming>
@@ -49,16 +60,21 @@
   <name|Scheme> source files <todo|complete> and place them <todo|complete>;
   the location is controlled through the <markup|use-module> macro that is in
   the preamble of the present files, and that I have set to
-  <scm|<value|graphics-functions>><todo|turn to a file path>. The manual
-  placement of <name|Scheme> files is necessary as I did not find a way to
-  make the <name|Scheme> files automatically available at the download of
-  this file; their location is specified in <TeXmacs> relative to the user's
-  <verbatim|prog> directory, and I did not find a way to specify their
-  location relative to the location of the file one is editing. If you place
-  the files in a different folder, please adjust correspondingly both the
-  path in the <markup|use-module> macro and inside the <scheme> file itself
-  in the instruction that declares its name and possibly imports additional
-  dependencies (more details later)<todo|link to details?>.\ 
+  <scm|<value|graphics-functions>><todo|defined with a variable to make it
+  easy to modify it both here and in use-module; turn to a file path (use
+  verbatim tag)>; the <TeXmacs> command is
+
+  <inactive|<use-module|<value|graphics-functions>>>.
+
+  \ The manual placement of <name|Scheme> files is necessary as I did not
+  find a way to make the <name|Scheme> files automatically available at the
+  download of this file; their location is specified in <TeXmacs> relative to
+  the user's <verbatim|prog> directory, and I did not find a way to specify
+  their location relative to the location of the file one is editing. If you
+  place the files in a different folder, please adjust correspondingly both
+  the path in the <markup|use-module> macro and inside the <scheme> file
+  itself in the instruction that declares its name and possibly imports
+  additional dependencies (more details later)<todo|link to details?>.\ 
 
   We start from the symbols (functions and variables) we developed in the
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
@@ -96,28 +112,156 @@
     <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
   </big-table>
 
-  <TeXmacs> graphics provide a set of elementary objects (points, polylines,
-  splines and so on). It would be nice to have at hand functions to deal with
-  complex objects, which can be seen as unions of elementary objects: for
-  example, \ a triangle in a half-circle is the union of a polyline (to
-  represent the triangle) with the half-circle, which in turn is the union of
-  a polyline (the diameter of the half-circle) and an arc.
+  We start with the first few functions, enough to draw the first example of
+  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>,
+  which is a triangle.
 
-  We would like to name complex objects and to transform them as units: for
-  example translate them or change the line style or the color for all of the
-  object components; naming complex objects will make our code clearer when
-  we deal with them\Vand for example we use them as building blocks of even
-  more complex objects.
+  Our <verbatim|scheme-graphics.scm> files contains (following code
+  block<todo|switch to captioned and numbered code blocks>) the <scm|pt> and
+  <scm|denestify-conditional> functions together with the helper functions
+  <scm|objects-list>, <scm|object-test>, and <scm|denest-test>:
 
-  In <TeXmacs> there is a partially-implemented interface for dealing with
-  complex graphics objects \ (see <menu|Help|Scheme extensions|Scheme
-  interface for the graphical mode> and the <verbatim|.scm> files in the
-  <verbatim|progs/graphics/> directory in the <TeXmacs> distribution). In
-  particular, graphics can be grouped using the primitive <markup|gr-group>.
+  <\scm-code>
+    (texmacs-module (notes external-scheme-files scheme-graphics))
 
-  In this post, we will develop a small interface of our own; we will show
-  how to compose and use in a drawing complex graphical objects, how to shift
-  them and how to set properties of already-existing complex objects.
+    \;
+
+    ;;; ================================
+
+    ;;; define a point using two numbers
+
+    \;
+
+    ;; exact-\<gtr\>inexact transforms fractions into floats yielding strings
+    that are
+
+    ;; parsed correctly by TeXmacs
+
+    (tm-define (pt x y)
+
+    \ \ `(point ,(number-\<gtr\>string (exact-\<gtr\>inexact x))
+    ,(number-\<gtr\>string (exact-\<gtr\>inexact y))))
+
+    \;
+
+    ;;; ====================
+
+    ;;; flattening functions
+
+    \;
+
+    (define objects-list\ 
+
+    \ \ '(point line cline spline arc carc text-at math-at document-at))
+
+    \;
+
+    (define (object-test expr) \ \ 
+
+    \ \ (not (equal?\ 
+
+    \ \ \ \ \ \ \ \ (filter (lambda (x) (equal? x expr)) objects-list)
+
+    \ \ \ \ \ \ \ \ '())))
+
+    \;
+
+    (define (denest-test expr)
+
+    \ \ (or
+
+    \ \ \ (object-test expr)
+
+    \ \ \ (equal? expr 'with)))
+
+    \;
+
+    ;; start from the answer https://stackoverflow.com/a/33338401\ 
+
+    ;; to the Stack Overflow question
+
+    ;; https://stackoverflow.com/q/33338078/flattening-a-list-in-scheme
+
+    \;
+
+    ;;(define (denestify lst)
+
+    ;; \ (cond ((null? lst) '())
+
+    ;; \ \ \ \ \ \ \ ((pair? (car lst))
+
+    ;; \ \ \ \ \ \ \ \ (append (denestify (car lst))
+
+    ;; \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify (cdr lst))))
+
+    ;; \ \ \ \ \ \ \ (else (cons (car lst) (denestify (cdr lst))))))
+
+    \;
+
+    ;; This function is not tail-recursive;\ 
+
+    ;; see https://stackoverflow.com/a/33338608
+
+    ;; for a tail-recursive function
+
+    (tm-define (denestify-conditional lst)
+
+    \ \ (cond ((null? lst) '())
+
+    \ \ \ \ \ \ \ \ ((pair? (car lst))
+
+    \ \ \ \ \ \ \ \ \ ;; If the car of (car lst) is 'with or another
+
+    \ \ \ \ \ \ \ \ \ ;; of the symbols in denest-test, we cons it
+
+    \ \ \ \ \ \ \ \ \ (if (denest-test (car (car lst)))
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ (cons (car lst)
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional (cdr lst)))
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; otherwise we flatten it with recursion,
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; obtaining a flat list, and append it to
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; the flattened rest of the list, in this
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; way flattening the combination of the
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; two lists
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ (append (denestify-conditional (car lst))
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional (cdr
+    lst)))))
+
+    \ \ \ \ \ \ \ \ ;; (car lst) is an atom
+
+    \ \ \ \ \ \ \ \ (else (if (denest-test (car lst))
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; test presence of (car lst) in the
+    list
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; of symbols that stop
+    denestification
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lst ;; we leave lst as it is
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; otherwise we cons (car lst) onto
+    the
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; flattened version of (cdr lst)
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cons (car lst)\ 
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional\ 
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cdr lst)))))))
+  </scm-code>
+
+  The file starts (<hlink|<TeXmacs> <scheme> developer
+  guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
+  section 1.4)
 
   <section|Composing complex objects>
 
@@ -406,6 +550,51 @@
       ;; and close all of the parentheses!!!
     <|unfolded-io>
       <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
+    </unfolded-io>
+
+    <\unfolded-io|Scheme] >
+      (stree-\<gtr\>tree (pt 2/3 1/2))
+    <|unfolded-io>
+      <text|<point|2/3|1/2>>
+    </unfolded-io>
+
+    <\unfolded-io|Scheme] >
+      (stree-\<gtr\>tree
+
+      \ `(with "gr-geometry" \ \ \ \ 
+
+      \ \ \ \ \ \ (tuple "geometry" "8cm" "4cm" "center")
+
+      \ \ \ \ "font-shape" "italic"
+
+      \ \ \ \ (graphics
+
+      \ \ \ \ \ \ ;; the arc and the line together make the semicircle
+
+      \ \ \ \ \ \ (with "point-size" "5ln" ,(pt 2/3 1/2))
+
+      \ \ \ \ \ \ (with "color" "green" ,(pt .67 .8))
+
+      \ \ \ \ \ \ (with "color" "red" ,(pt 2 2/3))
+
+      \ \ \ \ \ \ (with "color" "orange" ,(pt (exact-\<gtr\>inexact 2/3)
+      1)))))
+
+      ;; and close all of the parentheses!!!
+    <|unfolded-io>
+      <text|<with|gr-geometry|<tuple|geometry|8cm|4cm|center>|font-shape|italic|<graphics|<with|point-size|5ln|<point|2/3|1/2>>|<with|color|green|<point|0.67|0.8>>|<with|color|red|<point|2|2/3>>|<with|color|orange|<point|0.666666666666667|1>>>>>
+    </unfolded-io>
+
+    <\unfolded-io|Scheme] >
+      (number-\<gtr\>string 2/3)
+    <|unfolded-io>
+      "2/3"
+    </unfolded-io>
+
+    <\unfolded-io|Scheme] >
+      (number-\<gtr\>string (exact-\<gtr\>inexact 2/3))
+    <|unfolded-io>
+      "0.666666666666667"
     </unfolded-io>
 
     <\input|Scheme] >
@@ -985,20 +1174,20 @@
 
 <\references>
   <\collection>
-    <associate|auto-1|<tuple|?|3>>
-    <associate|auto-10|<tuple|1|11>>
-    <associate|auto-11|<tuple|2|14>>
+    <associate|auto-1|<tuple|?|?>>
+    <associate|auto-10|<tuple|2|?>>
+    <associate|auto-11|<tuple|3|?>>
     <associate|auto-12|<tuple|3|?>>
-    <associate|auto-2|<tuple|1|3>>
-    <associate|auto-3|<tuple|1|3>>
-    <associate|auto-4|<tuple|1|4>>
-    <associate|auto-5|<tuple|1|5>>
-    <associate|auto-6|<tuple|2|7>>
-    <associate|auto-7|<tuple|3|8>>
-    <associate|auto-8|<tuple|4|9>>
-    <associate|auto-9|<tuple|2|9>>
-    <associate|footnote-1|<tuple|1|9>>
-    <associate|footnr-1|<tuple|1|9>>
+    <associate|auto-2|<tuple|1|?>>
+    <associate|auto-3|<tuple|1|?>>
+    <associate|auto-4|<tuple|1|?>>
+    <associate|auto-5|<tuple|2|?>>
+    <associate|auto-6|<tuple|3|?>>
+    <associate|auto-7|<tuple|4|?>>
+    <associate|auto-8|<tuple|2|?>>
+    <associate|auto-9|<tuple|1|?>>
+    <associate|footnote-1|<tuple|1|?>>
+    <associate|footnr-1|<tuple|1|?>>
   </collection>
 </references>
 
@@ -1012,7 +1201,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3D78E58-6A46CC8>|<link|hyperlink|<id|%3D78E58-6A46CC8>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%58B0378-DE8C718>|<link|hyperlink|<id|%58B0378-DE8C718>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-2>>
     </associate>
