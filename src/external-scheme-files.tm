@@ -1,8 +1,16 @@
-<TeXmacs|1.99.18>
+<TeXmacs|1.99.19>
 
 <style|<tuple|notes|framed-session>>
 
 <\body>
+  <\hide-preamble>
+    <assign|graphics-functions|(notes external-scheme-files scheme-graphics)>
+
+    <use-module|<value|graphics-functions>>
+
+    \;
+  </hide-preamble>
+
   <notes-header>
 
   <chapter*|<name|Scheme> graphics with external files>
@@ -22,11 +30,12 @@
   putting them in the context of our graphics example.
 
   We are going to use the modules system in <verbatim|progs>, and leave aside
-  the pluging functionality. Our aim is to have <name|Scheme> forms available
+  the plugin functionality. Our aim is to have <name|Scheme> forms available
   inside our <TeXmacs> document; we will be able to use them inside macros,
-  with the <markup|extern> tag, by clicking on text, with the <markup|action>
-  tag, inside <name|Executable fold> environments (a way to embed graphics in
-  documents) or in <name|Scheme> sessions.
+  with the <markup|extern> tag, by clicking on text,<todo|is \Pwith the
+  action tag\Q part of the preceding case \Pby clicking on text\Q?> with the
+  <markup|action> tag, inside <name|Executable fold> environments (a way to
+  embed graphics in documents) or in <name|Scheme> sessions.
 
   Like in the other posts of the series, we assume that the reader is
   familiar with simple Scheme syntax. We link again to the <name|Wikipedia>
@@ -38,14 +47,18 @@
   in the <verbatim|resources> directory<todo|complete>. To be able to run the
   examples of this post on your computer, you will have to download the
   <name|Scheme> source files <todo|complete> and place them <todo|complete>;
-  the location is controlled through the <markup|use-modules> macro that is
-  in the preamble of the present files, and that I have set to
-  <todo|complete>. The manual placement of <name|Scheme> files is necessary
-  as I did not find a way to make the <name|Scheme> files automatically
-  available at the download of this file; their location is specified in
-  <TeXmacs> relative to the user's <verbatim|prog> directory, and I did not
-  find a way to specify their location relative to the location of the file
-  one is editing.
+  the location is controlled through the <markup|use-module> macro that is in
+  the preamble of the present files, and that I have set to
+  <scm|<value|graphics-functions>><todo|turn to a file path>. The manual
+  placement of <name|Scheme> files is necessary as I did not find a way to
+  make the <name|Scheme> files automatically available at the download of
+  this file; their location is specified in <TeXmacs> relative to the user's
+  <verbatim|prog> directory, and I did not find a way to specify their
+  location relative to the location of the file one is editing. If you place
+  the files in a different folder, please adjust correspondingly both the
+  path in the <markup|use-module> macro and inside the <scheme> file itself
+  in the instruction that declares its name and possibly imports additional
+  dependencies (more details later)<todo|link to details?>.\ 
 
   We start from the symbols (functions and variables) we developed in the
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
@@ -58,9 +71,10 @@
   </cell>>|<row|<cell|<scm|objects-list>>|<cell|aux>|<\cell>
     a list of native graphical objects
   </cell>>|<row|<cell|<scm|object-test>>|<cell|aux>|<\cell>
-    \;
+    tests whether a symbol is a native graphical object\ 
   </cell>>|<row|<cell|<scm|denest-test>>|<cell|aux>|<\cell>
-    \;
+    tests whether flattening must stop (at a native graphical object or at a
+    <scm|with> form)
   </cell>>|<row|<cell|<scm|denestify-conditional>>|<cell|aux>|<\cell>
     turns a nested list of graphical objects into a flat one
   </cell>>|<row|<cell|<scm|pt>>|<cell|user>|<\cell>
@@ -68,13 +82,15 @@
   </cell>>|<row|<cell|<scm|pi>>|<cell|user>|<\cell>
     <math|\<pi\>>
   </cell>>|<row|<cell|<scm|scheme-graphics>>|<cell|user>|<\cell>
-    \;
+    composes a graphics list, applies to it default properties and turns it
+    into a <TeXmacs> tree.
   </cell>>|<row|<cell|<scm|translate-point>>|<cell|aux>|<\cell>
-    \;
+    translates a point
   </cell>>|<row|<cell|<scm|translate-element>>|<cell|user>|<\cell>
-    \;
+    translates any graphical object (either native or list)
   </cell>>|<row|<cell|<scm|apply-property>>|<cell|user>|<\cell>
-    \;
+    applies a property to a graphical object or to all objects in a graphical
+    list
   </cell>>>>>>
     The <name|Scheme> functions for modular graphics we defined in
     <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
@@ -391,6 +407,10 @@
     <|unfolded-io>
       <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
     </unfolded-io>
+
+    <\input|Scheme] >
+      \;
+    </input>
   </session>
 
   <paragraph|Combination of individual graphical objects into complex
@@ -454,6 +474,10 @@
     <|unfolded-io>
       <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
     </unfolded-io>
+
+    <\input|Scheme] >
+      \;
+    </input>
   </session>
 
   <paragraph|A function for complex graphics>
@@ -988,7 +1012,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%2A42E58-5900AF0>|<link|hyperlink|<id|%2A42E58-5900AF0>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3D78E58-6A46CC8>|<link|hyperlink|<id|%3D78E58-6A46CC8>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-2>>
     </associate>
