@@ -29,6 +29,18 @@
   \PWhen and how to use Scheme\Q and \PGeneral architecture of the Scheme
   API\Q>
 
+  <todo|indicate that one needs to close TeXmacs and open it again to update
+  the Scheme code>
+
+  <todo|indicate post on methods to help developing scheme modules:
+  http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/211/4>
+
+  <\itemize>
+    <item>a function for loading a drawing from a file
+
+    <item>Introduce the <scm|:secure> keyword. Do I have to use it?
+  </itemize>
+
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
   Other posts in the same series are <hlink|Composing <TeXmacs> graphics with
   <name|Scheme>|./scheme-graphics.tm>, <hlink|Embedding graphics composed
@@ -87,7 +99,7 @@
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
   Let us list them together with a short description; next to each we note
   whether it serves as a building block for other symbols (\Paux\Q for
-  auxiliary) or it is meant for graphics compositions by users (\Pusers\Q)
+  auxiliary) or it is meant for graphics compositions by users (\Pusers\Q).
 
   <\big-table|<tabular|<tformat|<cwith|1|-1|3|3|cell-hyphen|t>|<cwith|1|-1|3|3|cell-hmode|min>|<cwith|1|-1|3|3|cell-hpart|>|<cwith|1|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-tsep|2sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tsep|5sep>|<cwith|1|1|1|-1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|3|3|cell-rsep|0spc>|<cwith|1|-1|3|3|cell-width|0.5par>|<cwith|1|1|1|-1|cell-halign|c>|<table|<row|<cell|<strong|Function>>|<cell|<strong|Purpose>>|<\cell>
     <strong|Description>
@@ -125,11 +137,23 @@
 
   Our <verbatim|scheme-graphics.scm> files contains (following code
   block<todo|switch to captioned and numbered code blocks>) the <scm|pt> and
-  <scm|denestify-conditional> functions together with the helper functions
-  <scm|objects-list>, <scm|object-test>, and <scm|denest-test>:
+  <scm|scheme-graphics> functions together with the symbol <scm|pi> and
+  helper functions (not accessible to the <TeXmacs> document)
+  <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
+  <scm|denestify-conditional>:
 
   <\scm-code>
     (texmacs-module (notes external-scheme-files scheme-graphics))
+
+    \;
+
+    ;;; =====================
+
+    ;;; mathematical constants
+
+    \;
+
+    (tm-define (define pi (acos -1)))
 
     \;
 
@@ -211,7 +235,7 @@
 
     ;; for a tail-recursive function
 
-    (tm-define (denestify-conditional lst)
+    (define (denestify-conditional lst)
 
     \ \ (cond ((null? lst) '())
 
@@ -264,6 +288,30 @@
     \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional\ 
 
     \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cdr lst)))))))
+
+    \;
+
+    \;
+
+    ;;; ====================
+
+    ;;; function for graphic composition
+
+    \;
+
+    (tm-define (scheme-graphics x-size y-size alignment graphics-list)
+
+    \ \ (stree-\<gtr\>tree
+
+    \ \ \ `(with "gr-geometry"\ 
+
+    \ \ \ \ \ \ \ \ (tuple "geometry" ,x-size ,y-size alignment)
+
+    \ \ \ \ \ \ \ \ "font-shape" "italic"
+
+    \ \ \ \ \ \ \ \ ,(denestify-conditional\ 
+
+    \ \ \ \ \ \ \ \ \ \ \ \ `(graphics ,graphics-list)))))
   </scm-code>
 
   The file\V which is a <TeXmacs> module<todo|introduce in a more \Pupfront\Q
@@ -281,24 +329,22 @@
   There are two variations of the <scm|define> form in <TeXmacs>: the
   standard <scm|define>, which makes functions and variables available within
   one module, and <scm|tm-define> which makes them available to the calling
-  modules <todo|do I have to qualify like in the guide?> and to <TeXmacs>
-  documents in this case.
+  modules <todo|do I have to qualify like in the guide, telling that with the
+  current implementation tm-define makes function globally available?> and to
+  <TeXmacs> documents in this case.
 
-  We have now the <scm|pt> and <scm|denestify-conditional> functions and we
-  use them to compose the \Ptriangle\Q example of <hlink|Modular graphics
-  with <name|Scheme>|./modular-scheme-graphics.tm>; please refer to that post
-  for a step-by-step discussion of the code
+  We have now the <scm|pt> and <scm|scheme-graphics> functions and we use
+  them to compose the \Ptriangle\Q example of <hlink|Modular graphics with
+  <name|Scheme>|./modular-scheme-graphics.tm>; please refer to that post for
+  a step-by-step discussion of the code.
 
   <\session|scheme|default>
     <\textput>
-      Define a constant for <math|\<pi\>> and points for composing the
-      drawing (using the <scm|pt> function)
+      Define points for composing the drawing (using the <scm|pt> function)
     </textput>
 
     <\input|Scheme] >
       (begin
-
-      \ \ (define pi (acos -1))
 
       \ \ (define pA (pt -2 0))
 
@@ -353,29 +399,23 @@
     </input>
 
     <\textput>
-      Finally apply <scm|denestify-conditional> to show the drawing
+      Finally apply <scm|scheme-graphics> to show the drawing
     </textput>
 
     <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree
+      (scheme-graphics "400px" "300px" "center" `(
 
-      \ `(with "gr-geometry"
+      ,half-circle
 
-      \ \ \ \ \ \ (tuple "geometry" "400px" "300px" "center")
+      ,triangle
 
-      \ \ \ \ "font-shape" "italic"
+      ,letters
 
-      \ \ \ \ ,(denestify-conditional `(graphics
+      ,caption))
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,letters
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,half-circle
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,caption))))
+      \;
     <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
     </unfolded-io>
 
     <\input|Scheme] >
@@ -1230,19 +1270,18 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|?|3>>
-    <associate|auto-10|<tuple|3|15>>
-    <associate|auto-11|<tuple|3|19>>
-    <associate|auto-12|<tuple|3|?>>
+    <associate|auto-10|<tuple|3|19>>
+    <associate|auto-11|<tuple|3|?>>
     <associate|auto-2|<tuple|1|4>>
-    <associate|auto-3|<tuple|1|6>>
-    <associate|auto-4|<tuple|1|6>>
-    <associate|auto-5|<tuple|2|9>>
-    <associate|auto-6|<tuple|3|11>>
-    <associate|auto-7|<tuple|2|12>>
-    <associate|auto-8|<tuple|1|13>>
-    <associate|auto-9|<tuple|2|13>>
-    <associate|footnote-1|<tuple|1|13>>
-    <associate|footnr-1|<tuple|1|13>>
+    <associate|auto-3|<tuple|1|7>>
+    <associate|auto-4|<tuple|1|8>>
+    <associate|auto-5|<tuple|2|10>>
+    <associate|auto-6|<tuple|3|13>>
+    <associate|auto-7|<tuple|2|13>>
+    <associate|auto-8|<tuple|1|14>>
+    <associate|auto-9|<tuple|2|16>>
+    <associate|footnote-1|<tuple|1|14>>
+    <associate|footnr-1|<tuple|1|14>>
   </collection>
 </references>
 
@@ -1251,7 +1290,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%58B0378-DE8C718>|<link|hyperlink|<id|%58B0378-DE8C718>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%4400E58-70E55C0>|<link|hyperlink|<id|%4400E58-70E55C0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-2>>
     </associate>
@@ -1272,29 +1311,25 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-5><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|Combination of individual graphical objects
-      into complex objects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-6><vspace|0.15fn>>
-
       <with|par-left|<quote|4tab>|A function for complex graphics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-7><vspace|0.15fn>>
+      <no-break><pageref|auto-6><vspace|0.15fn>>
 
       2.<space|2spc>Manipulation of complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-8>
+      <no-break><pageref|auto-7>
 
       <with|par-left|<quote|4tab>|Translate complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-9><vspace|0.15fn>>
+      <no-break><pageref|auto-8><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|Manipulate object properties
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-10><vspace|0.15fn>>
+      <no-break><pageref|auto-9><vspace|0.15fn>>
 
       3.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
       that show what we mean <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-11>
+      <no-break><pageref|auto-10>
     </associate>
   </collection>
 </auxiliary>
