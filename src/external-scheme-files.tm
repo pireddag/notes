@@ -93,7 +93,9 @@
   place the files in a different folder, please adjust correspondingly both
   the path in the <markup|use-module> macro and inside the <scheme> file
   itself in the instruction that declares its name and possibly imports
-  additional dependencies (more details later)<todo|link to details?>.\ 
+  additional dependencies (more details later)<todo|link to details?>.
+
+  <section|Composing complex objects>
 
   We start from the symbols (functions and variables) we developed in the
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
@@ -131,9 +133,9 @@
     <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
   </big-table>
 
-  We start with the first few functions, enough to draw the first example of
-  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>,
-  which is a triangle.
+  We write up an initial file with the first few functions, enough to draw
+  the first example of <hlink|Modular graphics with
+  <name|Scheme>|./modular-scheme-graphics.tm>, which is a triangle.
 
   Our <verbatim|scheme-graphics.scm> files contains (following code
   block<todo|switch to captioned and numbered code blocks>) the <scm|pt> and
@@ -335,8 +337,8 @@
 
   We have now the <scm|pt> and <scm|scheme-graphics> functions and we use
   them to compose the \Ptriangle\Q example of <hlink|Modular graphics with
-  <name|Scheme>|./modular-scheme-graphics.tm>; please refer to that post for
-  a step-by-step discussion of the code.
+  <name|Scheme>|./modular-scheme-graphics.tm> in a <scheme> session; please
+  refer to that post for a step-by-step discussion of the code.
 
   <\session|scheme|default>
     <\textput>
@@ -423,7 +425,7 @@
     </input>
   </session>
 
-  <section|Composing complex objects>
+  <section|Splitting one's own <scheme> files (modularization)>
 
   In <name|Scheme>, a natural way of composing complex objects is joining the
   building blocks into a list. To get <TeXmacs> to draw the objects
@@ -1270,16 +1272,16 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|?|3>>
-    <associate|auto-10|<tuple|3|19>>
-    <associate|auto-11|<tuple|3|?>>
+    <associate|auto-10|<tuple|2|19>>
+    <associate|auto-11|<tuple|4|?>>
     <associate|auto-2|<tuple|1|4>>
     <associate|auto-3|<tuple|1|7>>
-    <associate|auto-4|<tuple|1|8>>
-    <associate|auto-5|<tuple|2|10>>
-    <associate|auto-6|<tuple|3|13>>
-    <associate|auto-7|<tuple|2|13>>
-    <associate|auto-8|<tuple|1|14>>
-    <associate|auto-9|<tuple|2|16>>
+    <associate|auto-4|<tuple|2|8>>
+    <associate|auto-5|<tuple|1|10>>
+    <associate|auto-6|<tuple|2|13>>
+    <associate|auto-7|<tuple|3|13>>
+    <associate|auto-8|<tuple|3|14>>
+    <associate|auto-9|<tuple|1|16>>
     <associate|footnote-1|<tuple|1|14>>
     <associate|footnr-1|<tuple|1|14>>
   </collection>
@@ -1290,7 +1292,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%4400E58-70E55C0>|<link|hyperlink|<id|%4400E58-70E55C0>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%2895E58-4EB5D18>|<link|hyperlink|<id|%2895E58-4EB5D18>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-2>>
     </associate>
