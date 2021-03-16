@@ -8,7 +8,8 @@
 
     <use-module|<value|graphics-functions>>
 
-    \;
+    <assign|scheme-guide|<hlink|<name|Scheme>
+    guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
   </hide-preamble>
 
   <notes-header>
@@ -39,6 +40,13 @@
     <item>a function for loading a drawing from a file
 
     <item>Introduce the <scm|:secure> keyword. Do I have to use it?
+
+    <item>cite the developer's guide \Pappropriately\Q
+
+    <item>(done) introduce abbreviation <value|scheme-guide>
+
+    <item>is <scm|:use> transitive? (it seems so, and that transitive
+    importation is possible)
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -51,13 +59,12 @@
   in the previous posts in <name|Scheme> files and make them available inside
   <TeXmacs> documents; our descriptions repeats the concepts presented in the
   <hlink|<TeXmacs> manual|http://www.texmacs.org/tmweb/documents/manuals/texmacs-manual.en.pdf>
-  and <hlink|<TeXmacs> <name|Scheme> developer
+  <todo|do I use concepts described the TeXmacs manual or only in the Scheme
+  guide?> and <hlink|<TeXmacs> <name|Scheme> developer
   guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
-  putting them in the context of our graphics example. An overall guide to
-  controlling and extending <TeXmacs> with <scheme> is the \P<TeXmacs>
-  <scheme> developer guide\Q, available at <hlink|<TeXmacs> <scheme>
-  developer guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf><todo|improve
-  harmonizing better with what I have written above or delete>.
+  (indicated as <value|scheme-guide> from now on, \ describes how to control
+  and extend <TeXmacs> through <scheme><todo|improve this text in
+  parentheses>) putting them in the context of our graphics example.
 
   We are going to use the modules system in <verbatim|progs>, and leave aside
   the plugin functionality. Our aim is to have <name|Scheme> forms available
@@ -427,28 +434,30 @@
 
   <section|Splitting one's own <scheme> files (modularization)>
 
-  In <name|Scheme>, a natural way of composing complex objects is joining the
-  building blocks into a list. To get <TeXmacs> to draw the objects
-  represented by our (possibly nested) lists, we need to transform them into
-  lists that conform to the <TeXmacs> graphical input.
+  The functions we wrote can be grouped in a few categories: inserting a
+  <TeXmacs> graphics in a drawing (<scm|scheme-graphics>), turning a nested
+  list into a <TeXmacs> graphics (<scm|objects-list>, <scm|object-test>,
+  <scm|denest-test>, and <scm|denestify-conditional>), \ basic graphics
+  object (<scm|pt>), basic mathematical objects (<scm|pi>), geometrical
+  transformations of objects (<scm|translate-point> and
+  <scm|translate-element>) and object customization (<scm|apply-property>).
 
-  The input for graphics in <TeXmacs> <name|Scheme> is a list which starts
-  with the symbol <scm|graphics>, whose elements are elementary graphical
-  objects. Each elementary graphical object is a list, which starts with one
-  of these symbols: <scm|point>, <scm|line>, <scm|cline>, <scm|spline>,
-  <scm|cspline>, <scm|arc>, <scm|carc>, <scm|text-at>, <scm|math-at>,
-  <scm|document-at>, and can be optionally wrapped in a list starting with
-  the symbol <scm|with> that sets properties.
+  It is useful to write <todo|can I find a better expression here?> functions
+  belonging to different categories inside separated files. In this way, when
+  adding features or otherwise modifying the code, it is easier to find the
+  functions, and one is encouraged to keep functions organized by topic,
+  which in turn helps to keep the whole set of functions \Peasy to navigate\Q
+  and the relationships between them easy to grasp. This is of course an
+  aspect of modularization, which in functional languages (like <scheme>) is
+  promoted as well by the \Pinclination\Q that one feels, after having made
+  some experience with the language, towards organizing one's own program as
+  a composition of functions.
 
-  One possible way to turn an arbitrarily nested list of elementary objects
-  (a complex object, that is) into the flat list of lists that <TeXmacs>
-  expects is flattening it recursively, stopping the recursive flattening
-  every time we find one of the symbols that indicate the start of a
-  graphical object (including the symbol <scm|with>).
-
-  The following group of three functions does that. The main function is
-  adapted from <hlink|one of the answers|https://stackoverflow.com/a/33338401>
-  to this <hlink|Stack Overflow question|https://stackoverflow.com/questions/33338078/flattening-a-list-in-scheme>.
+  In <TeXmacs> one can add a <scm|:use> form in the <scm|texmacs-module>
+  declaration (see <value|scheme-guide>, section 1.4), specifying through it
+  a module to import and having in this way available all functions that are
+  defined using <scm|tm-define>\Vand as well the imported ones
+  \Ptransitively\Q.<todo|improve and complete>
 
   <paragraph|Flattening nested lists of graphical objects>
 
@@ -1292,9 +1301,9 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%2895E58-4EB5D18>|<link|hyperlink|<id|%2895E58-4EB5D18>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%2E03ED8-5453390>|<link|hyperlink|<id|%2E03ED8-5453390>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
-      </surround>|<pageref|auto-2>>
+      </surround>|<pageref|auto-3>>
     </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|font-shape|<quote|small-caps>|<with|font-shape|<quote|small-caps>|Scheme>
@@ -1303,35 +1312,39 @@
 
       1.<space|2spc>Composing complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-3>
+      <no-break><pageref|auto-2>
+
+      2.<space|2spc>Splitting one's own <with|font-shape|<quote|small-caps>|Scheme>
+      files (modularization) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4>
 
       <with|par-left|<quote|4tab>|Flattening nested lists of graphical
       objects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-4><vspace|0.15fn>>
+      <no-break><pageref|auto-5><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|Definition of basic graphical objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-5><vspace|0.15fn>>
+      <no-break><pageref|auto-6><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|A function for complex graphics
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-6><vspace|0.15fn>>
+      <no-break><pageref|auto-7><vspace|0.15fn>>
 
-      2.<space|2spc>Manipulation of complex objects
+      3.<space|2spc>Manipulation of complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-7>
+      <no-break><pageref|auto-8>
 
       <with|par-left|<quote|4tab>|Translate complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-8><vspace|0.15fn>>
+      <no-break><pageref|auto-9><vspace|0.15fn>>
 
       <with|par-left|<quote|4tab>|Manipulate object properties
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-9><vspace|0.15fn>>
+      <no-break><pageref|auto-10><vspace|0.15fn>>
 
-      3.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
+      4.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
       that show what we mean <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-10>
+      <no-break><pageref|auto-11>
     </associate>
   </collection>
 </auxiliary>
