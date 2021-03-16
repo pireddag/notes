@@ -47,6 +47,9 @@
 
     <item>is <scm|:use> transitive? (it seems so, and that transitive
     importation is possible)
+
+    <item>organize the \Phyerarchy\Q of functions and import them in the
+    document
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -314,7 +317,7 @@
 
     \ \ \ `(with "gr-geometry"\ 
 
-    \ \ \ \ \ \ \ \ (tuple "geometry" ,x-size ,y-size alignment)
+    \ \ \ \ \ \ \ \ (tuple "geometry" ,x-size ,y-size ,alignment)
 
     \ \ \ \ \ \ \ \ "font-shape" "italic"
 
@@ -412,19 +415,17 @@
     </textput>
 
     <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center" `(
+      (scheme-graphics "400px" "300px" "center"\ 
 
-      ,half-circle
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ `(,half-circle
 
-      ,triangle
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle
 
-      ,letters
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,letters
 
-      ,caption))
-
-      \;
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,caption))
     <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
     </unfolded-io>
 
     <\input|Scheme] >
@@ -432,7 +433,7 @@
     </input>
   </session>
 
-  <section|Splitting one's own <scheme> files (modularization)>
+  <section|Organizing one's own <scheme> files (modularization)>
 
   The functions we wrote can be grouped in a few categories: inserting a
   <TeXmacs> graphics in a drawing (<scm|scheme-graphics>), turning a nested
@@ -1280,19 +1281,19 @@
 
 <\references>
   <\collection>
-    <associate|auto-1|<tuple|?|3>>
-    <associate|auto-10|<tuple|2|19>>
+    <associate|auto-1|<tuple|?|?>>
+    <associate|auto-10|<tuple|2|?>>
     <associate|auto-11|<tuple|4|?>>
-    <associate|auto-2|<tuple|1|4>>
-    <associate|auto-3|<tuple|1|7>>
-    <associate|auto-4|<tuple|2|8>>
-    <associate|auto-5|<tuple|1|10>>
-    <associate|auto-6|<tuple|2|13>>
-    <associate|auto-7|<tuple|3|13>>
-    <associate|auto-8|<tuple|3|14>>
-    <associate|auto-9|<tuple|1|16>>
-    <associate|footnote-1|<tuple|1|14>>
-    <associate|footnr-1|<tuple|1|14>>
+    <associate|auto-2|<tuple|1|?>>
+    <associate|auto-3|<tuple|1|?>>
+    <associate|auto-4|<tuple|2|?>>
+    <associate|auto-5|<tuple|1|?>>
+    <associate|auto-6|<tuple|2|?>>
+    <associate|auto-7|<tuple|3|?>>
+    <associate|auto-8|<tuple|3|?>>
+    <associate|auto-9|<tuple|1|?>>
+    <associate|footnote-1|<tuple|1|?>>
+    <associate|footnr-1|<tuple|1|?>>
   </collection>
 </references>
 
@@ -1301,7 +1302,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%2E03ED8-5453390>|<link|hyperlink|<id|%2E03ED8-5453390>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3D86ED8-69E1558>|<link|hyperlink|<id|%3D86ED8-69E1558>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
