@@ -71,6 +71,8 @@
     importation is possible)
 
     <\itemize>
+      <item>Asked on TeXmacs-dev on 2021-03-17
+
       <item>A file sees the functions defined with <scm|tm-define> in the
       modules that it <scm|:use>s, and only them, but these are seen
       transitively
@@ -81,7 +83,11 @@
       multiple libraries with one <markup|use-modules> command only).
 
       <item>I have to inform myself on what are the plans on the topic and
-      write the blog post
+      write them in the blog post if necessary
+
+      <item>transitivity is also within modules, or only from a module to a
+      document? That is, if in module1 I load a module2 which loads another
+      module3, do I see the tm-definitions of module3 in module2?
     </itemize>
 
     <item>organize the \Phyerarchy\Q of functions and import them in the
@@ -890,265 +896,54 @@
     </input>
   </session>
 
-  <section|Manipulation of complex objects>
+  <section|Drawings as part of documents>
 
-  We would like to manipulate complex objects as units. Let's see how to
-  translate them; one can in a similar way rotate and stretch them (perhaps
-  with respect to reference points which are calculated from the objects
-  themselves). We will then see how to apply properties to all of the
-  components of an object.
+  The mechanism of external files helps one to embed drawings in one's
+  document, as including the drawing (i.e. <scheme> code) may be \Pcleaner\Q
+  than developing it inside the document itself and external applications (I
+  am using <name|emacs>) may offer facilities one likes. The key step for
+  blending one's drawing into the document is the <name|Executable fold>
+  environment (see also <hlink|Embedding graphics composed with <name|Scheme>
+  into documents|./scheme-graphics-embedding.tm>).
 
-  <paragraph|Translate complex objects>
+  Let us illustrate it with the \Pblending in\Q/\Pwaning out\Q triangle of
+  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
 
-  Since all objects are made out of points (that is, lists that start with
-  the symbol <scm|point>), we need to translate each point which the list is
-  composed of.
+  <\script-input|scheme|default>
+    (begin\ 
 
-  We do it by mapping a translation function recursively<\footnote>
-    Neither the function for translation nor the one for property-setting are
-    tail-recursive, but they are sufficient for our examples. Moreover the
-    stack dimension in the calls to these function is determined by how much
-    lists are nested, which keeps the stack dimension small.
-  </footnote> onto the list that represents a complex object; in this
-  recursive mapping we distinguish between expressions that represent points
-  (that have to be translated) and expressions that represent something else
-  (that have to be left as they are).
+    \ \ (define (blend-in-triangle delta)
 
-  The distinction is made when the recursion either gets to a point or gets
-  to an atom: if it does get to an atom, then the translation function acts
-  as the identity function. Here is the algorithm applied to a list:
+    \ \ (translate-element \ \ (apply-property
 
-  <\itemize>
-    <item>If the list starts with <scm|point>, we apply the function that
-    translates the point
+    \ \ \ (apply-property
 
-    <item>If the list does not start with <scm|point>, we map the translation
-    function onto the list
+    \ \ \ triangle
 
-    <item>If while mapping we meet an atom, we leave it as it is
-  </itemize>
+    \ \ "dash-style" "101010")
 
-  <\session|scheme|default>
-    <\textput>
-      A function to translate points
-    </textput>
+    \ \ \ "line-width" (string-join\ 
 
-    <\input|Scheme] >
-      (define (translate-point point delta-vect)
+    \ \ \ \ \ \ \ \ \ `(,(number-\<gtr\>string (- 1 delta)) "pt") ""))
 
-      \ \ (let ((coord (map string-\<gtr\>number (cdr point))))
+    \ \ \ \ \ \ \ \ \ `(,(* 1.0 delta) ,(* -1.5 delta))))
 
-      \ \ \ \ (pt (+ (car coord) (car delta-vect))
+    \ \ (define delta-lst
 
-      \ \ \ \ \ \ \ \ (+ (cadr coord) (cadr delta-vect)))))
-    </input>
+    \ \ \ \ \ \ \ '(0.2 0.4 0.6 0.8))
 
-    <\textput>
-      The general translation function. It is called <scm|translate-element>
-      rather than <scm|translate-object> because it applies to all elements,
-      including atoms.
-    </textput>
+    \ \ (define blend-in-triangle-series
 
-    <\input|Scheme] >
-      (define (translate-element element delta-vect)
+    \ \ \ \ (map blend-in-triangle delta-lst))
 
-      \ \ (cond ((list? element)
+    \ \ (scheme-graphics "400px" "300px" "center"\ 
 
-      \ \ \ \ \ (if (equal? (car element) 'point)
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ `(,blend-in-triangle-series
 
-      \ \ \ \ \ \ \ \ (translate-point element delta-vect)
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle-in-half-circle
 
-      \ \ \ \ \ \ \ \ (map (lambda (x)\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (translate-element x delta-vect))\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ element)))
-
-      \ \ \ \ \ \ \ \ (else element)))
-    </input>
-
-    <\textput>
-      Let's apply this function to a polyline to see its effect on the
-      <name|Scheme> expression:
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (translate-element `((line ,(pt 1 2) ,(pt 2 3) ,(pt 3 4))
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (text-at TeXmacs ,(pt -1 -1))) '(1
-      1))
-    <|unfolded-io>
-      ((line (point "2" "3") (point "3" "4") (point "4" "5")) (text-at
-      TeXmacs (point "0" "0")))
-    </unfolded-io>
-
-    <\input|Scheme] >
-      \;
-    </input>
-  </session>
-
-  Let us now use our translation function on a complex object in a drawing:
-  the triangle inscribed in the half-circle we first drew by listing all of
-  the elementary objects and then by combining the complex <scm|triangle>,
-  <scm|half-circle> and <scm|letter> objects (we are then going to add the
-  <TeXmacs> caption!).
-
-  \;
-
-  <paragraph|Manipulate object properties>
-
-  We write a simple function which wraps each elementary object in a
-  <scm|with>, placing it inside with respect to any other <scm|with>
-  construct the object might be already placed in. This function, applied a
-  few times, generates deeply nested lists that may be difficult to read; a
-  more refined function would check if the object is already inside a
-  <scm|with> construct and if it is, modify the <scm|with> list rather than
-  adding another one. We prefer the simple function to the refined one to
-  keep this post to the point (\Pmodular graphics\Q).
-
-  The <scm|with> needs to be placed as innermost wrapping construct for each
-  element so that the new property will prevail onto pre-existing properties
-  (<scm|with>s are scoping constructs).
-
-  The <scm|apply-property> function is built with the same logic as the
-  <scm|translate-element> function. When applied to a list, it first checks
-  if the list starts with one of the \Pgraphical object\Q symbols; if it
-  does, <scm|apply-property> wraps it in a <scm|with> construct; if it does
-  not, <scm|apply-property> maps itself onto the list elements. When applied
-  to an atom, <scm|apply-property> returns the input.
-
-  In this way the function seeks recursively inside the lists of all the
-  graphical objects, and applies the desired property to each.
-
-  <\session|scheme|default>
-    <\input|Scheme] >
-      (define (apply-property element name value)
-
-      \ \ (cond\ 
-
-      \ \ \ \ ((list? element)
-
-      \ \ \ \ \ \ \ \ (if (object-test (car element))
-
-      \ \ \ \ \ \ \ \ \ \ \ \ `(with ,name ,value ,element)
-
-      \ \ \ \ \ \ \ \ \ \ \ \ (map (lambda (x) (apply-property x name value))
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ element)))
-
-      \ \ \ \ \ (else element))) \ \ \ \ \ \ \ 
-    </input>
-
-    <\textput>
-      Let's apply dashing to the <scm|triangle> object (let us view the
-      <name|Scheme> lists):
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (apply-property triangle "dash-style" "11100")
-    <|unfolded-io>
-      (with "color" "red" "line-width" "1pt" (with "dash-style" "11100"
-      (cline (point "-2" "0") (point "2" "0") (point "-1.0"
-      "1.73205080756888"))))
-    </unfolded-io>
-
-    <\textput>
-      We act on a more complex object in the same way as we do on a simpler
-      object\Vwe now apply dashing to the translated copy of
-      <scm|triangle-in-half-circle>:
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (apply-property
-
-      \ \ (translate-element triangle-in-half-circle '(1.0 -1.5))
-
-      \ \ "dash-style" "11100")
-    <|unfolded-io>
-      (((with "color" "black" (with "dash-style" "11100" (arc (point "-1.0"
-      "-1.5") (point "0.0" "0.23205080756888") (point "3.0" "-1.5")))) (with
-      "color" "black" (with "dash-style" "11100" (line (point "-1.0" "-1.5")
-      (point "3.0" "-1.5"))))) (with "color" "red" "line-width" "1pt" (with
-      "dash-style" "11100" (cline (point "-1.0" "-1.5") (point "3.0" "-1.5")
-      (point "0.0" "0.23205080756888")))) ((with "color" "black" (with
-      "dash-style" "11100" (text-at "A" (point "-1.3" "-2.0")))) (with
-      "color" "black" (with "dash-style" "11100" (text-at "B" (point "3.1"
-      "-2.0")))) (with "color" "black" (with "dash-style" "11100" (text-at
-      "C" (point "-0.2" "0.43205080756888"))))))
-    </unfolded-io>
-
-    <\textput>
-      Placing our objects in the list argument of <scm|scheme-graphics>, we
-      obtain the drawing in a modular way:
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center" `(
-
-      ,triangle-in-half-circle
-
-      ,(apply-property
-
-      \ \ (translate-element triangle-in-half-circle '(1.0 -1.5))
-
-      \ \ "dash-style" "11100")
-
-      ,(translate-element caption '(1.0 -1.5))))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<with|dash-style|11100|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>>|<with|color|black|<with|dash-style|11100|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>>|<with|color|red|line-width|1pt|<with|dash-style|11100|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>>|<with|color|black|<with|dash-style|11100|<text-at|A|<point|-1.3|-2.0>>>>|<with|color|black|<with|dash-style|11100|<text-at|B|<point|3.1|-2.0>>>>|<with|color|black|<with|dash-style|11100|<text-at|C|<point|-0.2|0.43205080756888>>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
-    </unfolded-io>
-
-    <\textput>
-      <scm|apply-property> and <scm|translate-element> can be applied in both
-      orders. In the previous example we translated first the object, then we
-      applied the dashing; here we apply the dashed style first, then we
-      translate the object.
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center" `(
-
-      ,triangle-in-half-circle
-
-      ,(translate-element \ \ (apply-property
-
-      \ \ \ triangle-in-half-circle \ \ "dash-style" "11100")
-
-      \ \ '(1.0 -1.5))
-
-      ,(translate-element caption '(1.0 -1.5))))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<with|dash-style|11100|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>>|<with|color|black|<with|dash-style|11100|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>>|<with|color|red|line-width|1pt|<with|dash-style|11100|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>>|<with|color|black|<with|dash-style|11100|<text-at|A|<point|-1.3|-2.0>>>>|<with|color|black|<with|dash-style|11100|<text-at|B|<point|3.1|-2.0>>>>|<with|color|black|<with|dash-style|11100|<text-at|C|<point|-0.2|0.43205080756888>>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
-    </unfolded-io>
-
-    <\textput>
-      The last application of <scm|apply-property> prevails, as it is set in
-      the innermost <scm|with> list; subobjects which have individually-set
-      values of the property will all be set to the value fixed by the last
-      application of <scm|apply-property>. Here we apply a short-dash style
-      on an object which has long-dashing throughout:
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center" `(
-
-      ,triangle-in-half-circle
-
-      ,(translate-element (apply-property
-
-      \ \ \ (apply-property
-
-      \ \ \ triangle-in-half-circle \ \ "dash-style" "11100")
-
-      \ \ "dash-style" "101010")
-
-      \ \ '(1.0 -1.5))
-
-      ,(translate-element caption '(1.0 -1.5))))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>>>|<with|color|red|line-width|1pt|<with|dash-style|11100|<with|dash-style|101010|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|A|<point|-1.3|-2.0>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|B|<point|3.1|-2.0>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|C|<point|-0.2|0.43205080756888>>>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
-    </unfolded-io>
-  </session>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,translated-caption)))
+  </script-input|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.5gh>>|<graphics|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.8pt|<cline|<point|-1.8|-0.3>|<point|2.2|-0.3>|<point|-0.8|1.43205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.6pt|<cline|<point|-1.6|-0.6>|<point|2.4|-0.6>|<point|-0.6|1.13205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.4pt|<cline|<point|-1.4|-0.9>|<point|2.6|-0.9>|<point|-0.4|0.83205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.2pt|<cline|<point|-1.2|-1.2>|<point|2.8|-1.2>|<point|-0.2|0.53205080756888>>>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>>
 
   <section|<name|Scheme> expressions that show what we mean>
 
@@ -1310,8 +1105,8 @@
   <\collection>
     <associate|auto-1|<tuple|?|?>>
     <associate|auto-10|<tuple|3|?>>
-    <associate|auto-11|<tuple|1|?>>
-    <associate|auto-12|<tuple|2|?>>
+    <associate|auto-11|<tuple|4|?>>
+    <associate|auto-12|<tuple|4|?>>
     <associate|auto-13|<tuple|4|?>>
     <associate|auto-2|<tuple|1|?>>
     <associate|auto-3|<tuple|1|?>>
@@ -1332,7 +1127,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3F1AED8-67466D0>|<link|hyperlink|<id|%3F1AED8-67466D0>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%41DBED8-6EC84A0>|<link|hyperlink|<id|%41DBED8-6EC84A0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
