@@ -91,8 +91,14 @@
     the document I change the file and then after having finished section
     <reference|sec:a-few-functions> import separately each module that I want
     to use; I need to talk to JvdH about this) (so the functions up to a
-    point int he blog post work with the first import, and after that they
+    point in the blog post work with the first import, and after that they
     work with the new import)
+
+    <\itemize>
+      <item>I have saved the first import as
+      <verbatim|scheme-graphics.scm.saved> int he same directory as the other
+      files
+    </itemize>
 
     <item>rewrite the post without using environment variables to store the
     modules' names
@@ -837,7 +843,8 @@
   </session>
 
   The <scm|translated-triangle-in-half-circle-short-dashes> (uses the object
-  customization functions<todo|functions (plural) or function (singular)?>):
+  customization functions<todo|functions (plural) or function (singular)?> on
+  an object we have already defined):
 
   <\session|scheme|default>
     <\input|Scheme] >
@@ -863,9 +870,7 @@
     </input>
 
     <\textput>
-      The drawing is made out of complex objects, but the final expression
-      shows what we have in mind: our geometrical construction and a shifted
-      replica drawn with short dashes.
+      and draw the graphics with the <scm|scheme-graphics> function:
     </textput>
 
     <\unfolded-io|Scheme] >
@@ -1327,7 +1332,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3398ED8-5BA4E20>|<link|hyperlink|<id|%3398ED8-5BA4E20>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3F1AED8-67466D0>|<link|hyperlink|<id|%3F1AED8-67466D0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
