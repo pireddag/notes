@@ -6,7 +6,21 @@
   <\hide-preamble>
     <assign|graphics-functions|(notes external-scheme-files scheme-graphics)>
 
+    <assign|geometrical-transformation-functions|(notes external-scheme-files
+    geometrical-transformations)>
+
+    <assign|object-customization-functions|(notes external-scheme-files
+    object-customization)>
+
+    <assign|basic-objects|(notes external-scheme-files basic-objects)>
+
     <use-module|<value|graphics-functions>>
+
+    <use-module|<value|geometrical-transformation-functions>>
+
+    <use-module|<value|object-customization-functions>>
+
+    <use-module|<value|basic-objects>>
 
     <assign|scheme-guide|<hlink|<name|Scheme>
     guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
@@ -37,9 +51,17 @@
   http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/211/4>
 
   <\itemize>
-    <item>a function for loading a drawing from a file
+    <item>Explain that I am re-using the examples of <hlink|Modular graphics
+    with <name|Scheme>|./modular-scheme-graphics.tm> but without re-building
+    them step-by-step.
 
-    <item>Introduce the <scm|:secure> keyword. Do I have to use it?
+    <item>a function for loading a drawing from a file (probably not, use
+    <scm|load> directly)
+
+    <item>Introduce the <scm|:secure> keyword. Do I have to use it? How is it
+    working now? 2021-03-17 I have the security set to \Pprompt on script\Q.
+    Does it affect only what I can call from a macro and not what i can call
+    from Scheme?
 
     <item>cite the developer's guide \Pappropriately\Q
 
@@ -48,8 +70,45 @@
     <item>is <scm|:use> transitive? (it seems so, and that transitive
     importation is possible)
 
+    <\itemize>
+      <item>A file sees the functions defined with <scm|tm-define> in the
+      modules that it <scm|:use>s, and only them, but these are seen
+      transitively
+
+      <item>If transitive import is possible, that is not good, as the
+      symbols for hlper functions will be visible in <TeXmacs> documents. I
+      have to make it clear in this post (as a small advantage, I can import
+      multiple libraries with one <markup|use-modules> command only).
+
+      <item>I have to inform myself on what are the plans on the topic and
+      write the blog post
+    </itemize>
+
     <item>organize the \Phyerarchy\Q of functions and import them in the
     document
+
+    <item>explain that we change \Pimports\Q in mid blog post (2021-03-17 in
+    the document I change the file and then after having finished section
+    <reference|sec:a-few-functions> import separately each module that I want
+    to use; I need to talk to JvdH about this) (so the functions up to a
+    point int he blog post work with the first import, and after that they
+    work with the new import)
+
+    <item>rewrite the post without using environment variables to store the
+    modules' names
+
+    <item>Look at <verbatim|test-parsing-points.tm> in the folder
+    <verbatim|Working files> to see how we defined the <scm|pt> functions and
+    what is the effect of <scm|number-\<gtr\>string> in this context
+
+    <item>put the final example in a executable switch and suggest that
+    everything can go into an external file (so one can use emacs with
+    paredit for example)
+
+    <\itemize>
+      <item>the emacs mode for TeXmacs, <scm|tm-mode>, which is in my
+      <verbatim|.emacs> file
+    </itemize>
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -105,7 +164,12 @@
   itself in the instruction that declares its name and possibly imports
   additional dependencies (more details later)<todo|link to details?>.
 
-  <section|Composing complex objects>
+  <todo|perhaps here say that I will reuse the code of <hlink|Modular
+  graphics with <name|Scheme>|./modular-scheme-graphics.tm> in a shortened
+  way>
+
+  <section|A few initial functions - composing complex
+  objects><label|sec:a-few-functions>
 
   We start from the symbols (functions and variables) we developed in the
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
@@ -152,7 +216,8 @@
   <scm|scheme-graphics> functions together with the symbol <scm|pi> and
   helper functions (not accessible to the <TeXmacs> document)
   <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
-  <scm|denestify-conditional>:
+  <scm|denestify-conditional>:<todo|place the function for gaphic composition
+  at the top>
 
   <\scm-code>
     (texmacs-module (notes external-scheme-files scheme-graphics))
@@ -303,8 +368,6 @@
 
     \;
 
-    \;
-
     ;;; ====================
 
     ;;; function for graphic composition
@@ -383,13 +446,13 @@
     <\input|Scheme] >
       (begin
 
-      \ \ (define triangle\ 
+      \ \ (define triangle
 
       \ \ \ \ `(with "color" "red" "line-width" "1pt"
 
       \ \ \ \ \ \ \ \ \ \ \ (cline ,pA ,pB ,pC)))
 
-      \ \ (define half-circle\ 
+      \ \ (define half-circle
 
       \ \ \ \ `((with "color" "black" (arc ,pA ,pC ,pB))
 
@@ -403,7 +466,7 @@
 
       \ \ \ \ \ \ (with "color" "black" \ (text-at "C" ,tC))))
 
-      \ \ (define caption\ 
+      \ \ (define caption
 
       \ \ \ \ `((with "color" "blue" "font-shape" "upright"
 
@@ -433,14 +496,18 @@
     </input>
   </session>
 
+  <todo|explain that up to here it works with the first import, and from now
+  on we need to add imports, as described in the next section>
+
   <section|Organizing one's own <scheme> files (modularization)>
 
-  The functions we wrote can be grouped in a few categories: inserting a
-  <TeXmacs> graphics in a drawing (<scm|scheme-graphics>), turning a nested
-  list into a <TeXmacs> graphics (<scm|objects-list>, <scm|object-test>,
-  <scm|denest-test>, and <scm|denestify-conditional>), \ basic graphics
-  object (<scm|pt>), basic mathematical objects (<scm|pi>), geometrical
-  transformations of objects (<scm|translate-point> and
+  The functions we wrote in <hlink|Modular graphics with
+  <name|Scheme>|./modular-scheme-graphics.tm> can be grouped in a few
+  categories: inserting a <TeXmacs> graphics in a drawing
+  (<scm|scheme-graphics>), processing <TeXmacs> graphics (<scm|objects-list>,
+  <scm|object-test>, <scm|denest-test>, and <scm|denestify-conditional>),
+  \ basic graphics object (<scm|pt>), basic mathematical objects (<scm|pi>),
+  geometrical transformations of objects (<scm|translate-point> and
   <scm|translate-element>) and object customization (<scm|apply-property>).
 
   It is useful to write <todo|can I find a better expression here?> functions
@@ -458,363 +525,364 @@
   declaration (see <value|scheme-guide>, section 1.4), specifying through it
   a module to import and having in this way available all functions that are
   defined using <scm|tm-define>\Vand as well the imported ones
-  \Ptransitively\Q.<todo|improve and complete>
+  \Ptransitively\Q.<todo|improve and complete, explaining how we are doing it
+  here (as if they are not transitive) and what are TeXmacs plans for this>
 
-  <paragraph|Flattening nested lists of graphical objects>
+  Let us then organize our functions into five files\Vwe place together basic
+  graphics object and basic mathematical objects since we have only one of
+  each, we can split them when the file becomes larger. Here they are. We
+  need to import in our <TeXmacs> document only four of them <todo|again
+  explanation of transitivity and plans and show calls to
+  <markup|use-modules> in the preamble>
 
-  <\session|scheme|default>
-    <\textput>
-      <scm|denest-test> is a test to stop denestification when one finds one
-      of the symbols in the list <scm|objects-list> or the symbol <scm|with>.
+  <paragraph|scheme-graphics.scm>
 
-      We build it up from an <scm|object-test>, which check membership in
-      <scm|object-list>. <scm|object-test> itself will help later too, in a
-      function that applies properties to all of the elementary components of
-      an object.
-    </textput>
+  <\scm-code>
+    (texmacs-module (notes external-scheme-files scheme-graphics)
 
-    <\input|Scheme] >
-      (define objects-list '(point line cline spline arc
+    \ \ (:use (notes external-scheme-files graphical-list-processing)))
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ carc text-at math-at
-      document-at))
-    </input>
+    \;
 
-    <\input|Scheme] >
-      (define (object-test expr) \ \ (not (equal?
+    ;;; ================================
 
-      \ \ \ \ \ \ \ \ (filter (lambda (x) (equal? x expr)) objects-list)
+    ;;; function for graphic composition
 
-      \ \ \ \ \ \ \ \ '())))
-    </input>
+    \;
 
-    <\input|Scheme] >
-      (define (denest-test expr)
+    (tm-define (scheme-graphics x-size y-size alignment graphics-list)
 
-      \ \ (or
+    \ \ (stree-\<gtr\>tree
 
-      \ \ \ (object-test expr)
+    \ \ \ `(with "gr-geometry"\ 
 
-      \ \ \ (equal? expr 'with)))
-    </input>
+    \ \ \ \ \ \ \ \ (tuple "geometry" ,x-size ,y-size ,alignment)
 
-    <\textput>
-      <scm|denestify-conditional> flattens a list recursively, stopping the
-      recursion if it meets one of the symbols in <scm|objects-list> or the
-      symbol <scm|with>.
+    \ \ \ \ \ \ \ \ "font-shape" "italic"
 
-      <scm|denestify-conditional> is not tail-recursive; we write it in this
-      way as it is simpler than the tail-recursive version and it will work
-      fairly, as in these examples we will apply it to short lists.
+    \ \ \ \ \ \ \ \ ,(denestify-conditional\ 
 
-      A tail-recursive version of the function is given in <hlink|another
-      answer|https://stackoverflow.com/a/33338608> to the same StackExchange
-      question which we used as starting point.
-    </textput>
+    \ \ \ \ \ \ \ \ \ \ \ \ `(graphics ,graphics-list)))))
+  </scm-code>
 
-    <\input|Scheme] >
-      \;
+  <paragraph|graphical-list-processing.scm>
 
-      ;; start from the answer https://stackoverflow.com/a/33338401\ 
+  <\scm-code>
+    (texmacs-module (notes external-scheme-files graphical-list-processing))
 
-      ;; to the Stack Overflow question
+    \;
 
-      ;; https://stackoverflow.com/q/33338078/flattening-a-list-in-scheme
+    ;;; ====================
 
-      \;
+    ;;; flattening functions
 
-      ;;(define (denestify lst)
+    \;
 
-      ;; \ (cond ((null? lst) '())
+    (define objects-list '(point line cline spline arc
 
-      ;; \ \ \ \ \ \ \ ((pair? (car lst))
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ carc text-at
+    math-at document-at))
 
-      ;; \ \ \ \ \ \ \ \ (append (denestify (car lst))
+    \;
 
-      ;; \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify (cdr lst))))
+    ;; used by the function apply-property in the module object-customization
 
-      ;; \ \ \ \ \ \ \ (else (cons (car lst) (denestify (cdr lst))))))
+    (tm-define (object-test expr)
 
-      \;
+    \ \ (not (equal?
 
-      ;; This function is not tail-recursive;\ 
+    \ \ \ \ \ \ \ \ (filter (lambda (x) (equal? x expr)) objects-list)
 
-      ;; see https://stackoverflow.com/a/33338608
+    \ \ \ \ \ \ \ \ '())))
 
-      ;; for a tail-recursive function
+    \;
 
-      \ \ (define (denestify-conditional lst)
+    (define (denest-test expr)
 
-      \ \ \ \ (cond ((null? lst) '())
+    \ \ (or
 
-      \ \ \ \ \ \ \ \ \ \ ((pair? (car lst))
+    \ \ \ (object-test expr)
 
-      \ \ \ \ \ \ \ \ \ \ \ ;; If the car of (car lst) is 'with or another
+    \ \ \ (equal? expr 'with)))
 
-      \ \ \ \ \ \ \ \ \ \ \ ;; of the symbols in denest-test, we cons it
+    \;
 
-      \ \ \ \ \ \ \ \ \ \ \ (if (denest-test (car (car lst)))
+    ;; start from the answer https://stackoverflow.com/a/33338401\ 
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cons (car lst)
+    ;; to the Stack Overflow question
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional (cdr
-      lst)))
+    ;; https://stackoverflow.com/q/33338078/flattening-a-list-in-scheme
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; otherwise we flatten it with
-      recursion,
+    \;
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; obtaining a flat list, and append it
-      to
+    ;;(define (denestify lst)
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; the flattened rest of the list, in
-      this
+    ;; \ (cond ((null? lst) '())
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; way flattening the combination of the
+    ;; \ \ \ \ \ \ \ ((pair? (car lst))
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; two lists
+    ;; \ \ \ \ \ \ \ \ (append (denestify (car lst))
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (append (denestify-conditional (car lst))
+    ;; \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify (cdr lst))))
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional
-      (cdr lst)))))
+    ;; \ \ \ \ \ \ \ (else (cons (car lst) (denestify (cdr lst))))))
 
-      \ \ \ \ \ \ \ \ \ \ ;; (car lst) is an atom
+    \;
 
-      \ \ \ \ \ \ \ \ \ \ (else (if (denest-test (car lst))
+    ;; This function is not tail-recursive;\ 
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; test presence of (car lst) in the list
+    ;; see https://stackoverflow.com/a/33338608
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; of symbols that stop denestification
+    ;; for a tail-recursive function
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lst ;; we leave lst as it is
+    (tm-define (denestify-conditional lst)
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; otherwise we cons (car lst) onto the
+    \ \ (cond ((null? lst) '())
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; flattened version of (cdr lst)
+    \ \ \ \ \ \ \ \ ((pair? (car lst))
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cons (car lst)\ 
+    \ \ \ \ \ \ \ \ \ ;; If the car of (car lst) is 'with or another
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional\ 
+    \ \ \ \ \ \ \ \ \ ;; of the symbols in denest-test, we cons it
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cdr
-      lst)))))))
-    </input>
+    \ \ \ \ \ \ \ \ \ (if (denest-test (car (car lst)))
 
-    <\input|Scheme] >
-      \;
-    </input>
-  </session>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ (cons (car lst)
 
-  <paragraph|Definition of basic graphical objects>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional (cdr lst)))
 
-  Let us define a function for generating points, and use that to define some
-  graphical objects (the same objects of our previous posts). We will then
-  combine these objects in a complex unit and show that <TeXmacs> draws it
-  using our <scm|denestify-conditional> function.
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; otherwise we flatten it with recursion,
 
-  <\session|scheme|default>
-    <\input|Scheme] >
-      (define (pt x y)
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; obtaining a flat list, and append it to
 
-      \ \ `(point ,(number-\<gtr\>string x) ,(number-\<gtr\>string y)))
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; the flattened rest of the list, in this
 
-    <\textput>
-      \;
-    </textput>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; way flattening the combination of the
 
-    <\textput>
-      We will work with a circle so we need \<pi\>!
-    </textput>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ ;; two lists
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ (append (denestify-conditional (car lst))
 
-    <\textput>
-      Define points for the triangle
-    </textput>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional (cdr
+    lst)))))
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ ;; (car lst) is an atom
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ (else (if (denest-test (car lst))
 
-    <\textput>
-      Then the third point of the triangle, on the circumference, defined
-      with the help of two variables <scm|xC> and <scm|yC>:
-    </textput>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; test presence of (car lst) in the
+    list
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; of symbols that stop
+    denestification
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lst ;; we leave lst as it is
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; otherwise we cons (car lst) onto
+    the
 
-    <\textput>
-      Finally the points at which we will mark the triangle's vertices with
-      letters:
-    </textput>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ;; flattened version of (cdr lst)
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cons (car lst)\ 
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify-conditional\ 
 
-    <\input|Scheme] >
-      \;
-    </input>
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (cdr lst)))))))
+  </scm-code>
 
-    <\textput>
-      Use points to build up a drawing, where each object is typed down as a
-      list.
-    </textput>
+  <paragraph|basic-objects.scm>
 
-    <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree
+  <\scm-code>
+    (texmacs-module (notes external-scheme-files basic-objects))
 
-      \ `(with "gr-geometry" \ \ \ \ 
+    \;
 
-      \ \ \ \ \ \ (tuple "geometry" "400px" "300px" "center")
+    ;;; =====================
 
-      \ \ \ \ "font-shape" "italic"
+    ;;; mathematical constants
 
-      \ \ \ \ (graphics
+    \;
 
-      \ \ \ \ \ \ ;; the arc and the line together make the semicircle
+    (tm-define \ pi (acos -1))
 
-      \ \ \ \ \ \ (with "color" "black" \ (arc ,pA ,pC ,pB))
+    \;
 
-      \ \ \ \ \ \ (with "color" "black" \ (line ,pA ,pB))
+    ;;; ================================
 
-      \ \ \ \ \ \ ;; a closed polyline for the triangle
+    ;;; define a point using two numbers
 
-      \ \ \ \ \ \ (with "color" "red" "line-width" "1pt"\ 
+    \;
 
-      \ \ \ \ \ \ \ \ \ \ \ \ (cline ,pA ,pB ,pC))
+    ;; exact-\<gtr\>inexact transforms fractions into floats yielding strings
+    that are
 
-      \ \ \ \ \ \ ;; add letters using text-at
+    ;; parsed correctly by TeXmacs
 
-      \ \ \ \ \ \ (with "color" "black" \ (text-at "A" ,tA))
+    (tm-define (pt x y)
 
-      \ \ \ \ \ \ (with "color" "black" \ (text-at "B" ,tB))
+    \ \ `(point ,(number-\<gtr\>string (exact-\<gtr\>inexact x))
+    ,(number-\<gtr\>string (exact-\<gtr\>inexact y))))
+  </scm-code>
 
-      \ \ \ \ \ \ (with "color" "black" \ (text-at "C" ,tC))
+  <paragraph|geometrical-transformations.scm>
 
-      \ \ \ \ \ \ ;; finally decorate with the TeXmacs symbol
+  <\scm-code>
+    (texmacs-module (notes external-scheme-files
+    geometrical-transformations))
 
-      \ \ \ \ \ \ (with "color" "blue" \ "font-shape" "upright"\ 
+    \;
 
-      \ \ \ \ \ \ \ \ \ \ \ \ (text-at (TeXmacs) ,(pt -0.55 -0.75))))))
+    (define (translate-point point delta-vect)
 
-      ;; and close all of the parentheses!!!
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
-    </unfolded-io>
+    \ \ (let ((coord (map string-\<gtr\>number (cdr point))))
 
-    <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree (pt 2/3 1/2))
-    <|unfolded-io>
-      <text|<point|2/3|1/2>>
-    </unfolded-io>
+    \ \ \ \ (pt (+ (car coord) (car delta-vect))
 
-    <\unfolded-io|Scheme] >
-      (stree-\<gtr\>tree
+    \ \ \ \ \ \ \ \ (+ (cadr coord) (cadr delta-vect)))))
 
-      \ `(with "gr-geometry" \ \ \ \ 
+    \;
 
-      \ \ \ \ \ \ (tuple "geometry" "8cm" "4cm" "center")
+    (tm-define (translate-element element delta-vect)
 
-      \ \ \ \ "font-shape" "italic"
+    \ \ (cond ((list? element)
 
-      \ \ \ \ (graphics
+    \ \ \ \ \ (if (equal? (car element) 'point)
 
-      \ \ \ \ \ \ ;; the arc and the line together make the semicircle
+    \ \ \ \ \ \ \ \ (translate-point element delta-vect)
 
-      \ \ \ \ \ \ (with "point-size" "5ln" ,(pt 2/3 1/2))
+    \ \ \ \ \ \ \ \ (map (lambda (x)\ 
 
-      \ \ \ \ \ \ (with "color" "green" ,(pt .67 .8))
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (translate-element x delta-vect))\ 
 
-      \ \ \ \ \ \ (with "color" "red" ,(pt 2 2/3))
+    \ \ \ \ \ \ \ \ \ \ \ \ \ element)))
 
-      \ \ \ \ \ \ (with "color" "orange" ,(pt (exact-\<gtr\>inexact 2/3)
-      1)))))
+    \ \ \ \ \ \ \ \ (else element)))
+  </scm-code>
 
-      ;; and close all of the parentheses!!!
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|8cm|4cm|center>|font-shape|italic|<graphics|<with|point-size|5ln|<point|2/3|1/2>>|<with|color|green|<point|0.67|0.8>>|<with|color|red|<point|2|2/3>>|<with|color|orange|<point|0.666666666666667|1>>>>>
-    </unfolded-io>
+  <paragraph|object-customization.scm>
 
-    <\unfolded-io|Scheme] >
-      (number-\<gtr\>string 2/3)
-    <|unfolded-io>
-      "2/3"
-    </unfolded-io>
+  <\scm-code>
+    (texmacs-module (notes external-scheme-files
+    geometrical-transformations))
 
-    <\unfolded-io|Scheme] >
-      (number-\<gtr\>string (exact-\<gtr\>inexact 2/3))
-    <|unfolded-io>
-      "0.666666666666667"
-    </unfolded-io>
+    \;
 
-    <\input|Scheme] >
-      \;
-    </input>
-  </session>
+    (define (translate-point point delta-vect)
+
+    \ \ (let ((coord (map string-\<gtr\>number (cdr point))))
+
+    \ \ \ \ (pt (+ (car coord) (car delta-vect))
+
+    \ \ \ \ \ \ \ \ (+ (cadr coord) (cadr delta-vect)))))
+
+    \;
+
+    (tm-define (translate-element element delta-vect)
+
+    \ \ (cond ((list? element)
+
+    \ \ \ \ \ (if (equal? (car element) 'point)
+
+    \ \ \ \ \ \ \ \ (translate-point element delta-vect)
+
+    \ \ \ \ \ \ \ \ (map (lambda (x)\ 
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (translate-element x delta-vect))\ 
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ element)))
+
+    \ \ \ \ \ \ \ \ (else element)))
+  </scm-code>
 
   \;
 
-  <paragraph|A function for complex graphics>
+  Using the functions we defined, now we can repeat the drawings of
+  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
 
-  To write less ourselves, we can define a function that flattens graphics
-  lists and wraps them with the <TeXmacs> syntax:
+  The translated <scm|triangle-in-half-circle> (made out of a list of objects
+  we have already defined, uses the geometrical transformation functions):
 
   <\session|scheme|default>
     <\input|Scheme] >
-      (define (scheme-graphics x-size y-size alignment graphics-list)
+      (define triangle-in-half-circle \ `(
 
-      \ \ (stree-\<gtr\>tree
+      \ \ \ ,half-circle
 
-      \ \ \ `(with "gr-geometry"\ 
+      \ \ \ ,triangle
 
-      \ \ \ \ \ \ \ \ (tuple "geometry" ,x-size ,y-size alignment)
-
-      \ \ \ \ \ \ \ \ "font-shape" "italic"
-
-      \ \ \ \ \ \ \ \ ,(denestify-conditional\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ `(graphics ,graphics-list)))))
+      \ \ \ ,letters))
     </input>
 
     <\textput>
-      Let's use it:
+      Draw it by placing it in the list argument of the <scm|scheme-graphics>
+      function together with a translated copy of itself and the <TeXmacs>
+      caption (translating that too):
+    </textput>
+
+    <\unfolded-io|Scheme] >
+      (scheme-graphics "400px" "300px" "center"\ 
+
+      `( ,triangle-in-half-circle
+
+      \ \ \ ,(translate-element triangle-in-half-circle '(1.0 -1.5))
+
+      \ \ \ ,(translate-element caption '(1.0 -1.5))))
+    <|unfolded-io>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>|<with|color|black|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>|<with|color|red|line-width|1pt|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>|<with|color|black|<text-at|A|<point|-1.3|-2.0>>>|<with|color|black|<text-at|B|<point|3.1|-2.0>>>|<with|color|black|<text-at|C|<point|-0.2|0.43205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
+    </unfolded-io>
+
+    <\input|Scheme] >
+      \;
+    </input>
+  </session>
+
+  The <scm|translated-triangle-in-half-circle-short-dashes> (uses the object
+  customization functions<todo|functions (plural) or function (singular)?>):
+
+  <\session|scheme|default>
+    <\input|Scheme] >
+      (define translated-triangle-in-half-circle-short-dashes
+
+      \ \ (translate-element
+
+      \ \ \ \ \ (apply-property
+
+      \ \ \ \ \ \ \ (apply-property \ triangle-in-half-circle\ 
+
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "dash-style" "11100")
+
+      \ \ \ \ \ \ \ \ "dash-style" "101010")
+
+      \ \ \ \ \ '(1.0 -1.5)))
+    </input>
+
+    <\input|Scheme] >
+      (define translated-caption\ 
+
+      \ \ (translate-element caption '(1.0 -1.5)))
+    </input>
+
+    <\textput>
+      The drawing is made out of complex objects, but the final expression
+      shows what we have in mind: our geometrical construction and a shifted
+      replica drawn with short dashes.
     </textput>
 
     <\unfolded-io|Scheme] >
       (scheme-graphics "400px" "300px" "center" `(
 
-      ,half-circle
+      ,triangle-in-half-circle
 
-      ,triangle
+      ,translated-triangle-in-half-circle-short-dashes
 
-      ,letters
-
-      ,caption))
+      ,translated-caption))
     <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
+      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>>>|<with|color|red|line-width|1pt|<with|dash-style|11100|<with|dash-style|101010|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|A|<point|-1.3|-2.0>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|B|<point|3.1|-2.0>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|C|<point|-0.2|0.43205080756888>>>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
     </unfolded-io>
+
+    <\input|Scheme] >
+      \;
+    </input>
   </session>
 
   <section|Manipulation of complex objects>
@@ -920,53 +988,7 @@
   <scm|half-circle> and <scm|letter> objects (we are then going to add the
   <TeXmacs> caption!).
 
-  This time, we define the whole drawing as a unit, calling it
-  <scm|triangle-in-half-circle>; we will need to remember to unquote the
-  symbol <scm|triangle-in-half-circle> when placing it inside lists defined
-  through quasiquoting.
-
-  <\session|scheme|default>
-    <\input|Scheme] >
-      (define triangle-in-half-circle \ `(
-
-      \ \ \ ,half-circle
-
-      \ \ \ ,triangle
-
-      \ \ \ ,letters))
-    </input>
-
-    <\textput>
-      Draw it by placing it in the list argument of the <scm|scheme-graphics>
-      function:
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center"\ 
-
-      \ \ \ \ \ \ `(,triangle-in-half-circle ,caption)))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
-    </unfolded-io>
-
-    <\textput>
-      Now add to the drawing a translated copy of
-      <scm|triangle-in-half-circle> and the <TeXmacs> caption (translating
-      that too):
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center"\ 
-
-      `( ,triangle-in-half-circle
-
-      \ \ \ ,(translate-element triangle-in-half-circle '(1.0 -1.5))
-
-      \ \ \ ,(translate-element caption '(1.0 -1.5))))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>|<with|color|black|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>|<with|color|red|line-width|1pt|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>|<with|color|black|<text-at|A|<point|-1.3|-2.0>>>|<with|color|black|<text-at|B|<point|3.1|-2.0>>>|<with|color|black|<text-at|C|<point|-0.2|0.43205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
-    </unfolded-io>
-  </session>
+  \;
 
   <paragraph|Manipulate object properties>
 
@@ -1282,18 +1304,21 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|?|?>>
-    <associate|auto-10|<tuple|2|?>>
-    <associate|auto-11|<tuple|4|?>>
+    <associate|auto-10|<tuple|3|?>>
+    <associate|auto-11|<tuple|1|?>>
+    <associate|auto-12|<tuple|2|?>>
+    <associate|auto-13|<tuple|4|?>>
     <associate|auto-2|<tuple|1|?>>
     <associate|auto-3|<tuple|1|?>>
     <associate|auto-4|<tuple|2|?>>
     <associate|auto-5|<tuple|1|?>>
     <associate|auto-6|<tuple|2|?>>
     <associate|auto-7|<tuple|3|?>>
-    <associate|auto-8|<tuple|3|?>>
-    <associate|auto-9|<tuple|1|?>>
+    <associate|auto-8|<tuple|4|?>>
+    <associate|auto-9|<tuple|5|?>>
     <associate|footnote-1|<tuple|1|?>>
     <associate|footnr-1|<tuple|1|?>>
+    <associate|sec:a-few-functions|<tuple|1|?>>
   </collection>
 </references>
 
@@ -1302,7 +1327,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3D86ED8-69E1558>|<link|hyperlink|<id|%3D86ED8-69E1558>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3398ED8-5BA4E20>|<link|hyperlink|<id|%3398ED8-5BA4E20>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
@@ -1311,41 +1336,49 @@
       graphics with external files> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <pageref|auto-1><vspace|0.5fn>
 
-      1.<space|2spc>Composing complex objects
+      1.<space|2spc>A few initial functions - composing complex objects
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-2>
 
-      2.<space|2spc>Splitting one's own <with|font-shape|<quote|small-caps>|Scheme>
+      2.<space|2spc>Organizing one's own <with|font-shape|<quote|small-caps>|Scheme>
       files (modularization) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>
 
-      <with|par-left|<quote|4tab>|Flattening nested lists of graphical
-      objects <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|4tab>|scheme-graphics.scm
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-5><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|Definition of basic graphical objects
+      <with|par-left|<quote|4tab>|graphical-list-processing.scm
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-6><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|A function for complex graphics
+      <with|par-left|<quote|4tab>|basic-objects.scm
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-7><vspace|0.15fn>>
 
-      3.<space|2spc>Manipulation of complex objects
+      <with|par-left|<quote|4tab>|geometrical-transformations.scm
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-8>
+      <no-break><pageref|auto-8><vspace|0.15fn>>
 
-      <with|par-left|<quote|4tab>|Translate complex objects
+      <with|par-left|<quote|4tab>|object-customization.scm
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-9><vspace|0.15fn>>
 
+      3.<space|2spc>Manipulation of complex objects
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-10>
+
+      <with|par-left|<quote|4tab>|Translate complex objects
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-11><vspace|0.15fn>>
+
       <with|par-left|<quote|4tab>|Manipulate object properties
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-10><vspace|0.15fn>>
+      <no-break><pageref|auto-12><vspace|0.15fn>>
 
       4.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
       that show what we mean <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-11>
+      <no-break><pageref|auto-13>
     </associate>
   </collection>
 </auxiliary>
