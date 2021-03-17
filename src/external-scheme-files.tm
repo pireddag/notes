@@ -73,6 +73,13 @@
     <\itemize>
       <item>Asked on TeXmacs-dev on 2021-03-17
 
+      <\itemize>
+        <item>Answer received: <scm|define>,
+        <scm|define-public>,<scm|tm-define>
+
+        <item>Reorganize modules accordingly
+      </itemize>
+
       <item>A file sees the functions defined with <scm|tm-define> in the
       modules that it <scm|:use>s, and only them, but these are seen
       transitively
@@ -908,6 +915,10 @@
 
   Let us illustrate it with the \Pblending in\Q/\Pwaning out\Q triangle of
   <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
+  As a first step, we place into the <name|Executable fold> environment a
+  <scm|begin> form that depends on symbols we have already defined and has a
+  last subform (the one that wil be its return value) a <scm|scheme-graphics>
+  form.
 
   <\script-input|scheme|default>
     (begin\ 
@@ -945,75 +956,15 @@
     \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,translated-caption)))
   </script-input|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.5gh>>|<graphics|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.8pt|<cline|<point|-1.8|-0.3>|<point|2.2|-0.3>|<point|-0.8|1.43205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.6pt|<cline|<point|-1.6|-0.6>|<point|2.4|-0.6>|<point|-0.6|1.13205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.4pt|<cline|<point|-1.4|-0.9>|<point|2.6|-0.9>|<point|-0.4|0.83205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.2pt|<cline|<point|-1.2|-1.2>|<point|2.8|-1.2>|<point|-0.2|0.53205080756888>>>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>>
 
-  <section|<name|Scheme> expressions that show what we mean>
+  which will generate the drawing we have already seen in <hlink|Modular
+  graphics with <name|Scheme>|./modular-scheme-graphics.tm> (Figure
+  <reference|fig:bleding-waning-triangle>).
 
-  We apply again the idea of modularity by assigning to a variable the object
-  which we obtain after translation and application of dashing, and using the
-  variable to build a drawing. Our code again shows that in <name|Scheme>
-  building blocks combine together well.
+  <\big-figure>
+    <\script-output|scheme|default>
+      (begin\ 
 
-  <\session|scheme|default>
-    <\unfolded-io|Scheme] >
-      (define translated-triangle-in-half-circle-short-dashes
-
-      \ \ (translate-element
-
-      \ \ \ \ \ (apply-property
-
-      \ \ \ \ \ \ \ (apply-property \ triangle-in-half-circle\ 
-
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "dash-style" "11100")
-
-      \ \ \ \ \ \ \ \ "dash-style" "101010")
-
-      \ \ \ \ \ '(1.0 -1.5)))
-    <|unfolded-io>
-      \;
-    </unfolded-io>
-
-    <\input|Scheme] >
-      (define translated-caption\ 
-
-      \ \ (translate-element caption '(1.0 -1.5)))
-    </input>
-
-    <\textput>
-      The drawing is made out of complex objects, but the final expression
-      shows what we have in mind: our geometrical construction and a shifted
-      replica drawn with short dashes.
-    </textput>
-
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center" `(
-
-      ,triangle-in-half-circle
-
-      ,translated-triangle-in-half-circle-short-dashes
-
-      ,translated-caption))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<arc|<point|-1.0|-1.5>|<point|0.0|0.23205080756888>|<point|3.0|-1.5>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<line|<point|-1.0|-1.5>|<point|3.0|-1.5>>>>>|<with|color|red|line-width|1pt|<with|dash-style|11100|<with|dash-style|101010|<cline|<point|-1.0|-1.5>|<point|3.0|-1.5>|<point|0.0|0.23205080756888>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|A|<point|-1.3|-2.0>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|B|<point|3.1|-2.0>>>>>|<with|color|black|<with|dash-style|11100|<with|dash-style|101010|<text-at|C|<point|-0.2|0.43205080756888>>>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
-    </unfolded-io>
-  </session>
-
-  We can play further. Let's blend the triangle inside the half-circle
-  stepwise. Our functions are not sophisticated enough to target a subunit of
-  a complex object: applying a line-width to the whole drawing of the
-  triangle in the half-circle would eliminate the different line-widths for
-  the triangle and arc; for this reason, we use as an example of blending in
-  the triangle alone, which is one of the units we defined.
-
-  <\session|scheme|default>
-    <\textput>
-      The <scm|blend-in-triangle> function shifts the triangle by <scm|delta>
-      times the vector <scm|(1.0 -1.5)>, applies dashing and a linewidth
-      which is thicker as the triangle is closer to being inscribed in the
-      half-circle (we are going to use this function for values of
-      <scm|delta> which yield positive values of the line thickness).
-    </textput>
-
-    <\input|Scheme] >
-      (define (blend-in-triangle delta)
+      \ \ (define (blend-in-triangle delta)
 
       \ \ (translate-element \ \ (apply-property
 
@@ -1028,68 +979,172 @@
       \ \ \ \ \ \ \ \ \ `(,(number-\<gtr\>string (- 1 delta)) "pt") ""))
 
       \ \ \ \ \ \ \ \ \ `(,(* 1.0 delta) ,(* -1.5 delta))))
-    </input>
 
-    <\textput>
-      Let's map this function on a list of <scm|d> values, and let us name
-      the object it returns (all lists of objects will be flattened by the
-      conditional flattener) in a meaningful way:
-    </textput>
+      \ \ (define delta-lst
 
-    <\input|Scheme] >
-      (define delta-lst
+      \ \ \ \ \ \ \ '(0.2 0.4 0.6 0.8))
 
-      \ \ \ \ \ \ \ '(0.2 0.4 0.6 0.8)))
-    </input>
+      \ \ (define blend-in-triangle-series
 
-    <\input|Scheme] >
-      (define blend-in-triangle-series
+      \ \ \ \ (map blend-in-triangle delta-lst))
 
-      \ \ (map blend-in-triangle delta-lst))
-    </input>
+      \ \ (scheme-graphics "400px" "300px" "center"\ 
 
-    <\textput>
-      Here is the triangle blending in into the half-circle <text-dots> or
-      fading away!
-    </textput>
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ `(,blend-in-triangle-series
 
-    <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center" `(
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle-in-half-circle
 
-      ,blend-in-triangle-series
+      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,translated-caption)))
+    </script-output|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.8pt|<cline|<point|-1.8|-0.3>|<point|2.2|-0.3>|<point|-0.8|1.43205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.6pt|<cline|<point|-1.6|-0.6>|<point|2.4|-0.6>|<point|-0.6|1.13205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.4pt|<cline|<point|-1.4|-0.9>|<point|2.6|-0.9>|<point|-0.4|0.83205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.2pt|<cline|<point|-1.2|-1.2>|<point|2.8|-1.2>|<point|-0.2|0.53205080756888>>>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>>
 
-      ,triangle-in-half-circle
+    \;
+  <|big-figure>
+    The \Pblending in\Q/\Pwaning out\Q triangle of <hlink|Modular graphics
+    with <name|Scheme>|./modular-scheme-graphics.tm> generated through a
+    <name|Executable fold> environment.<label|fig:bleding-waning-triangle>
+  </big-figure>
 
-      ,translated-caption))
-    <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|alignment>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.8pt|<cline|<point|-1.8|-0.3>|<point|2.2|-0.3>|<point|-0.8|1.43205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.6pt|<cline|<point|-1.6|-0.6>|<point|2.4|-0.6>|<point|-0.6|1.13205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.4pt|<cline|<point|-1.4|-0.9>|<point|2.6|-0.9>|<point|-0.4|0.83205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.2pt|<cline|<point|-1.2|-1.2>|<point|2.8|-1.2>|<point|-0.2|0.53205080756888>>>>>|<with|color|black|<arc|<point|-2|0>|<point|-1.0|1.73205080756888>|<point|2|0>>>|<with|color|black|<line|<point|-2|0>|<point|2|0>>>|<with|color|red|line-width|1pt|<cline|<point|-2|0>|<point|2|0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>
-    </unfolded-io>
+  The subsequent step is delegating all of the definitions (the ones we have
+  written in <scheme> sessions in this document) to a file, which one can
+  then <scm|load> inside an <name|Executable fold>, within a <scm|begin>
+  whose last form evaluates to the drawing we want (for example using the
+  <scm|scheme-graphics> function we have defined).
 
-    <\input|Scheme] >
-      \;
-    </input>
-  </session>
+  In this way one separates the code into three parts:
 
-  One could wish for more actions. For example, one could wish to find
-  intersections of lines which define objects, and assign them to new
-  objects. Another example is to define styles as shortcuts to set several
-  properties of a graphical object with a single operation; this is among the
-  functions in the yet-to-be completed <TeXmacs> <name|Scheme> graphics code.
-  <name|Scheme> is promising for implementing each of them.
+  <\itemize>
+    <item>the graphical commands, which are defined in <TeXmacs> modules and
+    made available through the <markup|use-module> macro
 
-  As a sketch of an implementation, styles could be defined as lists of
-  name-value pairs, maybe association lists (this might allow easier
-  error-checking), which can be inserted into <scm|with> constructs by a
-  function which first flattens the pairs then appends the resulting list
-  into a <scm|'(with ... object)> list at the position we indicated with the
-  dots to apply all of the properties to <scm|object>. Never mind that the
-  <name|Scheme> syntax to achieve what we want is slightly different from the
-  description I gave, it is close enough that I hope it is convincing.
+    <item>the drawing itself, with its definitions, which is realized in a
+    separate file which includes a symbol (function or variable) which
+    evaluates to a <TeXmacs> drawing
 
-  About persuasion. I hope that I convinced you that the initial effort of
-  setting up <name|Scheme> functions pays off: one constructs a powerful
-  graphical language in which arbitrarily complex graphics are treated
-  uniformly.
+    <item>the placement of the drawing into the document, which is realized
+    through one of the means that <TeXmacs> provides, for example the
+    <name|Executable fold> environment.
+  </itemize>
+
+  When applying the <scm|load> command in <scheme> one must be aware that
+  <scheme> provides forms which make any action <todo|is action the right
+  word here?>possible (and therefore potential damage to one's computer), so
+  it is necessary to know what one is <scm|load>ing, since it may not be in
+  front of our eyes when we press the <key|return> key! This said, here is
+  how a graphical file may look like (we are using the first drawing we made
+  of a triangle, to keep the code short):
+
+  <\scm-code>
+    \ \ (define pA (pt -2 0))
+
+    \ \ (define pB (pt 2 0))
+
+    \ \ (define xC (- (* 2 (cos (/ pi 3)))))
+
+    \ \ (define yC (* 2 (sin (/ pi 3))))
+
+    \ \ (define pC (pt xC yC))
+
+    \ \ (define tA (pt -2.3 -0.5))
+
+    \ \ (define tB (pt 2.1 -0.5))
+
+    \ \ (define tC (pt (- xC 0.2) (+ yC 0.2)))
+
+    \ \ 
+
+    \ \ (define triangle
+
+    \ \ \ \ `(with "color" "red" "line-width" "1pt"
+
+    \ \ \ \ \ \ \ \ \ \ \ (cline ,pA ,pB ,pC)))
+
+    \ \ (define half-circle
+
+    \ \ \ \ `((with "color" "black" (arc ,pA ,pC ,pB))
+
+    \ \ \ \ \ \ (with "color" "black" (line ,pA ,pB))))
+
+    \ \ (define letters\ 
+
+    \ \ \ \ `((with "color" "black" \ (text-at "A" ,tA))
+
+    \ \ \ \ \ \ (with "color" "black" \ (text-at "B" ,tB))
+
+    \ \ \ \ \ \ (with "color" "black" \ (text-at "C" ,tC))))
+
+    \ \ (define caption
+
+    \ \ \ \ `((with "color" "blue" "font-shape" "upright"
+
+    \ \ \ \ \ \ \ \ \ \ \ \ (text-at (TeXmacs) ,(pt -0.55 -0.75)))))
+
+    \ \ 
+
+    \ \ (define triangle-drawing
+
+    \ \ \ \ (scheme-graphics "400px" "300px" "center"\ 
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ `(,half-circle
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,letters
+
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,caption)))
+  </scm-code>
+
+  This defines the symbol <scm|triangle-drawing>, which evaluates to a
+  <TeXmacs> drawing; assuming that the file is called
+  <verbatim|triangle-drawing.scm>, and that it is available under that name
+  in the document (full file names are advisable), the <name|Executable fold>
+  now might be
+
+  <\script-input|scheme|default>
+    (begin
+
+    \ \ (load "triangle-drawing.scm")
+
+    \ \ triangle-drawing)
+  </script-input|>
+
+  yielding, when activated, our by now familiar drawing of a triangle (Figure
+  <reference|fig:triangle-with-external-files>).
+
+  <\big-figure>
+    <\script-output|scheme|default>
+      (begin
+
+      \ \ (load "src/triangle-drawing.scm")
+
+      \ \ triangle-drawing)
+    </script-output|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>>
+
+    \;
+  <|big-figure>
+    The \Ptriangle drawing\Q generated with external
+    files.<label|fig:triangle-with-external-files>
+  </big-figure>
+
+  I myself use <name|emacs> with <name|paredit> for the editing of <TeXmacs>
+  <scheme> files. The highlighting of keywords defined by <TeXmacs> is
+  possible with the <verbatim|tm-mode.el> file located in
+  <verbatim|$TEXMACS_PATH/progs/tm-mode.el>, that can be loaded adding to
+  your <verbatim|.emacs> the following line:
+
+  <\scm-code>
+    (load (substitute-in-file-name "$TEXMACS_PATH/progs/tm-mode.el"))
+  </scm-code>
+
+  It can be loaded unconditionally (as the above command does), as it
+  contains the following line
+
+  <\scm-code>
+    (add-hook 'scheme-mode-hook '(lambda () (texmacs-style)))
+  </scm-code>
+
+  which takes care of the conditional loading as a minor mode for <scheme>
+  files.<todo|is it best to do it in this way? Am I not polluting the
+  namespace of .emacs?>
 </body>
 
 <\initial>
@@ -1105,8 +1160,8 @@
   <\collection>
     <associate|auto-1|<tuple|?|?>>
     <associate|auto-10|<tuple|3|?>>
-    <associate|auto-11|<tuple|4|?>>
-    <associate|auto-12|<tuple|4|?>>
+    <associate|auto-11|<tuple|1|?>>
+    <associate|auto-12|<tuple|2|?>>
     <associate|auto-13|<tuple|4|?>>
     <associate|auto-2|<tuple|1|?>>
     <associate|auto-3|<tuple|1|?>>
@@ -1116,18 +1171,31 @@
     <associate|auto-7|<tuple|3|?>>
     <associate|auto-8|<tuple|4|?>>
     <associate|auto-9|<tuple|5|?>>
-    <associate|footnote-1|<tuple|1|?>>
-    <associate|footnr-1|<tuple|1|?>>
+    <associate|fig:bleding-waning-triangle|<tuple|1|?>>
+    <associate|fig:triangle-with-external-files|<tuple|2|?>>
     <associate|sec:a-few-functions|<tuple|1|?>>
   </collection>
 </references>
 
 <\auxiliary>
   <\collection>
+    <\associate|figure>
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
+        The \Pblending in\Q/\Pwaning out\Q triangle of
+        <locus|<id|%3965ED8-6841110>|<link|hyperlink|<id|%3965ED8-6841110>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
+        through a <with|font-shape|<quote|small-caps>|Executable fold>
+        environment.
+      </surround>|<pageref|auto-11>>
+
+      <tuple|normal|<\surround|<hidden-binding|<tuple>|2>|>
+        The \Ptriangle drawing\Q generated with external files.
+      </surround>|<pageref|auto-12>>
+    </associate>
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%41DBED8-6EC84A0>|<link|hyperlink|<id|%41DBED8-6EC84A0>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3965ED8-67E3150>|<link|hyperlink|<id|%3965ED8-67E3150>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
@@ -1164,17 +1232,9 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-9><vspace|0.15fn>>
 
-      3.<space|2spc>Manipulation of complex objects
+      3.<space|2spc>Drawings as part of documents
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-10>
-
-      <with|par-left|<quote|4tab>|Translate complex objects
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-11><vspace|0.15fn>>
-
-      <with|par-left|<quote|4tab>|Manipulate object properties
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-12><vspace|0.15fn>>
 
       4.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
       that show what we mean <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
