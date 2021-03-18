@@ -44,8 +44,12 @@
     with <name|Scheme>|./modular-scheme-graphics.tm> but without re-building
     them step-by-step.
 
-    <item>a function for loading a drawing from a file (probably not, use
+    <item> a function for loading a drawing from a file (probably not, use
     <scm|load> directly)
+
+    <\itemize>
+      <item>done\Vuse <scm|load> directly
+    </itemize>
 
     <item>Introduce the <scm|:secure> keyword. Do I have to use it? How is it
     working now? 2021-03-17 I have the security set to \Pprompt on script\Q.
@@ -89,6 +93,10 @@
     <item>organize the \Phyerarchy\Q of functions and import them in the
     document
 
+    <\itemize>
+      <item>partly done, review
+    </itemize>
+
     <item>explain that we change \Pimports\Q in mid blog post (2021-03-17 in
     the document I change the file and then after having finished section
     <reference|sec:a-few-functions> import separately each module that I want
@@ -114,12 +122,20 @@
     paredit for example)
 
     <\itemize>
+      <item>partly done
+    </itemize>
+
+    <\itemize>
       <item>the emacs mode for TeXmacs, <scm|tm-mode>, which is in my
       <verbatim|.emacs> file
     </itemize>
 
     <item>remove the <verbatim|.scm> file from the <verbatim|src> directory
     and place it somewhere sensible
+
+    <\itemize>
+      <item>done (it is in <verbatim|resources/external-scheme-files>)
+    </itemize>
 
     <item>link to <hlink|<TeXmacs> forum|http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/211>
     with techniques for Scheme development (and to Jeroen Wouter's posts?)
@@ -173,15 +189,17 @@
 
   <inactive|<use-module|<value|graphics-functions>>>.
 
-  \ The manual placement of <name|Scheme> files is necessary as I did not
-  find a way to make the <name|Scheme> files automatically available at the
-  download of this file; their location is specified in <TeXmacs> relative to
-  the user's <verbatim|prog> directory, and I did not find a way to specify
-  their location relative to the location of the file one is editing. If you
-  place the files in a different folder, please adjust correspondingly both
-  the path in the <markup|use-module> macro and inside the <scheme> file
+  The manual placement of <name|Scheme> files is good practice; their
+  location is specified in <TeXmacs> relative to the user's <verbatim|prog>
+  directory <todo|provide a running document with the same mechanism of the
+  Tetris document; the modules too must be slightly different and I will need
+  to load correctly the final file too (and explain everything clearly,
+  perhaps in a separate section \Phow to start experimenting\Q at the end)>.
+  If you place the files in a different folder, please adjust correspondingly
+  both the path in the <markup|use-module> macro and inside the <scheme> file
   itself in the instruction that declares its name and possibly imports
-  additional dependencies (more details later)<todo|link to details?>.
+  additional dependencies (more details later)<todo|this needs to be
+  rewritten harmonizing it with the preceding explanation>.
 
   <todo|perhaps here say that I will reuse the code of <hlink|Modular
   graphics with <name|Scheme>|./modular-scheme-graphics.tm> in a shortened
@@ -235,8 +253,7 @@
   <scm|scheme-graphics> functions together with the symbol <scm|pi> and
   helper functions (not accessible to the <TeXmacs> document)
   <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
-  <scm|denestify-conditional>:<todo|place the function for gaphic composition
-  at the top>
+  <scm|denestify-conditional>:
 
   <\scm-code>
     (texmacs-module (notes external-scheme-files scheme-graphics))
@@ -414,18 +431,18 @@
   section 1.4) with the <scm|texmacs-module> form that allows <TeXmacs> to
   locate the code <todo|does it do that?> and optionally allows inclusion of
   other code (so implementing a modular system). The argument of the
-  <scm|texmacs-module> form is a list which corresponds to the location of
-  the corresponding le<todo|these words are copied from the developer
-  guide>, starting from the <TeXmacs> user home directory <todo|why
-  $<math|TEXMACS_HOME_PATH> is not defined in bash and yet it works? There
-  are several possible paths TeXmacs is looking the files in, see sect 1.4>.
+  <scm|texmacs-module> form is (borrowing one sentence from the
+  <value|scheme-guide>) a list which corresponds to the location of the
+  corresponding le, starting from the <TeXmacs> user home directory
+  <todo|why $<math|TEXMACS_HOME_PATH> is not defined in bash and yet it
+  works? There are several possible paths TeXmacs is looking the files in,
+  see sect 1.4>.
 
-  There are two variations of the <scm|define> form in <TeXmacs>: the
-  standard <scm|define>, which makes functions and variables available within
-  one module, and <scm|tm-define> which makes them available to the calling
-  modules <todo|do I have to qualify like in the guide, telling that with the
-  current implementation tm-define makes function globally available?> and to
-  <TeXmacs> documents in this case.
+  We use two variations of the <scm|define> form in <TeXmacs>: the standard
+  <scm|define>, which makes functions and variables available within one
+  module, and <scm|tm-define> which makes them available transitively to
+  calling modules <todo|link to and harmonize with subsequent discussion in
+  the \Pmodularized\Q part> and to <TeXmacs> documents in this case.
 
   We have now the <scm|pt> and <scm|scheme-graphics> functions and we use
   them to compose the \Ptriangle\Q example of <hlink|Modular graphics with
@@ -515,8 +532,11 @@
     </input>
   </session>
 
-  <todo|explain that up to here it works with the first import, and from now
-  on we need to switch the import file, as described in the next section>
+  In the next section we will work with different <scheme> files, and
+  correspondingly we will have to import them using <markup|use-modules>.
+
+  Since the set of functions of the \Pnew\Q modules will include some of the
+  functions we have already used <todo|complete explanation>
 
   <section|Organizing one's own <scheme> files (modularization)>
 
@@ -529,32 +549,32 @@
   geometrical transformations of objects (<scm|translate-point> and
   <scm|translate-element>) and object customization (<scm|apply-property>).
 
-  It is useful to write <todo|can I find a better expression here?> functions
-  belonging to different categories inside separated files. In this way, when
-  adding features or otherwise modifying the code, it is easier to find the
-  functions, and one is encouraged to keep functions organized by topic,
-  which in turn helps to keep the whole set of functions \Peasy to navigate\Q
-  and the relationships between them easy to grasp. This is of course an
-  aspect of modularization, which in functional languages (like <scheme>) is
-  promoted as well by the \Pinclination\Q that one feels, after having made
-  some experience with the language, towards organizing one's own program as
-  a composition of functions.
+  It is useful to place functions belonging to different categories inside
+  separated files. In this way, when adding features or otherwise modifying
+  the code, it is easier to find the code we want to edit; in addition to
+  this, by distributing code in several files one is encouraged to keep
+  functions organized by topic, which in turn helps to keep the whole set of
+  functions \Peasy to navigate\Q and the relationships between them easy to
+  grasp. This is of course an aspect of modularization, which in functional
+  languages (like <scheme>) is promoted as well by the \Pinclination\Q that
+  one feels, after having made some experience with the language, towards
+  organizing one's own program as a composition of functions.
 
   In <TeXmacs> one can add a <scm|:use> form in the <scm|texmacs-module>
   declaration (see <value|scheme-guide>, section 1.4), specifying through it
   a module to import. Functions in <TeXmacs> can be defined with three
-  distinct mechanisms, leading to three different scoping rules. Functions
-  defined with <scm|define> are local to the module in which they are
-  defined; \ functions defined with <scm|define-public> are visible both from
-  the module in which they are defined and in modules that import that
-  directly <todo|verify whether transitive import works within Scheme\Vit
-  does not work for a document>(at the moment I am writing, March 2021,
-  <scm|define-public> is not yet documented in the <value|scheme-guide>);
-  functions that are defined with <scm|tm-define> are \Pglobal\Q, in the
-  sense that <scm|:use>ing a module where they are defined makes them
-  available both in the module that <scm|:use>s them and transitively in
-  modules and documents that use that module<todo|I could document this for
-  myself>.
+  distinct mechanisms<todo|harmonize with preceding discussion>, leading to
+  three different scoping rules. Functions defined with <scm|define> are
+  local to the module in which they are defined; \ functions defined with
+  <scm|define-public> are visible both from the module in which they are
+  defined and in modules that import that directly <todo|verify whether
+  transitive import works within Scheme\Vit does not work for a document>(at
+  the moment I am writing, March 2021, <scm|define-public> is not yet
+  documented in the <value|scheme-guide>); functions that are defined with
+  <scm|tm-define> are \Pglobal\Q, in the sense that <scm|:use>ing a module
+  where they are defined makes them available both in the module that
+  <scm|:use>s them and transitively in modules and documents that use that
+  module<todo|I could document this for myself>.
 
   \PTransitive\Q importing of symbols makes it also possible to organize
   \Ppackages\Q of modules that can be used in a document with a single
@@ -1130,7 +1150,7 @@
     <\script-output|scheme|default>
       (begin
 
-      \ \ (load "src/triangle-drawing.scm")
+      \ \ (load "resources/external-scheme-files/triangle-drawing.scm")
 
       \ \ triangle-drawing)
     </script-output|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>>
