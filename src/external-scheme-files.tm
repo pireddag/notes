@@ -4,23 +4,12 @@
 
 <\body>
   <\hide-preamble>
+    Use an environment variable to define the module path to make it easier
+    to refer to it in the text of the document
+
     <assign|graphics-functions|(notes external-scheme-files scheme-graphics)>
 
-    <assign|geometrical-transformation-functions|(notes external-scheme-files
-    geometrical-transformations)>
-
-    <assign|object-customization-functions|(notes external-scheme-files
-    object-customization)>
-
-    <assign|basic-objects|(notes external-scheme-files basic-objects)>
-
     <use-module|<value|graphics-functions>>
-
-    <use-module|<value|geometrical-transformation-functions>>
-
-    <use-module|<value|object-customization-functions>>
-
-    <use-module|<value|basic-objects>>
 
     <assign|scheme-guide|<hlink|<name|Scheme>
     guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
@@ -128,6 +117,17 @@
       <item>the emacs mode for TeXmacs, <scm|tm-mode>, which is in my
       <verbatim|.emacs> file
     </itemize>
+
+    <item>remove the <verbatim|.scm> file from the <verbatim|src> directory
+    and place it somewhere sensible
+
+    <item>link to <hlink|<TeXmacs> forum|http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/211>
+    with techniques for Scheme development (and to Jeroen Wouter's posts?)
+
+    <item>say where to download the files from! (A subdirectory of resources)
+
+    <item>See the Tetris game document for how to load a Scheme file which is
+    in the same directory as the document
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -187,8 +187,8 @@
   graphics with <name|Scheme>|./modular-scheme-graphics.tm> in a shortened
   way>
 
-  <section|A few initial functions - composing complex
-  objects><label|sec:a-few-functions>
+  <section|A few functions in a single file (composing complex
+  objects)><label|sec:a-few-functions>
 
   We start from the symbols (functions and variables) we developed in the
   post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
@@ -516,7 +516,7 @@
   </session>
 
   <todo|explain that up to here it works with the first import, and from now
-  on we need to add imports, as described in the next section>
+  on we need to switch the import file, as described in the next section>
 
   <section|Organizing one's own <scheme> files (modularization)>
 
@@ -542,30 +542,55 @@
 
   In <TeXmacs> one can add a <scm|:use> form in the <scm|texmacs-module>
   declaration (see <value|scheme-guide>, section 1.4), specifying through it
-  a module to import and having in this way available all functions that are
-  defined using <scm|tm-define>\Vand as well the imported ones
-  \Ptransitively\Q.<todo|improve and complete, explaining how we are doing it
-  here (as if they are not transitive) and what are TeXmacs plans for this>
+  a module to import. Functions in <TeXmacs> can be defined with three
+  distinct mechanisms, leading to three different scoping rules. Functions
+  defined with <scm|define> are local to the module in which they are
+  defined; \ functions defined with <scm|define-public> are visible both from
+  the module in which they are defined and in modules that import that
+  directly <todo|verify whether transitive import works within Scheme\Vit
+  does not work for a document>(at the moment I am writing, March 2021,
+  <scm|define-public> is not yet documented in the <value|scheme-guide>);
+  functions that are defined with <scm|tm-define> are \Pglobal\Q, in the
+  sense that <scm|:use>ing a module where they are defined makes them
+  available both in the module that <scm|:use>s them and transitively in
+  modules and documents that use that module<todo|I could document this for
+  myself>.
+
+  \PTransitive\Q importing of symbols makes it also possible to organize
+  \Ppackages\Q of modules that can be used in a document with a single
+  <markup|use-modules> command: in fact it is sufficient to collect all of
+  the desired modules under a <scm|:use> form in a \Pmaster\Q module and then
+  import that. We will do so in this document<todo| switch the import file,
+  as described at the end of the previous section>.
 
   Let us then organize our functions into five files\Vwe place together basic
   graphics object and basic mathematical objects since we have only one of
   each, we can split them when the file becomes larger. Here they are. We
-  need to import in our <TeXmacs> document only four of them <todo|again
-  explanation of transitivity and plans and show calls to
-  <markup|use-modules> in the preamble>
+  need to import in our <TeXmacs> document only one of them, as we
+  discussed\Vsetting one of them as \Pmaster\Q.
 
   <paragraph|scheme-graphics.scm>
 
   <\scm-code>
     (texmacs-module (notes external-scheme-files scheme-graphics)
 
-    \ \ (:use (notes external-scheme-files graphical-list-processing)))
+    \ \ (:use (notes external-scheme-files graphical-list-processing)
+
+    \ \ \ \ \ \ \ \ (notes external-scheme-files basic-objects)
+
+    \ \ \ \ \ \ \ \ (notes external-scheme-files geometrical-transformations)
+
+    \ \ \ \ \ \ \ \ (notes external-scheme-files object-customization)))
+
+    \;
 
     \;
 
     ;;; ================================
 
     ;;; function for graphic composition
+
+    \;
 
     \;
 
@@ -606,7 +631,7 @@
 
     ;; used by the function apply-property in the module object-customization
 
-    (tm-define (object-test expr)
+    (define-public (object-test expr)
 
     \ \ (not (equal?
 
@@ -623,6 +648,8 @@
     \ \ \ (object-test expr)
 
     \ \ \ (equal? expr 'with)))
+
+    \;
 
     \;
 
@@ -654,7 +681,7 @@
 
     ;; for a tail-recursive function
 
-    (tm-define (denestify-conditional lst)
+    (define-public (denestify-conditional lst)
 
     \ \ (cond ((null? lst) '())
 
@@ -781,39 +808,28 @@
   <paragraph|object-customization.scm>
 
   <\scm-code>
-    (texmacs-module (notes external-scheme-files
-    geometrical-transformations))
+    (texmacs-module (notes external-scheme-files object-customization)
+
+    \ \ (:use (notes external-scheme-files graphical-list-processing)))
 
     \;
 
-    (define (translate-point point delta-vect)
+    (tm-define (apply-property element name value)
 
-    \ \ (let ((coord (map string-\<gtr\>number (cdr point))))
+    \ \ (cond\ 
 
-    \ \ \ \ (pt (+ (car coord) (car delta-vect))
+    \ \ \ \ ((list? element)
 
-    \ \ \ \ \ \ \ \ (+ (cadr coord) (cadr delta-vect)))))
+    \ \ \ \ \ \ \ \ (if (object-test (car element))
 
-    \;
+    \ \ \ \ \ \ \ \ \ \ \ \ `(with ,name ,value ,element)
 
-    (tm-define (translate-element element delta-vect)
+    \ \ \ \ \ \ \ \ \ \ \ \ (map (lambda (x) (apply-property x name value))
 
-    \ \ (cond ((list? element)
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ element)))
 
-    \ \ \ \ \ (if (equal? (car element) 'point)
-
-    \ \ \ \ \ \ \ \ (translate-point element delta-vect)
-
-    \ \ \ \ \ \ \ \ (map (lambda (x)\ 
-
-    \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (translate-element x delta-vect))\ 
-
-    \ \ \ \ \ \ \ \ \ \ \ \ \ element)))
-
-    \ \ \ \ \ \ \ \ (else element)))
+    \ \ \ \ \ (else element))) \ 
   </scm-code>
-
-  \;
 
   Using the functions we defined, now we can repeat the drawings of
   <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
@@ -954,7 +970,7 @@
     \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,triangle-in-half-circle
 
     \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,translated-caption)))
-  </script-input|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.5gh>>|<graphics|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.8pt|<cline|<point|-1.8|-0.3>|<point|2.2|-0.3>|<point|-0.8|1.43205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.6pt|<cline|<point|-1.6|-0.6>|<point|2.4|-0.6>|<point|-0.6|1.13205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.4pt|<cline|<point|-1.4|-0.9>|<point|2.6|-0.9>|<point|-0.4|0.83205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.2pt|<cline|<point|-1.2|-1.2>|<point|2.8|-1.2>|<point|-0.2|0.53205080756888>>>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>>
+  </script-input|<text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.8pt|<cline|<point|-1.8|-0.3>|<point|2.2|-0.3>|<point|-0.8|1.43205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.6pt|<cline|<point|-1.6|-0.6>|<point|2.4|-0.6>|<point|-0.6|1.13205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.4pt|<cline|<point|-1.4|-0.9>|<point|2.6|-0.9>|<point|-0.4|0.83205080756888>>>>>|<with|color|red|line-width|1pt|<with|dash-style|101010|<with|line-width|0.2pt|<cline|<point|-1.2|-1.2>|<point|2.8|-1.2>|<point|-0.2|0.53205080756888>>>>>|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|0.45|-2.25>>>>>>>
 
   which will generate the drawing we have already seen in <hlink|Modular
   graphics with <name|Scheme>|./modular-scheme-graphics.tm> (Figure
@@ -1145,6 +1161,8 @@
   which takes care of the conditional loading as a minor mode for <scheme>
   files.<todo|is it best to do it in this way? Am I not polluting the
   namespace of .emacs?>
+
+  <todo|more on developing Scheme?>
 </body>
 
 <\initial>
@@ -1162,7 +1180,6 @@
     <associate|auto-10|<tuple|3|?>>
     <associate|auto-11|<tuple|1|?>>
     <associate|auto-12|<tuple|2|?>>
-    <associate|auto-13|<tuple|4|?>>
     <associate|auto-2|<tuple|1|?>>
     <associate|auto-3|<tuple|1|?>>
     <associate|auto-4|<tuple|2|?>>
@@ -1182,7 +1199,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%3965ED8-6841110>|<link|hyperlink|<id|%3965ED8-6841110>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%45BCED8-813C4E0>|<link|hyperlink|<id|%45BCED8-813C4E0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1195,7 +1212,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3965ED8-67E3150>|<link|hyperlink|<id|%3965ED8-67E3150>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%45BCED8-813B670>|<link|hyperlink|<id|%45BCED8-813B670>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
@@ -1204,8 +1221,8 @@
       graphics with external files> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <pageref|auto-1><vspace|0.5fn>
 
-      1.<space|2spc>A few initial functions - composing complex objects
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      1.<space|2spc>A few functions in a single file (composing complex
+      objects) <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-2>
 
       2.<space|2spc>Organizing one's own <with|font-shape|<quote|small-caps>|Scheme>
@@ -1235,10 +1252,6 @@
       3.<space|2spc>Drawings as part of documents
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-10>
-
-      4.<space|2spc><with|font-shape|<quote|small-caps>|Scheme> expressions
-      that show what we mean <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-13>
     </associate>
   </collection>
 </auxiliary>
