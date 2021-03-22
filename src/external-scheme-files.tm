@@ -73,6 +73,11 @@
         <scm|define-public>,<scm|tm-define>
 
         <item>Reorganize modules accordingly
+
+        <item>Further answer in group-chat 2021-13-20: <scm|tm-define> is
+        global, once that the definition has been executed. So one file has
+        to load the file where the function is <scm|tm-define>d (this settles
+        many of the following subpoints)
       </itemize>
 
       <item>A file sees the functions defined with <scm|tm-define> in the
@@ -140,7 +145,11 @@
     </itemize>
 
     <item>link to <hlink|<TeXmacs> forum|http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/211>
-    with techniques for Scheme development (and to Jeroen Wouter's posts?)
+    with techniques for Scheme development (and to Jeroen Wouter's email
+    message? \VJolly coders mailing list \PThe videos of the 2012 workshop
+    have also been very informative (e.g. I've learnt about using disp* for
+    debugging Scheme code and Debug-\<gtr\>io for debugging
+    plug-ins).\Q\VPerhaps to the videos only)
 
     <item>say where to download the files from! (A subdirectory of resources)
 
@@ -154,6 +163,15 @@
     submodules), and it would harmonize itself with the <TeXmacs> code. I
     would need to stress that the code in this post is different from the
     code in the previous posts of the series.
+
+    <\itemize>
+      <item>Note that with the current code properties can be applied only
+      one at a time\V<scm|(apply-property triangle "color" "red" "dash-style"
+      "101010")> does not work
+
+      <item>It is better to keep the code consistent with the other posts in
+      the same series
+    </itemize>
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -914,11 +932,9 @@
 
       \ \ \ \ \ (apply-property
 
-      \ \ \ \ \ \ \ (apply-property \ triangle-in-half-circle\ 
+      \ \ \ \ \ \ triangle-in-half-circle
 
-      \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "dash-style" "11100")
-
-      \ \ \ \ \ \ \ \ "dash-style" "101010")
+      \ \ \ \ \ \ "dash-style" "101010")
 
       \ \ \ \ \ '(1.0 -1.5)))
     </input>
@@ -1230,7 +1246,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%2D08ED8-96754C8>|<link|hyperlink|<id|%2D08ED8-96754C8>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%2DEBED8-5F986A0>|<link|hyperlink|<id|%2DEBED8-5F986A0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1243,7 +1259,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%2D08ED8-58DF6B0>|<link|hyperlink|<id|%2D08ED8-58DF6B0>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%2DEBED8-5E5CE30>|<link|hyperlink|<id|%2DEBED8-5E5CE30>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
