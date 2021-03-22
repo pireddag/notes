@@ -169,7 +169,7 @@
   <todo|do I use concepts described the TeXmacs manual or only in the Scheme
   guide?> and <hlink|<TeXmacs> <name|Scheme> developer
   guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
-  (indicated as <value|scheme-guide> from now on, \ describes how to control
+  (indicated as <value|scheme-guide> from now on, describes how to control
   and extend <TeXmacs> through <scheme><todo|improve this text in
   parentheses>) putting them in the context of our graphics example.
 
