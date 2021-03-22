@@ -173,11 +173,12 @@
   and extend <TeXmacs> through <scheme><todo|improve this text in
   parentheses>) putting them in the context of our graphics example.
 
-  We are going to use the modules system in <verbatim|progs>, and leave aside
-  the plugin functionality. Our aim is to have <name|Scheme> forms available
-  inside our <TeXmacs> document; we will be able to use them inside macros,
-  with the <markup|extern> tag, by clicking on text,<todo|is \Pwith the
-  action tag\Q part of the preceding case \Pby clicking on text\Q?> with the
+  We are going to use the modules system (whose files are stored by
+  convention in the <verbatim|progs> subtree), and leave aside the plugin
+  functionality. Our aim is to have <name|Scheme> forms available inside our
+  <TeXmacs> document; we will be able to use them inside macros, with the
+  <markup|extern> tag, by clicking on text,<todo|is \Pwith the action tag\Q
+  part of the preceding case \Pby clicking on text\Q?> with the
   <markup|action> tag, inside <name|Executable fold> environments (a way to
   embed graphics in documents) or in <name|Scheme> sessions.
 
