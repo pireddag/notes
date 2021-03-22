@@ -13,6 +13,8 @@
 
     <assign|scheme-guide|<hlink|<name|Scheme>
     guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
+
+    <assign|mark-date|<macro|body|<arg|body> \U >>
   </hide-preamble>
 
   <notes-header>
@@ -106,7 +108,7 @@
 
     <\itemize>
       <item>I have saved the first import as
-      <verbatim|scheme-graphics.scm.saved> int he same directory as the other
+      <verbatim|scheme-graphics.scm.saved> in the same directory as the other
       files
     </itemize>
 
@@ -144,6 +146,14 @@
 
     <item>See the Tetris game document for how to load a Scheme file which is
     in the same directory as the document
+
+    <item><mark-date|2021-03-22> Do we need <scm|apply-property>? There is
+    <scm|gr-group>: do we need the flattening? I need to test to make sure
+    that I can apply properties to arbitrarily nested objects (very likely, I
+    recall. The code would become much shorter (but still there would be
+    submodules), and it would harmonize itself with the <TeXmacs> code. I
+    would need to stress that the code in this post is different from the
+    code in the previous posts of the series.
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -1219,7 +1229,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%45BCED8-813C4E0>|<link|hyperlink|<id|%45BCED8-813C4E0>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%2D08ED8-96754C8>|<link|hyperlink|<id|%2D08ED8-96754C8>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1232,7 +1242,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%45BCED8-813B670>|<link|hyperlink|<id|%45BCED8-813B670>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%2D08ED8-58DF6B0>|<link|hyperlink|<id|%2D08ED8-58DF6B0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
