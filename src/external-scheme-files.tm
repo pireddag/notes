@@ -14,6 +14,8 @@
     <assign|scheme-guide|<hlink|<name|Scheme>
     guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>>
 
+    <assign|modular-graphics|<macro|<hlink|Modular-graphics|./modular-scheme-graphics.tm>>>
+
     <assign|mark-date|<macro|body|<arg|body> \U >>
   </hide-preamble>
 
@@ -156,6 +158,11 @@
     <item>See the Tetris game document for how to load a Scheme file which is
     in the same directory as the document
 
+    <\itemize>
+      <item>set a note in this document about the different way of including
+      code that is used in the Tetris game document?
+    </itemize>
+
     <item><mark-date|2021-03-22> Do we need <scm|apply-property>? There is
     <scm|gr-group>: do we need the flattening? I need to test to make sure
     that I can apply properties to arbitrarily nested objects (very likely, I
@@ -172,33 +179,45 @@
       <item>It is better to keep the code consistent with the other posts in
       the same series
     </itemize>
+
+    <item>Mention <TeXmacs> default graphical code (figure out how it
+    works/does it work for setting properties?)
+
+    <item>Make the initial function the same in the document and in the code
+    and comment the code
+
+    <\itemize>
+      <item>I possibly forgot how conditional flattening works; there was a
+      \Ppitfall\Q, that I think is implicitly described in the code comments,
+      which should be written more clearly
+    </itemize>
+
+    <item>At the end, delete empty scheme prompts
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
   Other posts in the same series are <hlink|Composing <TeXmacs> graphics with
   <name|Scheme>|./scheme-graphics.tm>, <hlink|Embedding graphics composed
   with <name|Scheme> into documents|./scheme-graphics-embedding.tm> and
-  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
+  <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
+  (indicated with <modular-graphics> from now on).
 
   In this post, we describe how to place the graphical functions we defined
   in the previous posts in <name|Scheme> files and make them available inside
   <TeXmacs> documents; our descriptions repeats the concepts presented in the
-  <hlink|<TeXmacs> manual|http://www.texmacs.org/tmweb/documents/manuals/texmacs-manual.en.pdf>
-  <todo|do I use concepts described the TeXmacs manual or only in the Scheme
-  guide?> and <hlink|<TeXmacs> <name|Scheme> developer
+  <hlink|<TeXmacs> <name|Scheme> developer
   guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
   (indicated as <value|scheme-guide> from now on, describes how to control
-  and extend <TeXmacs> through <scheme><todo|improve this text in
-  parentheses>) putting them in the context of our graphics example.
+  and extend <TeXmacs> through <scheme>) putting them in the context of our
+  graphics example.
 
   We are going to use the modules system (whose files are stored by
   convention in the <verbatim|progs> subtree), and leave aside the plugin
   functionality. Our aim is to have <name|Scheme> forms available inside our
-  <TeXmacs> document; we will be able to use them inside macros, with the
-  <markup|extern> tag, by clicking on text,<todo|is \Pwith the action tag\Q
-  part of the preceding case \Pby clicking on text\Q?> with the
-  <markup|action> tag, inside <name|Executable fold> environments (a way to
-  embed graphics in documents) or in <name|Scheme> sessions.
+  <TeXmacs> document; we will be able to use them inside macros (with the
+  <markup|extern> tag), by clicking on hyperlinks (with the <markup|action>
+  tag), inside <name|Executable fold> environments (a way to embed graphics
+  in documents) or in <name|Scheme> sessions.
 
   Like in the other posts of the series, we assume that the reader is
   familiar with simple Scheme syntax. We link again to the <name|Wikipedia>
@@ -206,42 +225,51 @@
   and to <hlink|Yet Another Scheme Tutorial|http://www.shido.info/lisp/idx_scm_e.html>
   by Takafumi Shido as two possible web resources for learning <name|Scheme>.
 
-  This post is accompanied by the <name|Scheme> source files <todo|complete>
-  in the <verbatim|resources> directory<todo|complete>. To be able to run the
-  examples of this post on your computer, you will have to download the
-  <name|Scheme> source files <todo|complete> and place them <todo|complete>;
-  the location is controlled through the <markup|use-module> macro that is in
-  the preamble of the present files, and that I have set to
-  <scm|<value|graphics-functions>><todo|defined with a variable to make it
-  easy to modify it both here and in use-module; turn to a file path (use
-  verbatim tag)>; the <TeXmacs> command is
+  This post is accompanied by the <name|Scheme> source files
+  <verbatim|scheme-graphics.scm>, <verbatim|basic-objects.scm>,
+  <verbatim|graphical-list-processing.scm>,
+  <verbatim|object-customization.scm> and
+  <verbatim|geometrical-transformations.scm> in the directory
+  <hlink|<verbatim|resources/<verbatim|external-scheme-files>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>.
+  To be able to run the examples of this post on your computer, you will have
+  to download the <name|Scheme> source files and place them in a place where
+  <TeXmacs> can find them; the location is controlled through the
+  <markup|use-module> macro that is in the preamble of the present files, and
+  that I have set to <scm|<value|graphics-functions>><todo|defined with a
+  variable to make it easy to modify it both here and in use-module; turn to
+  a file path (use verbatim tag)>; the <TeXmacs> command is
 
   <inactive|<use-module|<value|graphics-functions>>>.
 
-  The manual placement of <name|Scheme> files is good practice; their
-  location is specified in <TeXmacs> relative to the user's <verbatim|prog>
-  directory <todo|provide a running document with the same mechanism of the
-  Tetris document; the modules too must be slightly different and I will need
-  to load correctly the final file too (and explain everything clearly,
-  perhaps in a separate section \Phow to start experimenting\Q at the end)>.
-  If you place the files in a different folder, please adjust correspondingly
-  both the path in the <markup|use-module> macro and inside the <scheme> file
-  itself in the instruction that declares its name and possibly imports
-  additional dependencies (more details later)<todo|this needs to be
-  rewritten harmonizing it with the preceding explanation>.
+  The location is specified in <TeXmacs> relative to the user's
+  <verbatim|progs> directory <todo|provide a running document with the same
+  mechanism of the Tetris document; the modules too must be slightly
+  different and I will need to load correctly the final file too (and explain
+  everything clearly, perhaps in a separate section \Phow to start
+  experimenting\Q at the end)>. If you place the files in a different folder,
+  please adjust correspondingly both the path in the <markup|use-module>
+  macro and inside the <scheme> file itself in the instruction that declares
+  its name and possibly imports additional dependencies (more details
+  later)<todo|this needs to be rewritten harmonizing it with the preceding
+  explanation>.
 
-  <todo|perhaps here say that I will reuse the code of <hlink|Modular
-  graphics with <name|Scheme>|./modular-scheme-graphics.tm> in a shortened
-  way>
+  For this post, I will re-use some of the code of <hlink|Modular graphics
+  with <name|Scheme>|./modular-scheme-graphics.tm>, in particular the
+  definitions that allow composing objects, assigning them properties, and
+  translating them.<todo|comment relationship to existing Scheme graphics
+  code. Can I use it?>
 
-  <section|A few functions in a single file (composing complex
+  <section|A few functions in a single file (enough to compose complex
   objects)><label|sec:a-few-functions>
 
-  We start from the symbols (functions and variables) we developed in the
-  post <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
-  Let us list them together with a short description; next to each we note
-  whether it serves as a building block for other symbols (\Paux\Q for
-  auxiliary) or it is meant for graphics compositions by users (\Pusers\Q).
+  We start from the symbols (functions and variables) we developed in
+  <modular-graphics>. \ Let us list them together with a short description;
+  next to each we note whether it serves as a building block for other
+  symbols (\Paux\Q for auxiliary) or it is meant for graphics compositions by
+  users (\Pusers\Q). Please refer to <modular-graphics> <todo|and to comments
+  in the code\Vto add> for a discussion of the code itself; in this post we
+  will focus on how to use it in <TeXmacs> document through external
+  files<todo|improve>.
 
   <\big-table|<tabular|<tformat|<cwith|1|-1|3|3|cell-hyphen|t>|<cwith|1|-1|3|3|cell-hmode|min>|<cwith|1|-1|3|3|cell-hpart|>|<cwith|1|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-tsep|2sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tsep|5sep>|<cwith|1|1|1|-1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|3|3|cell-rsep|0spc>|<cwith|1|-1|3|3|cell-width|0.5par>|<cwith|1|1|1|-1|cell-halign|c>|<table|<row|<cell|<strong|Function>>|<cell|<strong|Purpose>>|<\cell>
     <strong|Description>
@@ -273,16 +301,32 @@
     <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
   </big-table>
 
+  <TeXmacs> has a module system (<value|scheme-guide>, section 1.4), so that
+  one can collect <scheme> functions in a file and make them available to a
+  document through the <markup|use-module> command. Modules must start with
+  the <scm|texmacs-module> form, which states the location of the module in
+  the file tree<todo|add note that it starts from <verbatim|progs>, see next
+  note as well> and optionally allows inclusion of other code (so that the
+  modular system becomes more \Pmodular\Q), discussed in Section
+  <reference|sec:modularization>. The argument of the <scm|texmacs-module>
+  form is (borrowing one sentence from the <value|scheme-guide>) a list which
+  corresponds to the location of the corresponding le, starting from the
+  <TeXmacs> user home directory <todo|There are several possible paths
+  TeXmacs is looking the files in, see sect 1.4. Test them. How does it work
+  with the file location?>.
+
   We write up an initial file with the first few functions, enough to draw
-  the first example of <hlink|Modular graphics with
-  <name|Scheme>|./modular-scheme-graphics.tm>, which is a triangle.
+  the first example of <modular-graphics>, which is a triangle.<todo|add this
+  initial file to the list of files>
 
   Our <verbatim|scheme-graphics.scm> files contains (following code
   block<todo|switch to captioned and numbered code blocks>) the <scm|pt> and
   <scm|scheme-graphics> functions together with the symbol <scm|pi> and
   helper functions (not accessible to the <TeXmacs> document)
   <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
-  <scm|denestify-conditional>:
+  <scm|denestify-conditional>; it starts, as announced, with a
+  <scm|texmacs-module> form:<todo|I can delete the SE code and leave only the
+  reference>
 
   <\scm-code>
     (texmacs-module (notes external-scheme-files scheme-graphics))
@@ -349,25 +393,15 @@
 
     \;
 
-    ;; start from the answer https://stackoverflow.com/a/33338401\ 
+    ;; For a flattening function, start from the answer\ 
+
+    ;; https://stackoverflow.com/a/33338401\ 
 
     ;; to the Stack Overflow question
 
     ;; https://stackoverflow.com/q/33338078/flattening-a-list-in-scheme
 
-    \;
-
-    ;;(define (denestify lst)
-
-    ;; \ (cond ((null? lst) '())
-
-    ;; \ \ \ \ \ \ \ ((pair? (car lst))
-
-    ;; \ \ \ \ \ \ \ \ (append (denestify (car lst))
-
-    ;; \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify (cdr lst))))
-
-    ;; \ \ \ \ \ \ \ (else (cons (car lst) (denestify (cdr lst))))))
+    ;; We need that the flattening stop when it meets graphical objects
 
     \;
 
@@ -454,29 +488,18 @@
     \ \ \ \ \ \ \ \ \ \ \ \ `(graphics ,graphics-list)))))
   </scm-code>
 
-  The file\V which is a <TeXmacs> module<todo|introduce in a more \Pupfront\Q
-  way the concept of modules>\Vstarts (<hlink|<TeXmacs> <scheme> developer
-  guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
-  section 1.4) with the <scm|texmacs-module> form that allows <TeXmacs> to
-  locate the code <todo|does it do that?> and optionally allows inclusion of
-  other code (so implementing a modular system). The argument of the
-  <scm|texmacs-module> form is (borrowing one sentence from the
-  <value|scheme-guide>) a list which corresponds to the location of the
-  corresponding le, starting from the <TeXmacs> user home directory
-  <todo|why $<math|TEXMACS_HOME_PATH> is not defined in bash and yet it
-  works? There are several possible paths TeXmacs is looking the files in,
-  see sect 1.4>.
+  \;
 
   We use two variations of the <scm|define> form in <TeXmacs>: the standard
   <scm|define>, which makes functions and variables available within one
-  module, and <scm|tm-define> which makes them available transitively to
-  calling modules <todo|link to and harmonize with subsequent discussion in
-  the \Pmodularized\Q part> and to <TeXmacs> documents in this case.
+  module, and <scm|tm-define> which makes them globally available, as soon as
+  they are defined (in particular, they are available within <TeXmacs>
+  documents).
 
   We have now the <scm|pt> and <scm|scheme-graphics> functions and we use
-  them to compose the \Ptriangle\Q example of <hlink|Modular graphics with
-  <name|Scheme>|./modular-scheme-graphics.tm> in a <scheme> session; please
-  refer to that post for a step-by-step discussion of the code.
+  them to compose the \Ptriangle\Q example of <modular-graphics> in a
+  <scheme> session; please refer again to that post for a step-by-step
+  discussion of the code.
 
   <\session|scheme|default>
     <\textput>
@@ -562,12 +585,16 @@
   </session>
 
   In the next section we will work with different <scheme> files, and
-  correspondingly we will have to import them using <markup|use-modules>.
+  correspondingly we will have to import them using
+  <markup|use-modules><todo|improve this: are we reminding hte reader of hte
+  general mechanism, or do we want to say what to do with the test file when
+  getting to this point?>.
 
   Since the set of functions of the \Pnew\Q modules will include some of the
   functions we have already used <todo|complete explanation>
 
-  <section|Organizing one's own <scheme> files (modularization)>
+  <section|Organizing one's own <scheme> files
+  (modularization)><label|sec:modularization>
 
   The functions we wrote in <hlink|Modular graphics with
   <name|Scheme>|./modular-scheme-graphics.tm> can be grouped in a few
@@ -589,12 +616,20 @@
   one feels, after having made some experience with the language, towards
   organizing one's own program as a composition of functions.
 
+  <todo|Revise next paragraph. The <scm|tm-define> form then makes it
+  possible to load functions through apparently \Ptransitive\Q loading of
+  modules (harmonize with paragraph after the next) (verify the global
+  loading of <scm|tm-define>d functions for documents and for modules; see
+  todo note in the following paragraph too, where I state that it does not
+  work for a document! Was I right?)>
+
   In <TeXmacs> one can add a <scm|:use> form in the <scm|texmacs-module>
   declaration (see <value|scheme-guide>, section 1.4), specifying through it
-  a module to import. Functions in <TeXmacs> can be defined with three
-  distinct mechanisms<todo|harmonize with preceding discussion>, leading to
-  three different scoping rules. Functions defined with <scm|define> are
-  local to the module in which they are defined; \ functions defined with
+  a module to import. Functions in <TeXmacs> can be defined through three
+  distinct definition functions <todo|are these functions or
+  macros?><todo|harmonize with preceding discussion>, leading to three
+  different scoping rules. Functions defined with <scm|define> are local to
+  the module in which they are defined; \ functions defined with
   <scm|define-public> are visible both from the module in which they are
   defined and in modules that import that directly <todo|verify whether
   transitive import works within Scheme\Vit does not work for a document>(at
@@ -707,20 +742,6 @@
     ;; to the Stack Overflow question
 
     ;; https://stackoverflow.com/q/33338078/flattening-a-list-in-scheme
-
-    \;
-
-    ;;(define (denestify lst)
-
-    ;; \ (cond ((null? lst) '())
-
-    ;; \ \ \ \ \ \ \ ((pair? (car lst))
-
-    ;; \ \ \ \ \ \ \ \ (append (denestify (car lst))
-
-    ;; \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (denestify (cdr lst))))
-
-    ;; \ \ \ \ \ \ \ (else (cons (car lst) (denestify (cdr lst))))))
 
     \;
 
@@ -887,15 +908,17 @@
   we have already defined, uses the geometrical transformation functions):
 
   <\session|scheme|default>
-    <\input|Scheme] >
-      (define triangle-in-half-circle \ `(
+    <\unfolded-io|Scheme] >
+      (define triangle-in-half-circle \ 
 
-      \ \ \ ,half-circle
+      \ \ `(,half-circle
 
-      \ \ \ ,triangle
+      \ \ \ \ ,triangle
 
-      \ \ \ ,letters))
-    </input>
+      \ \ \ \ ,letters))
+    <|unfolded-io>
+      <errput|Unbound variable: letters>
+    </unfolded-io>
 
     <\textput>
       Draw it by placing it in the list argument of the <scm|scheme-graphics>
@@ -1238,6 +1261,7 @@
     <associate|fig:bleding-waning-triangle|<tuple|1|?>>
     <associate|fig:triangle-with-external-files|<tuple|2|?>>
     <associate|sec:a-few-functions|<tuple|1|?>>
+    <associate|sec:modularization|<tuple|2|?>>
   </collection>
 </references>
 
@@ -1246,7 +1270,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%2DEBED8-5F986A0>|<link|hyperlink|<id|%2DEBED8-5F986A0>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%3B5FED8-62305A8>|<link|hyperlink|<id|%3B5FED8-62305A8>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1259,7 +1283,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%2DEBED8-5E5CE30>|<link|hyperlink|<id|%2DEBED8-5E5CE30>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3B5FED8-6C07C28>|<link|hyperlink|<id|%3B5FED8-6C07C28>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
