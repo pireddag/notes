@@ -204,60 +204,70 @@
   <name|Scheme>|./scheme-graphics.tm>, <hlink|Embedding graphics composed
   with <name|Scheme> into documents|./scheme-graphics-embedding.tm> and
   <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>
-  (sometimes indicated with <modular-graphics> from now on).
-
-  In this post, we describe how to place the graphical functions we defined
-  in the previous posts in <name|Scheme> files and make them available inside
-  <TeXmacs> documents; our descriptions repeats the concepts presented in the
-  <hlink|<TeXmacs> <name|Scheme> developer
-  guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
-  (indicated as <value|scheme-guide> from now on, describes how to control
-  and extend <TeXmacs> through <scheme>) putting them in the context of our
-  graphics example.
-
-  We are going to use the modules system (whose files are stored by
-  convention in the <verbatim|progs> subtree), and leave aside the plugin
-  functionality. Our aim is to have <name|Scheme> forms available inside our
-  <TeXmacs> document; we will be able to use them inside macros (with the
-  <markup|extern> tag), by clicking on hyperlinks (with the <markup|action>
-  tag), inside <name|Executable fold> environments (a way to embed graphics
-  in documents) or in <name|Scheme> sessions.
-
-  Like in the other posts of the series, we assume that the reader is
-  familiar with simple Scheme syntax. We link again to the <name|Wikipedia>
-  book <hlink|Scheme programming|https://en.wikibooks.org/wiki/Scheme_Programming>
+  (sometimes indicated with <modular-graphics> from now on). Like in the
+  other posts of the series, we assume that the reader is familiar with
+  simple Scheme syntax. We link again to the <name|Wikipedia> book
+  <hlink|Scheme programming|https://en.wikibooks.org/wiki/Scheme_Programming>
   and to <hlink|Yet Another Scheme Tutorial|http://www.shido.info/lisp/idx_scm_e.html>
   by Takafumi Shido as two possible web resources for learning <name|Scheme>.
 
-  This post is accompanied by the <name|Scheme> source files
-  <verbatim|scheme-graphics.scm>, <verbatim|basic-objects.scm>,
-  <verbatim|graphical-list-processing.scm>,
-  <verbatim|object-customization.scm> and
-  <verbatim|geometrical-transformations.scm> in the directory
-  <hlink|<verbatim|resources/<verbatim|external-scheme-files>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>.
-  To be able to run the examples of this post on your computer, you will have
-  to download the <name|Scheme> source files and place them in a place where
-  <TeXmacs> can find them; the location is controlled through the
-  <markup|use-module> macro that is in the preamble of the present files, and
-  that I have set to <scm|<value|graphics-functions>><todo|defined with a
-  variable to make it easy to modify it both here and in use-module; turn to
-  a file path (use verbatim tag)>; the <TeXmacs> command is
+  In the preceding posts we defined the <scheme> forms for graphics within
+  documents, using <scheme> sessions. It would be helpful to define them in
+  separate files so that, after pointing <TeXmacs> to them, one would be able
+  to use in one's own documents the functionalities they provide.
+
+  We would be able to use <scheme> functions provided by external files
+  inside macros (with the <markup|extern> tag), by clicking on hyperlinks
+  (with the <markup|action> tag), inside <name|Executable fold> environments
+  (a way to embed graphics in documents) or in <name|Scheme> sessions.
+
+  Let's see how to do this; our descriptions repeats the concepts presented
+  in the <hlink|<TeXmacs> <name|Scheme> developer
+  guide|http://www.texmacs.org/tmweb/documents/manuals/texmacs-scheme.en.pdf>
+  (indicated as <value|scheme-guide> from now on, describes how to control
+  and extend <TeXmacs> through <scheme>) putting them in the context of our
+  graphics example. We are going to use the modules system (whose files are
+  stored by convention in the <verbatim|progs> subtree), and leave aside the
+  plugin functionality. The modules are included in the <TeXmacs> document
+  via the macro <markup|use-module>, that takes as its argument the location
+  of the file (path and file name) and can be placed in the preamble.
+
+  Let us see an example, keeping in mind that the location is specified in
+  <TeXmacs> relative to the user's <verbatim|progs> directory, which under
+  Linux is a subdirectory of <verbatim|~/.TeXmacs/><todo|complete with other
+  operating systems>; if the file we want to include is
+  <verbatim|notes/external-scheme-files/scheme-graphics.scm>, then the
+  <markup|use-module> macro will have to be called with the argument
+  <scm|<value|graphics-functions>>; the <TeXmacs> command is
 
   <inactive|<use-module|<value|graphics-functions>>>.
 
-  The location is specified in <TeXmacs> relative to the user's
-  <verbatim|progs> directory <todo|provide a running document with the same
-  mechanism of the Tetris document; the modules too must be slightly
-  different and I will need to load correctly the final file too (and explain
-  everything clearly, perhaps in a separate section \Phow to start
-  experimenting\Q at the end)>. If you place the files in a different folder,
-  please adjust correspondingly both the path in the <markup|use-module>
-  macro and inside the <scheme> file itself in the instruction that declares
-  its name and possibly imports additional modules (we will discuss
-  submodules in Section <reference|sec:modularization>)<todo|this needs to be
-  rewritten harmonizing it with the preceding explanation>.
+  This post is accompanied by the <name|Scheme> source files
+  <scm|scheme-graphics-single-file.scm> in the directory
+  <hlink|<verbatim|resources/<verbatim|external-scheme-files/single-file>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>
+  (this first file is for the initial example) and
+  <verbatim|scheme-graphics.scm>, <verbatim|basic-objects.scm>,
+  <verbatim|graphical-list-processing.scm>,
+  <verbatim|object-customization.scm>, <verbatim|geometrical-transformations.scm>
+  in the directory <hlink|<verbatim|resources/<verbatim|external-scheme-files>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>.
+  To be able to run the examples of this post on your computer, you will have
+  to download the <name|Scheme> source files and place them in a place where
+  <TeXmacs> can find them; the location will have to match the one set
+  through the <markup|use-module> macro that makes the files available to
+  <TeXmacs> (and the file itself as well will have to be marked with its own
+  location, but we will see that later).
 
-  For this post, I will re-use some of the code of <modular-graphics>, in
+  \ <todo|provide a running document with the same mechanism of the Tetris
+  document; the modules too must be slightly different and I will need to
+  load correctly the final file too (and explain everything clearly, perhaps
+  in a separate section \Phow to start experimenting\Q at the end)>. If you
+  place the files in a different folder, please adjust correspondingly both
+  the path in the <markup|use-module> macro and inside the <scheme> file
+  itself in the instruction that declares its name and possibly imports
+  additional modules (we will discuss submodules in Section
+  <reference|sec:modularization>).
+
+  For this post, we will re-use some of the code of <modular-graphics>, in
   particular the definitions that allow composing objects, assigning them
   properties, and translating them.<todo|comment relationship to existing
   Scheme graphics code. Can I use it?>
@@ -320,8 +330,8 @@
   work with the file location?>.
 
   We write up an initial file with the first few functions, enough to draw
-  the first example of <modular-graphics>, which is a triangle.<todo|add this
-  initial file to the list of files\Vstate how I named it>
+  the first example of <modular-graphics>, which is a triangle. We call our
+  first file\ 
 
   Our <verbatim|scheme-graphics.scm> files contains (following code
   block<todo|switch to captioned and numbered code blocks>) the <scm|pt> and
@@ -335,7 +345,8 @@
   <verbatim|$TEXMACS_HOME_PATH/progs/> directory:
 
   <\scm-code>
-    (texmacs-module (notes external-scheme-files scheme-graphics))
+    (texmacs-module (notes external-scheme-files
+    scheme-graphics-single-file))
 
     \;
 
@@ -939,8 +950,8 @@
 
     <\textput>
       Draw it by placing it in the list argument of the <scm|scheme-graphics>
-      function <todo|which expects lists parsable by
-      <scm|denestify-conditional>>together with a translated copy of itself
+      function (which expects lists of objects, which will be parsed by
+      <scm|denestify-conditional>) together with a translated copy of itself
       (using the the geometrical transformation function
       <scm|translate-element>) and the <TeXmacs> caption (translating that
       too):
@@ -1109,11 +1120,11 @@
     <name|Executable fold> environment.<label|fig:bleding-waning-triangle>
   </big-figure>
 
-  <name|Executable fold>s are activated by pressing <key|Shift><key|Return>
-  with the cursor positioned inside them, and are disactivated (displaying
-  again the code) by positioning the cursor to their immediate right,
-  pressing <key|Backspace> once and finally \ <key|Shift><key|Return>
-  again<todo|can I improve this?>.
+  <name|Executable fold>s are activated by pressing <key|Shift+Return>with
+  the cursor positioned inside them, and are disactivated (displaying again
+  the code) by positioning the cursor to their immediate right, pressing
+  <key|Backspace> once and finally <key|Shift+Return> again<todo|can I
+  improve this?>.
 
   The subsequent step is delegating all of the definitions (the ones we have
   written in <scheme> sessions in this document) to a file, which one can
@@ -1137,12 +1148,12 @@
   </itemize>
 
   When applying the <scm|load> command in <scheme> one must be aware that
-  <scheme> provides forms which make any action <todo|is action the right
-  word here?>possible (and therefore potential damage to one's computer), so
-  it is necessary to know what one is <scm|load>ing, since it may not be in
-  front of our eyes when we press the <key|return> key! This said, here is
-  how a graphical file may look like (we are using the first drawing we made
-  of a triangle, to keep the code short; copy the code in a file to use it):
+  <scheme> provides forms which run shell programs, and therefore can damage
+  one's computer; because of this it is necessary to be aware of what one is
+  <scm|load>ing, since it may not be in front of our eyes when we press the
+  <key|return> key! This said, here is how a graphical file may look like (we
+  are using the first drawing we made of a triangle, to keep the code short;
+  copy the code in a file to use it):
 
   <\scm-code>
     \ \ (define pA (pt -2 0))
@@ -1255,9 +1266,10 @@
     (add-hook 'scheme-mode-hook '(lambda () (texmacs-style)))
   </scm-code>
 
-  which takes care of the conditional loading as a minor mode for <scheme>
-  files.<todo|is it best to do it in this way? Am I not polluting the
-  namespace of .emacs?>
+  which takes care of the conditional loading of <verbatim|texmacs-style> as
+  a minor mode for <scheme> files.<todo|is it a minor mode? Why don't I see
+  it in the list of minor modes? is it best to do it in this way? Am I not
+  polluting the namespace of .emacs?>
 
   <todo|more on developing Scheme?>
 </body>
@@ -1298,7 +1310,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%43A3ED8-7732318>|<link|hyperlink|<id|%43A3ED8-7732318>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%37EAED8-6BB7808>|<link|hyperlink|<id|%37EAED8-6BB7808>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1311,7 +1323,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%43A3ED8-75F0940>|<link|hyperlink|<id|%43A3ED8-75F0940>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%37EAED8-6B58C50>|<link|hyperlink|<id|%37EAED8-6B58C50>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
