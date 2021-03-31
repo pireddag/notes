@@ -280,10 +280,13 @@
   (Table <reference|tab:functions-list>); next to each function we note
   whether it serves as a building block for other symbols (\Paux\Q for
   auxiliary) or it is meant for graphics compositions by users (\Puser\Q).
-  Please refer to <modular-graphics> <todo|and to comments in the code\Vto
-  add> for a discussion of the code itself; in this post we will focus on how
-  to make available in <TeXmacs> documents our forms with the help of
-  external files.
+  Please refer to <modular-graphics> and to comments in the code<todo|and to
+  comments in the code\Vto add><todo-blue|partly done\Vsee if I want to
+  delete some comments in the blog version of the code> for a discussion of
+  the code itself (the <scheme> files are more richly commented than the code
+  blocks in this post<todo|check if it is true at the end of the work>); in
+  this post we will focus on how to make available in <TeXmacs> documents our
+  forms with the help of external files.
 
   <\big-table|<tabular|<tformat|<cwith|1|-1|3|3|cell-hyphen|t>|<cwith|1|-1|3|3|cell-hmode|min>|<cwith|1|-1|3|3|cell-hpart|>|<cwith|1|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-tsep|2sep>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|2|2|1|-1|cell-tborder|1ln>|<cwith|1|1|1|1|cell-lborder|0ln>|<cwith|1|1|3|3|cell-rborder|0ln>|<cwith|1|1|1|-1|cell-bsep|3sep>|<cwith|1|1|1|-1|cell-tsep|5sep>|<cwith|1|1|1|-1|cell-rsep|1spc>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|3|3|cell-rsep|0spc>|<cwith|1|-1|3|3|cell-width|0.5par>|<cwith|1|1|1|-1|cell-halign|c>|<table|<row|<cell|<strong|Function>>|<cell|<strong|Purpose>>|<\cell>
     <strong|Description>
@@ -584,7 +587,7 @@
     </textput>
 
     <\unfolded-io|Scheme] >
-      (scheme-graphics "400px" "300px" "center"\ 
+      (scheme-graphics "6cm" "5cm" "center"\ 
 
       \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ `(,half-circle
 
@@ -594,7 +597,7 @@
 
       \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,caption))
     <|unfolded-io>
-      <text|<with|gr-geometry|<tuple|geometry|400px|300px|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
+      <text|<with|gr-geometry|<tuple|geometry|6cm|5cm|center>|font-shape|italic|<graphics|<with|color|black|<arc|<point|-2.0|0.0>|<point|-1.0|1.73205080756888>|<point|2.0|0.0>>>|<with|color|black|<line|<point|-2.0|0.0>|<point|2.0|0.0>>>|<with|color|red|line-width|1pt|<cline|<point|-2.0|0.0>|<point|2.0|0.0>|<point|-1.0|1.73205080756888>>>|<with|color|black|<text-at|A|<point|-2.3|-0.5>>>|<with|color|black|<text-at|B|<point|2.1|-0.5>>>|<with|color|black|<text-at|C|<point|-1.2|1.93205080756888>>>|<with|color|blue|font-shape|upright|<text-at|<TeXmacs>|<point|-0.55|-0.75>>>>>>
     </unfolded-io>
 
     <\input|Scheme] >
@@ -649,13 +652,21 @@
   <scm|tm-define> is a macro (defined in <verbatim|prog/kernel/tm-define.scm>)
   and there is a macro definition for <scm|define-public-macro> (in
   <verbatim|prog/kernel/boot.scm>); for <scm|define-public> see
-  <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>>,
-  leading to three different scoping rules. Functions defined with
-  <scm|define> are local to the module in which they are defined; \ functions
-  defined with <scm|define-public> are visible both from the module in which
-  they are defined and in modules that import that directly <todo-blue|verify
-  whether transitive import for <scm|define-public> works within Scheme\Vit
-  does not work for a document>(at the moment I am writing, March 2021,
+  <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>;
+  <scm|procedure-source> applied to <scm|define-public> gives an error
+  (<scm|Wrong type argument in position 1: #\<less\>macro!
+  define-public\<gtr\>>), and in fact <scm|define-public> can be
+  macroexpanded; <scm|procedure-source> applied to <scm|define-private> gives
+  <scm|Wrong type argument in position 1: #\<less\>primitive-builtin-macro!
+  define\<gtr\> >and <scm|(eq? define define-private)> yields <scm|#t>; see
+  <hlink|test-function-definitions.tm|/home/giovanni/test/test_TeXmacs/2 -
+  Test/Test definitions/test-function-definitions.tm>>, leading to three
+  different scoping rules. Functions defined with <scm|define> are local to
+  the module in which they are defined; \ functions defined with
+  <scm|define-public> are visible both from the module in which they are
+  defined and in modules that import that directly <todo-blue|verify whether
+  transitive import for <scm|define-public> works within Scheme\Vit does not
+  work for a document>(at the moment I am writing, March 2021,
   <scm|define-public> is not yet documented in the
   <value|scheme-guide><todo|it is a Guile function, see link above>);
   functions that are defined with <scm|tm-define> are \Pglobal\Q: once their
@@ -681,7 +692,10 @@
   of them, as we discussed\Vsetting one of them
   (<verbatim|scheme-graphics.scm>) as \Pmaster\Q and importing the rest
   through <scm|:use> <todo|note that all of the <scm|define-public> functions
-  are also imported: can I improve this? Or comment>.
+  are also imported in the master file, but they are not imported in the
+  document (2021-03-31 checked with <scm|object-test>, which is defined with
+  <scm|define-public in graphical-list-processing.scm> and is not imported in
+  the document\VI do not think that I can improve this>.
 
   <paragraph|scheme-graphics.scm>
 
@@ -1310,7 +1324,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%37EAED8-6BB7808>|<link|hyperlink|<id|%37EAED8-6BB7808>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%3A2EED8-6DC1AB8>|<link|hyperlink|<id|%3A2EED8-6DC1AB8>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1323,7 +1337,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%37EAED8-6B58C50>|<link|hyperlink|<id|%37EAED8-6B58C50>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3A2EED8-6EA0848>|<link|hyperlink|<id|%3A2EED8-6EA0848>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
