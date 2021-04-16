@@ -609,10 +609,6 @@
   submodules, and correspondingly we will have to import them using
   <markup|use-modules>.
 
-  For this document, files are organized in the following way: Since the set
-  of functions of the \Pnew\Q modules will include some of the functions we
-  have already used <todo|complete explanation>
-
   <section|Organizing one's own <scheme> files
   (modularization)><label|sec:modularization>
 
@@ -1324,7 +1320,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%3A2EED8-6DC1AB8>|<link|hyperlink|<id|%3A2EED8-6DC1AB8>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%3EA1E58-7C108F8>|<link|hyperlink|<id|%3EA1E58-7C108F8>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1337,7 +1333,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3A2EED8-6EA0848>|<link|hyperlink|<id|%3A2EED8-6EA0848>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3EA1E58-7BB19D0>|<link|hyperlink|<id|%3EA1E58-7BB19D0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
