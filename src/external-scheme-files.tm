@@ -110,12 +110,12 @@
       <item>partly done, review
     </itemize>
 
-    <item>explain that we change \Pimports\Q in mid blog post (2021-03-17 in
-    the document I change the file and then after having finished section
-    <reference|sec:a-few-functions> import separately each module that I want
-    to use; I need to talk to JvdH about this) (so the functions up to a
-    point in the blog post work with the first import, and after that they
-    work with the new import)
+    <item><todo-blue|partly done>explain that we change \Pimports\Q in mid
+    blog post (2021-03-17 in the document I change the file and then after
+    having finished section <reference|sec:a-few-functions> import separately
+    each module that I want to use; I need to talk to JvdH about this) (so
+    the functions up to a point in the blog post work with the first import,
+    and after that they work with the new import)
 
     <\itemize>
       <item>I have saved the first import as
@@ -333,13 +333,20 @@
   work with the file location?>.
 
   We write up an initial file with the first few functions, enough to draw
-  the first example of <modular-graphics>, which is a triangle. We call our
-  first file\ 
+  the first example of <modular-graphics>, which is a triangle; we call our
+  first file <verbatim|scheme-graphics-single-file.scm> and we load it into
+  our <TeXmacs> document with the command
 
-  Our <verbatim|scheme-graphics.scm> files contains (following code
-  block<todo|switch to captioned and numbered code blocks>) the <scm|pt> and
-  <scm|scheme-graphics> functions together with the symbol <scm|pi> and the
-  helper functions (not accessible to the <TeXmacs> document)
+  <inactive|<use-module|(notes external-scheme-files
+  scheme-graphics-single-file)>>.
+
+  Once again, you will have to adapt the list argument of <markup|use-module>
+  to your directory structure.
+
+  Our <verbatim|scheme-graphics-single-file.scm> files contains (following
+  code block<todo|switch to captioned and numbered code blocks>) the <scm|pt>
+  and <scm|scheme-graphics> functions together with the symbol <scm|pi> and
+  the helper functions (not accessible to the <TeXmacs> document)
   <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
   <scm|denestify-conditional>; it starts, as announced, with a
   <scm|texmacs-module> form; the list <scm|(notes external-scheme-files
@@ -609,6 +616,10 @@
   submodules, and correspondingly we will have to import them using
   <markup|use-modules>.
 
+  The code in sections <reference|sec:a-few-functions> runs with both the
+  single-file module and the multi-file modules, while the code in section
+  <reference|sec:modularization> runs with the multi-file modules only.
+
   <section|Organizing one's own <scheme> files
   (modularization)><label|sec:modularization>
 
@@ -691,7 +702,20 @@
   are also imported in the master file, but they are not imported in the
   document (2021-03-31 checked with <scm|object-test>, which is defined with
   <scm|define-public in graphical-list-processing.scm> and is not imported in
-  the document\VI do not think that I can improve this>.
+  the document\VI do not think that I can improve this>. The command I am
+  using for this part of the document is
+
+  <inactive|<use-module|(notes external-scheme-files scheme-graphics)>>
+
+  When running the examples of section <reference|sec:modularization> of this
+  document on my computer, I am deleting from the preamble the
+  <markup|use-module> command I used for section
+  <reference|sec:a-few-functions> and writing in its stead the command above;
+  in the document in <hlink|src/external-scheme-graphics.tm|https://github.com/texmacs/notes/blob/main/src/external-scheme-graphics.tm>
+  the <markup|use-module> command is written with the <scm|(notes
+  external-scheme-files scheme-graphics)> argument so you will have to edit
+  the file if you want to see how the document behaves with the
+  \Psingle-file\Q code.
 
   <paragraph|scheme-graphics.scm>
 
@@ -1320,7 +1344,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%3EA1E58-7C108F8>|<link|hyperlink|<id|%3EA1E58-7C108F8>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%3FF5E58-8A12D60>|<link|hyperlink|<id|%3FF5E58-8A12D60>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1333,7 +1357,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3EA1E58-7BB19D0>|<link|hyperlink|<id|%3EA1E58-7BB19D0>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3FF5E58-8B87908>|<link|hyperlink|<id|%3FF5E58-8B87908>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
