@@ -328,9 +328,18 @@
   <scm|texmacs-module> form is (borrowing one sentence from the
   <value|scheme-guide>) a list which corresponds to the location of the
   corresponding le (an optional argument specifies submodules, again see
-  \ Section <reference|sec:modularization>). <todo|There are several possible
-  paths TeXmacs is looking the files in, see sect 1.4. Test them. How does it
-  work with the file location?>.
+  \ Section <reference|sec:modularization>).\ 
+
+  <TeXmacs> looks for modules in several locations (see <value|scheme-guide>,
+  Section 1.4): <verbatim|$GUILE_LOAD_PATH>, <verbatim|$TEXMACS_PATH/progs>
+  \ and <verbatim|$TEXMACS_HOME_PATH/progs> and the subdirectories of
+  these.<todo|explain how to write the location of the file>
+
+  <todo|There are several possible paths TeXmacs is looking the files in, see
+  sect 1.4. Test them. How does it work with the file
+  location?><todo-blue|$GUILE_LOAD_PATH works, and if I use a directory
+  defined in $GUILE_LOAD_PATH, I can use a module specification without
+  directory specification>.
 
   We write up an initial file with the first few functions, enough to draw
   the first example of <modular-graphics>, which is a triangle; we call our
@@ -1306,6 +1315,10 @@
   polluting the namespace of .emacs?>
 
   <todo|more on developing Scheme?>
+
+  \;
+
+  \;
 </body>
 
 <\initial>
@@ -1344,7 +1357,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%3FF5E58-8A12D60>|<link|hyperlink|<id|%3FF5E58-8A12D60>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%6DEE788-8604088>|<link|hyperlink|<id|%6DEE788-8604088>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1357,7 +1370,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3FF5E58-8B87908>|<link|hyperlink|<id|%3FF5E58-8B87908>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%6DEE788-87EDF50>|<link|hyperlink|<id|%6DEE788-87EDF50>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
