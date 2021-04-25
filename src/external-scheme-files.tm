@@ -270,7 +270,8 @@
   For this post, we will re-use some of the code of <modular-graphics>, in
   particular the definitions that allow composing objects, assigning them
   properties, and translating them.<todo|comment relationship to existing
-  Scheme graphics code. Can I use it?>
+  Scheme graphics code. Can I use it?><todo-blue|I am probably not going to
+  do this>
 
   <section|A few functions in a single file (enough to compose complex
   objects)><label|sec:a-few-functions>
@@ -324,16 +325,19 @@
   the <scm|texmacs-module> form, which states the location of the module in
   the file tree (starting from the <TeXmacs> user home directory) and
   optionally allows inclusion of other code (discussed in Section
-  <reference|sec:modularization>); the mandatory argument of the
+  <reference|sec:modularization>). The mandatory argument of the
   <scm|texmacs-module> form is (borrowing one sentence from the
   <value|scheme-guide>) a list which corresponds to the location of the
   corresponding le (an optional argument specifies submodules, again see
-  \ Section <reference|sec:modularization>).\ 
+  \ Section <reference|sec:modularization>); the list elements are the names
+  of the directories that form the path of the module, starting from one of
+  the \Pstart locations\Q <TeXmacs> looks for modules in\Vand the last
+  element is the name of the file that contains the module, without
+  extension.
 
   <TeXmacs> looks for modules in several locations (see <value|scheme-guide>,
   Section 1.4): <verbatim|$GUILE_LOAD_PATH>, <verbatim|$TEXMACS_PATH/progs>
-  \ and <verbatim|$TEXMACS_HOME_PATH/progs> and the subdirectories of
-  these.<todo|explain how to write the location of the file>
+  \ and <verbatim|$TEXMACS_HOME_PATH/progs> and the subdirectories of these.
 
   <todo|There are several possible paths TeXmacs is looking the files in, see
   sect 1.4. Test them. How does it work with the file
@@ -349,18 +353,23 @@
   <inactive|<use-module|(notes external-scheme-files
   scheme-graphics-single-file)>>.
 
-  Once again, you will have to adapt the list argument of <markup|use-module>
-  to your directory structure.
+  as, in the machine where I am writing this, I have put it in
+  \ <verbatim|$TEXMACS_HOME_PATH/progs/notes/external-scheme-files>. The
+  argument of <markup|use-module> is identical to the argument of the
+  <scm|texmacs-module> form that starts the module; once again, you will have
+  to adapt the list argument of <markup|use-module> to your directory
+  structure.
 
   Our <verbatim|scheme-graphics-single-file.scm> files contains (following
-  code block<todo|switch to captioned and numbered code blocks>) the <scm|pt>
+  code block<todo|switch to captioned and numbered code
+  blocks><todo-blue|most probably I am not going to do this>) the <scm|pt>
   and <scm|scheme-graphics> functions together with the symbol <scm|pi> and
   the helper functions (not accessible to the <TeXmacs> document)
   <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
   <scm|denestify-conditional>; it starts, as announced, with a
   <scm|texmacs-module> form; the list <scm|(notes external-scheme-files
   scheme-graphics)> corresponds to the path
-  <verbatim|notes/external-scheme-files/scheme-graphics> in the
+  <verbatim|notes/external-scheme-files/scheme-graphics.scm> in the
   <verbatim|$TEXMACS_HOME_PATH/progs/> directory:
 
   <\scm-code>
@@ -1355,9 +1364,38 @@
     the document; this is a sign that the <scheme> forms are executed with no
     errors; when in a cell that generates a drawing, the draing should be
     redrawn in front of your eyes within a short time.
+
+    <item>Execute <name|Fold Executables> as well. In the last one, you will
+    have to substitute the full path of the <shell|triangle-drawing.scm> file
+    for the current string <shell|"triangle-drawing.scm">.
   </enumerate>
 
-  \;
+  <subsection|How to experiment further>
+
+  Define some graphics objects (e.g. a square with four points) and use them
+  to draw. A way to figure out the <scheme> syntax of <TeXmacs> graphical
+  objects is to draw them interactively in a canvas opened with
+  <menu|Insert|Image|Draw image>, then checking the source code with
+  <menu|Document|Source|Edit source tree> and possible copying the code with
+  <menu|Edit|Copy to|TeXmacs Scheme>; please note that the code copied in
+  this way will not be pasted correctly into <scheme> sessions if you do
+  <menu|Edit|Paste> (<TeXmacs> will interpret part of it), you will rather
+  have to do <menu|Edit|Paste from|Verbatim>.
+
+  If editing <scheme> modules, you will have to close and restart <TeXmacs>
+  to reload them (updating the document does not). Further hints to develop
+  <scheme> modules are in this <hlink|forum
+  post|http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/>.
+
+  You can also ask for help on
+
+  <\itemize>
+    <item>The <verbatim|texmacs-users> mailing list (see instructions for
+    subscribing at <hlink|Mailing lists for
+    TeXmacs|http://texmacs.org/tmweb/home/ml.en.html>)
+
+    <item>The <hlink|<TeXmacs> forum|http://forum.texmacs.cn/>
+  </itemize>
 
   \;
 </body>
@@ -1383,7 +1421,13 @@
     <associate|auto-16|<tuple|b|?>>
     <associate|auto-17|<tuple|b|?>>
     <associate|auto-18|<tuple|c|?>>
+    <associate|auto-19|<tuple|4.1|?>>
     <associate|auto-2|<tuple|1|?>>
+    <associate|auto-20|<tuple|4.1|?>>
+    <associate|auto-21|<tuple|4.1|?>>
+    <associate|auto-22|<tuple|4.1|?>>
+    <associate|auto-23|<tuple|4.1|?>>
+    <associate|auto-24|<tuple|4.1|?>>
     <associate|auto-3|<tuple|1|?>>
     <associate|auto-4|<tuple|2|?>>
     <associate|auto-5|<tuple|1|?>>
