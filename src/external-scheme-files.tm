@@ -1185,9 +1185,9 @@
   tight focus frame surrounds the drawing and the cursor is displayed to its
   right; a way to easily achieve the correct cursor position is clicking in
   the white area at the right of the drawing (within the larger frame of the
-  figure)\Vthen press once either <key|Backspace> ot the left arrow; then
-  <key|Shift+Return> will open the <name|Executable fold><todo|can I improve
-  this?>.
+  figure)\Vthen press once either <key|Backspace> ot the left arrow;
+  <key|Shift+Return> will now open the <name|Executable fold>.<todo|can I
+  improve this?>.
 
   The subsequent step is delegating all of the definitions (the ones we have
   written in <scheme> sessions in this document) to a file, which one can
