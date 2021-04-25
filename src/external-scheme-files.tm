@@ -1368,7 +1368,7 @@
     <item>Execute the code in the <scheme> session in order from top to
     bottom by pressing <key|Return> with the cursor in each cell. On the
     pressing of <key|Return>, the cursor advances to the next cell when
-    inside a group; when in the last cell of a group a new blank cell will
+    inside a group; when in the last cell of a group, a new blank cell will
     appear: click inside the first cell of the next group to advance.
     Executing a cell which contains definitions of <scheme> symbols does not
     cause visible changes in the document; this is a sign that the <scheme>
