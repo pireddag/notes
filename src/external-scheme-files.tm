@@ -1180,8 +1180,14 @@
   <name|Executable fold>s are activated by pressing <key|Shift+Return>with
   the cursor positioned inside them, and are disactivated (displaying again
   the code) by positioning the cursor to their immediate right, pressing
-  <key|Backspace> once and finally <key|Shift+Return> again<todo|can I
-  improve this?>.
+  <key|Backspace> once (the left arrow works too) and finally
+  <key|Shift+Return> again. When the cursor is in the correct position, a
+  tight focus frame surrounds the drawing and the cursor is displayed to its
+  right; a way to easily achieve the correct cursor position is clicking in
+  the white area at the right of the drawing (within the larger frame of the
+  figure)\Vthen press once either <key|Backspace> ot the left arrow; then
+  <key|Shift+Return> will open the <name|Executable fold><todo|can I improve
+  this?>.
 
   The subsequent step is delegating all of the definitions (the ones we have
   written in <scheme> sessions in this document) to a file, which one can
@@ -1302,8 +1308,15 @@
 
     \;
   <|big-figure>
-    The \Ptriangle drawing\Q generated with external
-    files.<label|fig:triangle-with-external-files>
+    The \Ptriangle drawing\Q generated with external files. In the source
+    <shell|.tm> file, place the cursor immediately to the right of the
+    drawing to be able to deactivate it and enter the <name|Executable fold>
+    that generates it. When the cursor is in the correct position, a tight
+    focus frame surrounds the drawing and the cursor is displayed to its
+    right; a way to easily achieve the correct cursor position is clicking in
+    the white area at the right of the drawing (within the larger frame of
+    the figure) and press once the left arrow; then <key|Shift+Return> will
+    open the <name|Executable fold> .<label|fig:triangle-with-external-files>
   </big-figure>
 
   I myself use <name|emacs> with <name|paredit> for the editing of <TeXmacs>
