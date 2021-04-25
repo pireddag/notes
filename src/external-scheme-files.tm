@@ -64,6 +64,10 @@
     Does it affect only what I can call from a macro and not what i can call
     from Scheme?
 
+    <\itemize>
+      <item>May ask on TeXmacs-dev
+    </itemize>
+
     <item>cite the developer's guide \Pappropriately\Q
 
     <item>(done) introduce abbreviation <value|scheme-guide>
@@ -1349,7 +1353,10 @@
     <item>Create the directory <shell|$TEXMACS_HOME_PATH/prog/notes/external-scheme-files>
 
     <item>Copy the files in <hlink|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>
-    into the directory you just created
+    into the directory you just created (from the GitHub web interface you
+    will have to download them one by one: once inside the directory, click
+    on the file name, then on the top right of the file a small grey
+    <verbatim|Download> button will appear.
 
     <item>Download the <shell|.tm> version of this file from
     <hlink|https://github.com/texmacs/notes/tree/main/src|https://github.com/texmacs/notes/tree/main/src>
@@ -1372,20 +1379,21 @@
 
   <subsection|How to experiment further>
 
-  Define some graphics objects (e.g. a square with four points) and use them
+  Define some graphics objects (e.g. a square using four points) and use them
   to draw. A way to figure out the <scheme> syntax of <TeXmacs> graphical
-  objects is to draw them interactively in a canvas opened with
-  <menu|Insert|Image|Draw image>, then checking the source code with
-  <menu|Document|Source|Edit source tree> and possible copying the code with
-  <menu|Edit|Copy to|TeXmacs Scheme>; please note that the code copied in
-  this way will not be pasted correctly into <scheme> sessions if you do
-  <menu|Edit|Paste> (<TeXmacs> will interpret part of it), you will rather
-  have to do <menu|Edit|Paste from|Verbatim>.
+  objects (for example how to fill objects, change trasparency, how to add
+  arrows, how to make Bezier curves) is to draw what you want interactively
+  in a canvas opened with <menu|Insert|Image|Draw image>, then check the
+  source code with <menu|Document|Source|Edit source tree> and possibly copy
+  the code with <menu|Edit|Copy to|TeXmacs Scheme>; please note that the code
+  copied in this way will not be pasted correctly into <scheme> sessions if
+  you do <menu|Edit|Paste> (<TeXmacs> will interpret part of it), you will
+  rather have to do <menu|Edit|Paste from|Verbatim>.
 
   If editing <scheme> modules, you will have to close and restart <TeXmacs>
   to reload them (updating the document does not). Further hints to develop
   <scheme> modules are in this <hlink|forum
-  post|http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/>.
+  thread|http://forum.texmacs.cn/t/are-there-any-good-methods-to-help-developing-scheme-modules/>.
 
   You can also ask for help on
 
