@@ -61,7 +61,7 @@
 
     <item>Introduce the <scm|:secure> keyword. Do I have to use it? How is it
     working now? 2021-03-17 I have the security set to \Pprompt on script\Q.
-    Does it affect only what I can call from a macro and not what i can call
+    Does it affect only what I can call from a macro and not what I can call
     from Scheme?
 
     <\itemize>
@@ -612,7 +612,7 @@
     </input>
 
     <\textput>
-      Finally apply <scm|scheme-graphics> to show the drawing
+      Finally apply <scm|scheme-graphics> to generate the drawing
     </textput>
 
     <\unfolded-io|Scheme] >
@@ -695,15 +695,16 @@
   <scm|define-public> are visible both from the module in which they are
   defined and in modules that import that directly <todo-blue|verify whether
   transitive import for <scm|define-public> works within Scheme\Vit does not
-  work for a document>(at the moment I am writing, March 2021,
-  <scm|define-public> is not yet documented in the
-  <value|scheme-guide><todo|it is a Guile function, see link above>);
-  functions that are defined with <scm|tm-define> are \Pglobal\Q: once their
-  definition form is executed (for example by <scm|:use>ing a module where
-  they are defined) they are available to any another module and document
-  <todo|I could document this for myself both for documents (try using a
-  function in a document without <markup|use-modules>) and for modules (with
-  <scm|:use>); the following paragraphs depend on this>.
+  work for a document>(<scm|define-public> is<space|1em>Guile function\Vsee
+  <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>\V,
+  and at the moment I am writing, March 2021, it is not yet documented in the
+  <value|scheme-guide> itself); functions that are defined with
+  <scm|tm-define> are \Pglobal\Q: once their definition form is executed (for
+  example by <scm|:use>ing a module where they are defined) they are
+  available to any another module and document <todo|I could document this
+  for myself both for documents (try using a function in a document without
+  <markup|use-modules>) and for modules (with <scm|:use>); the following
+  paragraphs depend on this>.
 
   The global character of <scm|tm-define>d functions makes it also possible
   to organize \Ppackages\Q of modules that can be used in a document with a
@@ -1327,7 +1328,8 @@
   it in the list of minor modes? is it best to do it in this way? Am I not
   polluting the namespace of .emacs?>
 
-  <todo|more on developing Scheme?>
+  <todo|more on developing Scheme?><todo-blue|done at the end, section \Phow
+  to experiment further\Q>
 
   <section|How to start experimenting>
 
@@ -1353,10 +1355,10 @@
     <item>Create the directory <shell|$TEXMACS_HOME_PATH/prog/notes/external-scheme-files>
 
     <item>Copy the files in <hlink|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>
-    into the directory you just created (from the GitHub web interface you
+    into the directory you just created; from the GitHub web interface you
     will have to download them one by one: once inside the directory, click
-    on the file name, then on the top right of the file a small grey
-    <verbatim|Download> button will appear.
+    on the file name, then on the top right of the file preview frame a small
+    grey <verbatim|Download> button will appear.
 
     <item>Download the <shell|.tm> version of this file from
     <hlink|https://github.com/texmacs/notes/tree/main/src|https://github.com/texmacs/notes/tree/main/src>
