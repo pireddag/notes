@@ -677,7 +677,8 @@
   declaration (see <value|scheme-guide>, section 1.4), specifying through it
   modules to import; the specification is done through lists which state the
   path of each module. Functions in <TeXmacs> can be defined through three
-  distinct definition forms <todo|are these functions or macros?
+  distinct definition forms <todo-blue|this can remain as it is, place the
+  notes in another document><todo|are these functions or macros?
   <scm|tm-define> is a macro (defined in <verbatim|prog/kernel/tm-define.scm>)
   and there is a macro definition for <scm|define-public-macro> (in
   <verbatim|prog/kernel/boot.scm>); for <scm|define-public> see
@@ -1480,7 +1481,18 @@
       </surround>|<pageref|auto-11>>
 
       <tuple|normal|<\surround|<hidden-binding|<tuple>|2>|>
-        The \Ptriangle drawing\Q generated with external files.
+        The \Ptriangle drawing\Q generated with external files. In the source
+        <with|mode|<quote|prog>|prog-language|<quote|shell>|font-family|<quote|rm>|.tm>
+        file, place the cursor immediately to the right of the drawing to be
+        able to deactivate it and enter the
+        <with|font-shape|<quote|small-caps>|Executable fold> that generates
+        it. When the cursor is in the correct position, a tight focus frame
+        surrounds the drawing and the cursor is displayed to its right; a way
+        to easily achieve the correct cursor position is clicking in the
+        white area at the right of the drawing (within the larger frame of
+        the figure) and press once the left arrow; then
+        <move|<with|font-size|<quote|0.841>|<with|font-family|<quote|tt>|<with|ornament-color|<quote|#e0e0e0>|ornament-sunny-color|<quote|#f0f0f0>|ornament-shadow-color|<quote|#c0c0c0>|ornament-hpadding|<quote|2ln>|ornament-vpadding|<quote|2ln>|ornament-border|<quote|2ln>|<ornament|<resize|Shift+Return||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>>>||0.075ex>
+        will open the <with|font-shape|<quote|small-caps>|Executable fold> .
       </surround>|<pageref|auto-12>>
     </associate>
     <\associate|idx>
@@ -1495,6 +1507,20 @@
 
       <tuple|<tuple|<with|font-family|<quote|ss>|File>|<with|font-family|<quote|ss>|Save
       as>>|<pageref|auto-18>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Insert>|<with|font-family|<quote|ss>|Image>|<with|font-family|<quote|ss>|Draw
+      image>>|<pageref|auto-20>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Document>|<with|font-family|<quote|ss>|Source>|<with|font-family|<quote|ss>|Edit
+      source tree>>|<pageref|auto-21>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Edit>|<with|font-family|<quote|ss>|Copy
+      to>|<with|font-family|<quote|ss>|TeXmacs Scheme>>|<pageref|auto-22>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Edit>|<with|font-family|<quote|ss>|Paste>>|<pageref|auto-23>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Edit>|<with|font-family|<quote|ss>|Paste
+      from>|<with|font-family|<quote|ss>|Verbatim>>|<pageref|auto-24>>
     </associate>
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
@@ -1543,6 +1569,10 @@
       4.<space|2spc>How to start experimenting
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-13>
+
+      <with|par-left|<quote|1tab>|4.1.<space|2spc>How to experiment further
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-19>>
     </associate>
   </collection>
 </auxiliary>
