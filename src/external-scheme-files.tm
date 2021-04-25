@@ -234,10 +234,10 @@
 
   Let us see an example, keeping in mind that the location is specified in
   <TeXmacs> relative to the user's <verbatim|progs> directory, which under
-  Linux is a subdirectory of <verbatim|~/.TeXmacs/><todo|complete with other
-  operating systems>; if the file we want to include is
-  <verbatim|notes/external-scheme-files/scheme-graphics.scm>, then the
-  <markup|use-module> macro will have to be called with the argument
+  Linux <todo|and Mac OS> is a subdirectory of
+  <verbatim|~/.TeXmacs/><todo|complete with other operating systems>; if the
+  file we want to include is <verbatim|notes/external-scheme-files/scheme-graphics.scm>,
+  then the <markup|use-module> macro will have to be called with the argument
   <scm|<value|graphics-functions>>; the <TeXmacs> command is
 
   <inactive|<use-module|<value|graphics-functions>>>.
@@ -260,12 +260,12 @@
   \ <todo|provide a running document with the same mechanism of the Tetris
   document; the modules too must be slightly different and I will need to
   load correctly the final file too (and explain everything clearly, perhaps
-  in a separate section \Phow to start experimenting\Q at the end)>. If you
-  place the files in a different folder, please adjust correspondingly both
-  the path in the <markup|use-module> macro and inside the <scheme> file
-  itself in the instruction that declares its name and possibly imports
-  additional modules (we will discuss submodules in Section
-  <reference|sec:modularization>).
+  in a separate section \Phow to start experimenting\Q at the
+  end)><todo-blue|I am not going to do this>. If you place the files in a
+  different folder, please adjust correspondingly both the path in the
+  <markup|use-module> macro and inside the <scheme> file itself in the
+  instruction that declares its name and possibly imports additional modules
+  (we will discuss submodules in Section <reference|sec:modularization>).
 
   For this post, we will re-use some of the code of <modular-graphics>, in
   particular the definitions that allow composing objects, assigning them
@@ -1316,6 +1316,47 @@
 
   <todo|more on developing Scheme?>
 
+  <section|How to start experimenting>
+
+  <\enumerate>
+    <item>Find out where your <shell|$TEXMACS_HOME_PATH/prog> directory is.
+    An easy way to do the following is:
+
+    <\enumerate>
+      <item>From the menu, select <menu|Tools|Developer> tool; the entry
+      <menu|Developer> appears in the menu bar.
+
+      <item>From the <menu|Developer> menu select <menu|Open
+      my-init-texmacs.scm>; the file <shell|my-init-texmacs.scm> that opens
+      in the <TeXmacs> editor resides in the <shell|$TEXMACS_HOME_PATH/prog>
+      directory.
+
+      <item>Start the procedure for saving <shell|my-init-texmacs.scm> with
+      <menu|File|Save as>; in the file explorer window that opens you will be
+      able to read the directory where <shell|my-init-texmacs.scm> is, that
+      is <shell|$TEXMACS_HOME_PATH/prog>.
+    </enumerate>
+
+    <item>Create the directory <shell|$TEXMACS_HOME_PATH/prog/notes/external-scheme-files>
+
+    <item>Copy the files in <hlink|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>
+    into the directory you just created
+
+    <item>Download the <shell|.tm> version of this file from
+    <hlink|https://github.com/texmacs/notes/tree/main/src|https://github.com/texmacs/notes/tree/main/src>
+    (it is called <shell|external-scheme-files.tm>) and place it in a
+    directory of your choosing
+
+    <item>Execute the code in the <scheme> session in order from top to
+    bottom by pressing <key|Return> with the cursor in each cell. The cursor
+    advances to the next cell when in a group; when a group is finished a new
+    blank cell will appear: click inside the first cell of the next group to
+    advance. Executing a definition cell does not cause visible changes in
+    the document; this is a sign that the <scheme> forms are executed with no
+    errors; when in a cell that generates a drawing, the draing should be
+    redrawn in front of your eyes within a short time.
+  </enumerate>
+
   \;
 
   \;
@@ -1336,6 +1377,12 @@
     <associate|auto-10|<tuple|3|?>>
     <associate|auto-11|<tuple|1|?>>
     <associate|auto-12|<tuple|2|?>>
+    <associate|auto-13|<tuple|4|?>>
+    <associate|auto-14|<tuple|a|?>>
+    <associate|auto-15|<tuple|a|?>>
+    <associate|auto-16|<tuple|b|?>>
+    <associate|auto-17|<tuple|b|?>>
+    <associate|auto-18|<tuple|c|?>>
     <associate|auto-2|<tuple|1|?>>
     <associate|auto-3|<tuple|1|?>>
     <associate|auto-4|<tuple|2|?>>
@@ -1357,7 +1404,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%6DEE788-8604088>|<link|hyperlink|<id|%6DEE788-8604088>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%3C81ED8-8A87308>|<link|hyperlink|<id|%3C81ED8-8A87308>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1367,10 +1414,23 @@
         The \Ptriangle drawing\Q generated with external files.
       </surround>|<pageref|auto-12>>
     </associate>
+    <\associate|idx>
+      <tuple|<tuple|<with|font-family|<quote|ss>|Tools>|<with|font-family|<quote|ss>|Developer>>|<pageref|auto-14>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Developer>>|<pageref|auto-15>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Developer>>|<pageref|auto-16>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|Open
+      my-init-texmacs.scm>>|<pageref|auto-17>>
+
+      <tuple|<tuple|<with|font-family|<quote|ss>|File>|<with|font-family|<quote|ss>|Save
+      as>>|<pageref|auto-18>>
+    </associate>
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%6DEE788-87EDF50>|<link|hyperlink|<id|%6DEE788-87EDF50>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%3C81ED8-8B8AC80>|<link|hyperlink|<id|%3C81ED8-8B8AC80>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
@@ -1410,6 +1470,10 @@
       3.<space|2spc>Drawings as part of documents
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-10>
+
+      4.<space|2spc>How to start experimenting
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-13>
     </associate>
   </collection>
 </auxiliary>
