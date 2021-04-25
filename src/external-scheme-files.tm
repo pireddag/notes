@@ -1366,13 +1366,15 @@
     directory of your choosing
 
     <item>Execute the code in the <scheme> session in order from top to
-    bottom by pressing <key|Return> with the cursor in each cell. The cursor
-    advances to the next cell when in a group; when a group is finished a new
-    blank cell will appear: click inside the first cell of the next group to
-    advance. Executing a definition cell does not cause visible changes in
-    the document; this is a sign that the <scheme> forms are executed with no
-    errors; when in a cell that generates a drawing, the draing should be
-    redrawn in front of your eyes within a short time.
+    bottom by pressing <key|Return> with the cursor in each cell. On the
+    pressing of <key|Return>, the cursor advances to the next cell when
+    inside a group; when in the last cell of a group a new blank cell will
+    appear: click inside the first cell of the next group to advance.
+    Executing a cell which contains definitions of <scheme> symbols does not
+    cause visible changes in the document; this is a sign that the <scheme>
+    forms are executed with no errors. When in a cell that generates a
+    drawing, the drawing below the cell should be redrawn in front of your
+    eyes within a short time.
 
     <item>Execute <name|Fold Executables> as well. In the last one, you will
     have to substitute the full path of the <shell|triangle-drawing.scm> file
