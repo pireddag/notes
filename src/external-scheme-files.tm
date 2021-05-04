@@ -252,10 +252,10 @@
   and to <hlink|Yet Another Scheme Tutorial|http://www.shido.info/lisp/idx_scm_e.html>
   by Takafumi Shido as two possible web resources for learning <name|Scheme>.
 
-  In the preceding posts we defined the <scheme> forms for graphics within
+  In the preceding posts we defined some <scheme> forms for graphics within
   documents, using <scheme> sessions. It would be helpful to define them in
-  separate files so that, after pointing <TeXmacs> to them, one would be able
-  to use in one's own documents the functionalities they provide.
+  separate files so that, after pointing <TeXmacs> to the files, one would be
+  able to use in one's own documents the functionalities they provide.
 
   We would be able to use <scheme> functions provided by external files
   inside macros (with the <markup|extern> tag), by clicking on hyperlinks
@@ -273,42 +273,49 @@
   via the macro <markup|use-module>, that takes as its argument the location
   of the file (path and file name) and can be placed in the preamble.
 
-  Let us see an example, keeping in mind that the location is specified in
-  <TeXmacs> relative to the user's <verbatim|progs> directory, which under
-  Linux <todo|and Mac OS> is a subdirectory of
-  <verbatim|~/.TeXmacs/><todo|complete with other operating systems>; if the
+  Let us see an example of module inclusion, keeping in mind that the
+  location is specified in <TeXmacs> relative to the user's <verbatim|progs>
+  directory, which under Linux <todo|and Mac OS> is a subdirectory of
+  <verbatim|~/.TeXmacs/><todo|complete with other operating systems>. If the
   file we want to include is <verbatim|notes/external-scheme-files/scheme-graphics.scm>,
   then the <markup|use-module> macro will have to be called with the argument
   <scm|<value|graphics-functions>>; the <TeXmacs> command is
 
   <inactive|<use-module|<value|graphics-functions>>>.
 
-  This post is accompanied by the <name|Scheme> source files
-  <scm|scheme-graphics-single-file.scm> in the directory
-  <hlink|<verbatim|resources/<verbatim|external-scheme-files/single-file>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>
-  (this first file is for the initial example) and
-  <verbatim|scheme-graphics.scm>, <verbatim|basic-objects.scm>,
-  <verbatim|graphical-list-processing.scm>,
-  <verbatim|object-customization.scm>, <verbatim|geometrical-transformations.scm>
-  in the directory <hlink|<verbatim|resources/<verbatim|external-scheme-files>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>.
-  To be able to run the examples of this post on your computer, you will have
-  to download the <name|Scheme> source files and place them in a place where
-  <TeXmacs> can find them; the location will have to match the one set
-  through the <markup|use-module> macro that makes the files available to
-  <TeXmacs> (and the file itself as well will have to be marked with its own
-  location, but we will see that later).
-
-  If you place the files in a different folder, please adjust correspondingly
-  both the path in the <markup|use-module> macro and inside the <scheme> file
-  itself in the instruction that declares its name and possibly imports
-  additional modules (we will discuss submodules in Section
-  <reference|sec:modularization>).
-
   For this post, we will re-use some of the code of <modular-graphics>, in
   particular the definitions that allow composing objects, assigning them
   properties, and translating them.<todo|comment relationship to existing
   Scheme graphics code. Can I use it?><todo-blue|I am probably not going to
   do this>
+
+  <\framed>
+    <\note*>
+      This post is accompanied by the <name|Scheme> source files
+      <scm|scheme-graphics-single-file.scm> in the directory
+      <hlink|<verbatim|resources/<verbatim|external-scheme-files/single-file>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>
+      (this first file is for the initial example) and
+      <verbatim|scheme-graphics.scm>, <verbatim|basic-objects.scm>,
+      <verbatim|graphical-list-processing.scm>,
+      <verbatim|object-customization.scm>,
+      <verbatim|geometrical-transformations.scm> in the directory
+      <hlink|<verbatim|resources/<verbatim|external-scheme-files>>|https://github.com/texmacs/notes/tree/main/resources/external-scheme-files>.
+      To be able to run the examples of this post on your computer, you will
+      have to download the <name|Scheme> source files and place them in a
+      place where <TeXmacs> can find them; the location will have to match
+      the one set through the <markup|use-module> macro that makes the files
+      available to <TeXmacs> (and the file itself as well will have to be
+      marked with its own location, but we will see that later).
+
+      If you place the files in a different folder, please adjust
+      correspondingly both the path in the <markup|use-module> macro and
+      inside the <scheme> file itself in the instruction that declares its
+      name and possibly imports additional modules (we will discuss
+      submodules in Section <reference|sec:modularization>).
+    </note*>
+  </framed>
+
+  \;
 
   <section|A few functions in a single file (enough to compose complex
   objects)><label|sec:a-few-functions>
@@ -1455,6 +1462,7 @@
 
 <\initial>
   <\collection>
+    <associate|framed-color|pastel grey>
     <associate|page-medium|papyrus>
     <associate|page-screen-margin|false>
     <associate|preamble|false>
