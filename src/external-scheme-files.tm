@@ -184,8 +184,8 @@
       one at a time\V<scm|(apply-property triangle "color" "red" "dash-style"
       "101010")> does not work
 
-      <item>It is better to keep the code consistent with the other posts in
-      the same series
+      <item><todo-blue|It is better to keep the code consistent with the
+      other posts in the same series>
     </itemize>
 
     <item>Mention <TeXmacs> default graphical code (figure out how it
@@ -201,6 +201,43 @@
     </itemize>
 
     <item>At the end, delete empty scheme prompts
+
+    <item><TeXmacs> paths: <verbatim|$GUILE_LOAD_PATH>,
+    <verbatim|$TEXMACS_PATH/progs> \ and <verbatim|$TEXMACS_HOME_PATH/progs>
+    and the subdirectories of these.
+
+    <\itemize>
+      <item>the lists that specify module locations are written starting from
+      these paths
+    </itemize>
+
+    <item><scm|tm-define> is a macro (defined in
+    <verbatim|prog/kernel/tm-define.scm>) and there is a macro definition for
+    <scm|define-public-macro> (in <verbatim|prog/kernel/boot.scm>); for
+    <scm|define-public> see <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>;
+    <scm|procedure-source> applied to <scm|define-public> gives an error
+    (<scm|Wrong type argument in position 1: #\<less\>macro!
+    define-public\<gtr\>>), and in fact <scm|define-public> can be
+    macroexpanded; <scm|procedure-source> applied to <scm|define-private>
+    gives <scm|Wrong type argument in position 1:
+    #\<less\>primitive-builtin-macro! define\<gtr\> >and <scm|(eq? define
+    define-private)> yields <scm|#t>; see
+    <hlink|test-function-definitions.tm|/home/giovanni/test/test_TeXmacs/2 -
+    Test/Test definitions/test-function-definitions.tm>
+
+    <\itemize>
+      <item>(<scm|define-public> is<space|1em>Guile function\Vsee
+      <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>\V,
+      and at the moment I am writing, March 2021, it is not yet documented in
+      the <value|scheme-guide> itself)
+
+      <item>functions that are defined with <scm|tm-define> are \Pglobal\Q:
+      once their definition form is executed (for example by <scm|:use>ing a
+      module where they are defined) they are available to any another module
+      and document <todo|I could document this for myself both for documents
+      (try using a function in a document without <markup|use-modules>) and
+      for modules (with <scm|:use>); the following paragraphs depend on this>
+    </itemize>
   </itemize>
 
   This post is a part of a series of <name|Scheme> graphics in <TeXmacs>.
@@ -261,15 +298,11 @@
   <TeXmacs> (and the file itself as well will have to be marked with its own
   location, but we will see that later).
 
-  \ <todo|provide a running document with the same mechanism of the Tetris
-  document; the modules too must be slightly different and I will need to
-  load correctly the final file too (and explain everything clearly, perhaps
-  in a separate section \Phow to start experimenting\Q at the
-  end)><todo-blue|I am not going to do this>. If you place the files in a
-  different folder, please adjust correspondingly both the path in the
-  <markup|use-module> macro and inside the <scheme> file itself in the
-  instruction that declares its name and possibly imports additional modules
-  (we will discuss submodules in Section <reference|sec:modularization>).
+  If you place the files in a different folder, please adjust correspondingly
+  both the path in the <markup|use-module> macro and inside the <scheme> file
+  itself in the instruction that declares its name and possibly imports
+  additional modules (we will discuss submodules in Section
+  <reference|sec:modularization>).
 
   For this post, we will re-use some of the code of <modular-graphics>, in
   particular the definitions that allow composing objects, assigning them
@@ -343,12 +376,6 @@
   Section 1.4): <verbatim|$GUILE_LOAD_PATH>, <verbatim|$TEXMACS_PATH/progs>
   \ and <verbatim|$TEXMACS_HOME_PATH/progs> and the subdirectories of these.
 
-  <todo|There are several possible paths TeXmacs is looking the files in, see
-  sect 1.4. Test them. How does it work with the file
-  location?><todo-blue|$GUILE_LOAD_PATH works, and if I use a directory
-  defined in $GUILE_LOAD_PATH, I can use a module specification without
-  directory specification>.
-
   We write up an initial file with the first few functions, enough to draw
   the first example of <modular-graphics>, which is a triangle; we call our
   first file <verbatim|scheme-graphics-single-file.scm> and we load it into
@@ -364,15 +391,38 @@
   to adapt the list argument of <markup|use-module> to your directory
   structure.
 
-  Our <verbatim|scheme-graphics-single-file.scm> files contains (following
-  code block<todo|switch to captioned and numbered code
-  blocks><todo-blue|most probably I am not going to do this>) the <scm|pt>
-  and <scm|scheme-graphics> functions together with the symbol <scm|pi> and
-  the helper functions (not accessible to the <TeXmacs> document)
-  <scm|objects-list>, <scm|object-test>, <scm|denest-test>, and
-  <scm|denestify-conditional>; it starts, as announced, with a
-  <scm|texmacs-module> form; the list <scm|(notes external-scheme-files
-  scheme-graphics)> corresponds to the path
+  <\framed>
+    <\note*>
+      The <markup|use-module> command I am using for this part of the
+      document is
+
+      <inactive|<use-module|(notes external-scheme-files
+      scheme-graphics-single-file)>>
+
+      The document in <hlink|src/external-scheme-graphics.tm|https://github.com/texmacs/notes/blob/main/src/external-scheme-graphics.tm>
+      is set for using the \Pmulti-file\Q code of section
+      <reference|sec:modularization>; the <markup|use-module> command is
+      written with the <scm|(notes external-scheme-files scheme-graphics)>
+      argument that loads the multi-file <scheme> code.
+
+      You will have to edit <hlink|src/external-scheme-graphics.tm|https://github.com/texmacs/notes/blob/main/src/external-scheme-graphics.tm>
+      if you want to see how the document behaves with the \Psingle-file\Q
+      code: the preamble will have to contain the <markup|use-module> command
+      above.
+
+      It is sensible to load either only the file for the \Psingle-file\Q
+      code or only the file for the \Pmulti-file\Q code, as the multi-file
+      code includes all of the forms of the single-code file.\ 
+    </note*>
+  </framed>
+
+  Our <verbatim|scheme-graphics-single-file.scm> file (reproduced in the
+  following code block) contains the <scm|pt> and <scm|scheme-graphics>
+  functions together with the symbol <scm|pi> and the helper functions (not
+  accessible to the <TeXmacs> document) <scm|objects-list>,
+  <scm|object-test>, <scm|denest-test>, and <scm|denestify-conditional>; it
+  starts, as announced, with a <scm|texmacs-module> form; the list
+  <scm|(notes external-scheme-files scheme-graphics)> corresponds to the path
   <verbatim|notes/external-scheme-files/scheme-graphics.scm> in the
   <verbatim|$TEXMACS_HOME_PATH/progs/> directory:
 
@@ -665,81 +715,58 @@
   one feels, after having made some experience with the language, towards
   organizing one's own program as a composition of functions.
 
-  <todo|Revise next paragraph. The <scm|tm-define> form then makes it
-  possible to load functions through apparently \Ptransitive\Q loading of
-  modules (harmonize with paragraph after the next) (verify the global
-  loading of <scm|tm-define>d functions for documents and for modules; see
-  todo note in the following paragraph too, where I state that it does not
-  work for a document! Was I right? Maybe I was referring to
-  <scm|define-public>)>
-
   In <TeXmacs> one can add a <scm|:use> form in the <scm|texmacs-module>
   declaration (see <value|scheme-guide>, section 1.4), specifying through it
   modules to import; the specification is done through lists which state the
   path of each module. Functions in <TeXmacs> can be defined through three
-  distinct definition forms <todo-blue|this can remain as it is, place the
-  notes in another document><todo|are these functions or macros?
-  <scm|tm-define> is a macro (defined in <verbatim|prog/kernel/tm-define.scm>)
-  and there is a macro definition for <scm|define-public-macro> (in
-  <verbatim|prog/kernel/boot.scm>); for <scm|define-public> see
-  <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>;
-  <scm|procedure-source> applied to <scm|define-public> gives an error
-  (<scm|Wrong type argument in position 1: #\<less\>macro!
-  define-public\<gtr\>>), and in fact <scm|define-public> can be
-  macroexpanded; <scm|procedure-source> applied to <scm|define-private> gives
-  <scm|Wrong type argument in position 1: #\<less\>primitive-builtin-macro!
-  define\<gtr\> >and <scm|(eq? define define-private)> yields <scm|#t>; see
-  <hlink|test-function-definitions.tm|/home/giovanni/test/test_TeXmacs/2 -
-  Test/Test definitions/test-function-definitions.tm>>, leading to three
-  different scoping rules. Functions defined with <scm|define> are local to
-  the module in which they are defined; \ functions defined with
-  <scm|define-public> are visible both from the module in which they are
-  defined and in modules that import that directly <todo-blue|verify whether
-  transitive import for <scm|define-public> works within Scheme\Vit does not
-  work for a document>(<scm|define-public> is<space|1em>Guile function\Vsee
-  <hlink|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html|https://www.gnu.org/software/guile/manual/html_node/Creating-Guile-Modules.html>\V,
-  and at the moment I am writing, March 2021, it is not yet documented in the
-  <value|scheme-guide> itself); functions that are defined with
-  <scm|tm-define> are \Pglobal\Q: once their definition form is executed (for
-  example by <scm|:use>ing a module where they are defined) they are
-  available to any another module and document <todo|I could document this
-  for myself both for documents (try using a function in a document without
-  <markup|use-modules>) and for modules (with <scm|:use>); the following
-  paragraphs depend on this>.
+  distinct definition forms, leading to three different scoping rules.
+  Functions defined with <scm|define> are local to the module in which they
+  are defined; \ functions defined with <scm|define-public> are visible both
+  from the module in which they are defined and in modules that import that
+  directly <todo-blue|verify whether transitive import for
+  <scm|define-public> works within Scheme\Vit does not work for a document>;
+  functions that are defined with <scm|tm-define> are \Pglobal\Q: once their
+  definition form is executed (for example by <scm|:use>ing a module where
+  they are defined) they are available to any another module and document
+  <todo|I could document this for myself both for documents (try using a
+  function in a document without <markup|use-modules>) and for modules (with
+  <scm|:use>); the following paragraphs depend on this>.
 
   The global character of <scm|tm-define>d functions makes it also possible
   to organize \Ppackages\Q of modules that can be used in a document with a
   single <markup|use-modules> command: in fact it is sufficient to collect
   all of the desired modules under a <scm|:use> form in a \Pmaster\Q module
-  and then import that<compound|todo-blue|distinguish from \Ptransitive
-  importing\Q and review what happens with <scm|define-public>>. We will do
-  so in this document<todo| switch the import file, as described at the end
-  of the previous section>.
+  and then import that. We will do so in this document.
 
   Let us then organize our functions into five files\Vwe place together
   functions defining basic graphics objects and basic mathematical objects
   since we have only one of each, we could split them when the file becomes
-  larger. Here they are. We need to import in our <TeXmacs> document only one
-  of them, as we discussed\Vsetting one of them
-  (<verbatim|scheme-graphics.scm>) as \Pmaster\Q and importing the rest
-  through <scm|:use> <todo|note that all of the <scm|define-public> functions
-  are also imported in the master file, but they are not imported in the
-  document (2021-03-31 checked with <scm|object-test>, which is defined with
-  <scm|define-public in graphical-list-processing.scm> and is not imported in
-  the document\VI do not think that I can improve this>. The command I am
-  using for this part of the document is
+  larger; I reproduce each module in the code blocks below. We import in our
+  <TeXmacs> document the <scm|tm-define>d functions by importing only one of
+  our modules, as we discussed\Vwe set <verbatim|scheme-graphics.scm> as
+  \Pmaster\Q and import the rest through <scm|:use>.\ 
 
-  <inactive|<use-module|(notes external-scheme-files scheme-graphics)>>
+  <\framed>
+    <\note*>
+      The <markup|use-module> command I am using for this part of the
+      document is
 
-  When running the examples of section <reference|sec:modularization> of this
-  document on my computer, I am deleting from the preamble the
-  <markup|use-module> command I used for section
-  <reference|sec:a-few-functions> and writing in its stead the command above;
-  in the document in <hlink|src/external-scheme-graphics.tm|https://github.com/texmacs/notes/blob/main/src/external-scheme-graphics.tm>
-  the <markup|use-module> command is written with the <scm|(notes
-  external-scheme-files scheme-graphics)> argument so you will have to edit
-  the file if you want to see how the document behaves with the
-  \Psingle-file\Q code.
+      <inactive|<use-module|(notes external-scheme-files scheme-graphics)>>
+
+      When running the examples of section <reference|sec:modularization> of
+      this document on my computer, I am deleting from the preamble the
+      <markup|use-module> command I used for section
+      <reference|sec:a-few-functions> and writing in its stead the command
+      above.
+
+      The document in <hlink|src/external-scheme-graphics.tm|https://github.com/texmacs/notes/blob/main/src/external-scheme-graphics.tm>
+      is set for using the \Pmulti-file\Q code of section
+      <reference|sec:modularization>; the <markup|use-module> command is
+      written with the <scm|(notes external-scheme-files scheme-graphics)>
+      argument. You will have to edit the file if you want to see how the
+      document behaves with the \Psingle-file\Q code.
+    </note*>
+  </framed>
 
   <paragraph|scheme-graphics.scm>
 
@@ -1437,35 +1464,35 @@
 
 <\references>
   <\collection>
-    <associate|auto-1|<tuple|?|?>>
-    <associate|auto-10|<tuple|3|?>>
-    <associate|auto-11|<tuple|1|?>>
-    <associate|auto-12|<tuple|2|?>>
-    <associate|auto-13|<tuple|4|?>>
-    <associate|auto-14|<tuple|a|?>>
-    <associate|auto-15|<tuple|a|?>>
-    <associate|auto-16|<tuple|b|?>>
-    <associate|auto-17|<tuple|b|?>>
-    <associate|auto-18|<tuple|c|?>>
-    <associate|auto-19|<tuple|4.1|?>>
-    <associate|auto-2|<tuple|1|?>>
-    <associate|auto-20|<tuple|4.1|?>>
-    <associate|auto-21|<tuple|4.1|?>>
-    <associate|auto-22|<tuple|4.1|?>>
-    <associate|auto-23|<tuple|4.1|?>>
-    <associate|auto-24|<tuple|4.1|?>>
-    <associate|auto-3|<tuple|1|?>>
-    <associate|auto-4|<tuple|2|?>>
-    <associate|auto-5|<tuple|1|?>>
-    <associate|auto-6|<tuple|2|?>>
-    <associate|auto-7|<tuple|3|?>>
-    <associate|auto-8|<tuple|4|?>>
-    <associate|auto-9|<tuple|5|?>>
-    <associate|fig:bleding-waning-triangle|<tuple|1|?>>
-    <associate|fig:triangle-with-external-files|<tuple|2|?>>
-    <associate|sec:a-few-functions|<tuple|1|?>>
-    <associate|sec:modularization|<tuple|2|?>>
-    <associate|tab:functions-list|<tuple|1|?>>
+    <associate|auto-1|<tuple|?|3>>
+    <associate|auto-10|<tuple|3|17>>
+    <associate|auto-11|<tuple|1|18>>
+    <associate|auto-12|<tuple|2|21>>
+    <associate|auto-13|<tuple|4|21>>
+    <associate|auto-14|<tuple|a|21>>
+    <associate|auto-15|<tuple|a|21>>
+    <associate|auto-16|<tuple|b|22>>
+    <associate|auto-17|<tuple|b|22>>
+    <associate|auto-18|<tuple|c|22>>
+    <associate|auto-19|<tuple|4.1|22>>
+    <associate|auto-2|<tuple|1|7>>
+    <associate|auto-20|<tuple|4.1|22>>
+    <associate|auto-21|<tuple|4.1|22>>
+    <associate|auto-22|<tuple|4.1|22>>
+    <associate|auto-23|<tuple|4.1|22>>
+    <associate|auto-24|<tuple|4.1|22>>
+    <associate|auto-3|<tuple|1|7>>
+    <associate|auto-4|<tuple|2|12>>
+    <associate|auto-5|<tuple|1|13>>
+    <associate|auto-6|<tuple|2|13>>
+    <associate|auto-7|<tuple|3|15>>
+    <associate|auto-8|<tuple|4|15>>
+    <associate|auto-9|<tuple|5|15>>
+    <associate|fig:bleding-waning-triangle|<tuple|1|18>>
+    <associate|fig:triangle-with-external-files|<tuple|2|21>>
+    <associate|sec:a-few-functions|<tuple|1|7>>
+    <associate|sec:modularization|<tuple|2|12>>
+    <associate|tab:functions-list|<tuple|1|7>>
   </collection>
 </references>
 
@@ -1474,7 +1501,7 @@
     <\associate|figure>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The \Pblending in\Q/\Pwaning out\Q triangle of
-        <locus|<id|%3C81ED8-8A87308>|<link|hyperlink|<id|%3C81ED8-8A87308>|<url|./modular-scheme-graphics.tm>>|Modular
+        <locus|<id|%935FB18-7842E10>|<link|hyperlink|<id|%935FB18-7842E10>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>> generated
         through a <with|font-shape|<quote|small-caps>|Executable fold>
         environment.
@@ -1525,7 +1552,7 @@
     <\associate|table>
       <tuple|normal|<\surround|<hidden-binding|<tuple>|1>|>
         The <with|font-shape|<quote|small-caps>|Scheme> functions for modular
-        graphics we defined in <locus|<id|%3C81ED8-8B8AC80>|<link|hyperlink|<id|%3C81ED8-8B8AC80>|<url|./modular-scheme-graphics.tm>>|Modular
+        graphics we defined in <locus|<id|%935FB18-7C927A0>|<link|hyperlink|<id|%935FB18-7C927A0>|<url|./modular-scheme-graphics.tm>>|Modular
         graphics with <with|font-shape|<quote|small-caps>|Scheme>>
       </surround>|<pageref|auto-3>>
     </associate>
