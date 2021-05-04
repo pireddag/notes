@@ -1126,8 +1126,8 @@
   <hlink|Modular graphics with <name|Scheme>|./modular-scheme-graphics.tm>.
   As a first step, we place into the <name|Executable fold> environment a
   <scm|begin> form that depends on symbols we have already defined and has a
-  last subform (the one that wil be its return value) a <scm|scheme-graphics>
-  form.
+  last subform (the one that will be its return value) a
+  <scm|scheme-graphics> form.
 
   <\script-input|scheme|default>
     (begin\ 
@@ -1354,9 +1354,12 @@
     open the <name|Executable fold> .<label|fig:triangle-with-external-files>
   </big-figure>
 
-  I myself use <name|emacs> with <name|paredit> for the editing of <TeXmacs>
-  <scheme> files. The highlighting of keywords defined by <TeXmacs> is
-  possible with the <verbatim|tm-mode.el> file located in
+  <section|Editing <scheme> files>
+
+  <todo|improve with a short introduction about the parentheses>I myself use
+  <name|emacs> with <name|paredit> for the editing of <TeXmacs> <scheme>
+  files. The highlighting of keywords defined by <TeXmacs> is possible with
+  the <verbatim|tm-mode.el> file located in
   <verbatim|$TEXMACS_PATH/progs/tm-mode.el>, that can be loaded adding to
   your <verbatim|.emacs> the following line:
 
@@ -1477,18 +1480,19 @@
     <associate|auto-11|<tuple|1|18>>
     <associate|auto-12|<tuple|2|21>>
     <associate|auto-13|<tuple|4|21>>
-    <associate|auto-14|<tuple|a|21>>
+    <associate|auto-14|<tuple|5|21>>
     <associate|auto-15|<tuple|a|21>>
-    <associate|auto-16|<tuple|b|22>>
+    <associate|auto-16|<tuple|a|22>>
     <associate|auto-17|<tuple|b|22>>
-    <associate|auto-18|<tuple|c|22>>
-    <associate|auto-19|<tuple|4.1|22>>
+    <associate|auto-18|<tuple|b|22>>
+    <associate|auto-19|<tuple|c|22>>
     <associate|auto-2|<tuple|1|7>>
-    <associate|auto-20|<tuple|4.1|22>>
-    <associate|auto-21|<tuple|4.1|22>>
-    <associate|auto-22|<tuple|4.1|22>>
-    <associate|auto-23|<tuple|4.1|22>>
-    <associate|auto-24|<tuple|4.1|22>>
+    <associate|auto-20|<tuple|5.1|22>>
+    <associate|auto-21|<tuple|5.1|22>>
+    <associate|auto-22|<tuple|5.1|22>>
+    <associate|auto-23|<tuple|5.1|22>>
+    <associate|auto-24|<tuple|5.1|22>>
+    <associate|auto-25|<tuple|5.1|?>>
     <associate|auto-3|<tuple|1|7>>
     <associate|auto-4|<tuple|2|12>>
     <associate|auto-5|<tuple|1|13>>
