@@ -37,24 +37,116 @@
     Current members
   </with>
 
-  Basile Audoly, Massimiliano Gubinelli, \ Joris van der Hoeven, Pierre-Henri
-  Jondot, Marc Lalaude-Labayle, Sebastian Miele, Giovanni Piredda, Joy Yang
-  Qiping, Peter Rap£an, Darcy Shen, Jeroen Wouters.
+  Basile Audoly, Miguel de Benito Delgado, Álvaro Tejero Cantero,
+  Massimiliano Gubinelli, Joris van der Hoeven, Pierre-Henri Jondot, Marc
+  Lalaude-Labayle, Giovanni Piredda, Joy Yang Qiping, Peter Rap£an, Darcy
+  Shen, Jeroen Wouters.
 
   \;
 
   <with|font-shape|italic|Journal of past gatherings>
 
   <\itemize>
-    <item>12.3.2021 \U The Xcode project, working on a bug related to
-    exporting PDF images to the clipboard on a Mac.
+    <item>1.5.2021 \U Miguel showed us his many enhancements to TeXmacs which
+    still didn't make their way to the main trunk: autocompletion for
+    references, another style of comments, and the wonderful integration he
+    has set up for producing content for the Hugo static site generator,
+    including a TeXmacs<math|\<rightarrow\>>Markdown converter. We then
+    discussed about conversion in general and conservative conversion. Joris
+    showed us how the conservative conversion with LaTeX works. It is
+    described also in more detail in the paper \ \ <hlink|Conservative
+    conversion between LaTeX and TeXmacs|http://www.texmacs.org/joris/latexconv/latexconv-abs.html>
+    already mentioned in previous meetings. We discussed a possible
+    conservative conversion for Markdown. The topic will certainly pop up
+    again in future meetings. Towards the end we had a discussion on possible
+    advertisement strategies to make a wider public aware of the existence
+    and capabilities of TeXmacs. <hlink|Obligatory
+    tweet|https://twitter.com/gnu_texmacs/status/1388532464512118786>.
+
+    <item>24.4.2021 \U We continued the discussion of style files and the
+    customization of styles and of tags like theorem, proposition,
+    etc<text-dots> Joris showed ways to introduce different color themes for
+    various kinds of tags in such a way that this plays well with different
+    styles (e.g. beamer, article, etc<text-dots>) We also briefly discussed
+    the possibility to improve the way users can access and customize options
+    for plugins via the application preferences systems and dialogs. Then
+    Joris gave an overview of the font selection system, and of the various
+    C++ classes involved in unicode and math font support.
+    <hlink|Tweet|https://twitter.com/gnu_texmacs/status/1385981413212753923>.\ 
+
+    <item>17.4.2021 \U Joris explained the organisation of the style files
+    for beamer presentations: what are the various tags, how the overlays are
+    organised, what are the possible improvements. In particular we discussed
+    about a possible template system, better UI for interacting with overlays
+    and screens, how to structure content on the slides, how the theming
+    works, the various parameters for decorations. Towards the end we touched
+    upon the theme of fonts and of their installation. A
+    <hlink|screenshot|https://twitter.com/gnu_texmacs/status/1383459597063655428>
+    from twitter.
+
+    <item>10.4.2021 \U Darcy showed us his work on the
+    <hlink|Octave|https://www.gnu.org/software/octave/index> plugin and we
+    worked out some issues in the plugin mechanisms: how to properly format
+    numbers coming from Octave and how to support UTF8 output. <hlink|Twitter
+    trace|https://twitter.com/gnu_texmacs/status/1380906950402138114>.
+
+    <item>9.4.2021 \U We improved two standard styles for APS and AIP
+    journals based on the RevTeX LaTeX package, this allowed us to discuss
+    various issues related to writing style files and also some aspects of
+    the conversions in <LaTeX>. We talked about the tags for the front matter
+    of the papers (title, authors, etc<text-dots>), the typesetting of the
+    bibliography, some problems related to wrong interactions among styling
+    macros. The obligatory <hlink|twitter
+    post|https://twitter.com/gnu_texmacs/status/1380569437183610880>.
+
+    <item>3.4.2021 \U Discussion on the behaviour of section headers within
+    tables. This become an attempt to fix some suboptimal behaviour of the
+    sectioning macros, and a deep dive on the algorithms <TeXmacs> uses to
+    typeset lines in tables and to determine the size of horizontal cells in
+    tables. A lot of macro code and some C++. <hlink|Twitter
+    post|https://twitter.com/gnu_texmacs/status/1378382890724175872>.
+
+    <item>2.4.2021 \U Joris explained the use of spreadsheets in <TeXmacs>
+    and how the plugins can produce dynamic content, i.e. content in the
+    typesetted document which change in response to computations in the
+    plugin. He gave an example with <hlink|Mathemagix|http://www.mathemagix.org/www/mmdoc/doc/html/main/index.en.html>
+    (a programming language for computer algebra and analysis). We then also
+    discussed the possibility of embedding documents within PDF and in
+    general the problem of embedding data within documents. Finally some
+    remarks on conservative conversions between various formats, i.e.
+    conversions which can be incrementally updated, e.g. <hlink|Conservative
+    conversion between LaTeX and TeXmacs|http://www.texmacs.org/joris/latexconv/latexconv-abs.html>.
+
+    <item>28.3.2021 \U Hacking session on improving the navigation of the
+    structure of the document (sections, subsections<text-dots>). We modified
+    the scheme code of the UI to produce properly indented structures for the
+    menu listing all the sections and added some keybindings. Some
+    screenshots in the <hlink|twitter feed|https://twitter.com/gnu_texmacs/status/1376205283102502917>.
+    We had also some (not recorded) discussion on live editing of documents
+    and on versioning of documents. We will discuss these topics also in a
+    further session.
+
+    <item>20.3.2021 \U Various aspects of the use of Scheme in TeXmacs,
+    including embedding Scheme, the various dialects and the status of the
+    Guile 3 and Chez Scheme ports. The design and use of tm-define. Features
+    currently absent in TeXmacs like a structured table of contents or a
+    double view on a document. Design choices in TeXmacs' user interface.
+    Joris demonstrated the use of the search tool, including template
+    variables and the filtering option.
+
+    <item>19.3.2021 \U The build systems. How the makefile works. Demo of the
+    old widget library and of the Guile 3 port. Discussion on the Scheme
+    code, the module system, the differences between Guile 1.8 and Guile 2/3.
+
+    <item>14.3.2021 \U Scheme/C++ interface, patching the S7 Scheme
+    interpreter, generation of menus and widgets between C++ and Scheme.
 
     <item>13.3.2021 \U General structure of the C++ codebase, various
     directories, abstract interfaces to the user interface, handling of
     events, \ example of the close window event.
 
-    <item>14.3.2021 \U Scheme/C++ interface, patching the S7 Scheme
-    interpreter, generation of menus and widgets between C++ and Scheme.
+    <item>12.3.2021 \U The Xcode project, working on a bug related to
+    exporting PDF images to the clipboard on a Mac.
   </itemize>
 
   \;

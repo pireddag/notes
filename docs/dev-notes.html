@@ -28,38 +28,13 @@
       TeXmacs.
     </div>
     <p>
-      [Last update 17.3.2021]
+      [Last update 22.3.2021]
     </p>
-    <h2 id="auto-2">1.<span style="margin-left: 1em"></span>Incremental computing<span style="margin-left: 1em"></span></h2>
-    <p>
-      Modifications to the documents are incremental, so one would like to
-      take this into account when recomputing both the typesetting and the
-      rendering onscreen. This problem is also relevant when syncronizing
-      live-editing document across a network connection. Some infrastructure
-      is already present in TeXmacs (details?). Here are gathered some
-      approaches to incremental computations in a general context.
-    </p>
+    <h2 id="auto-2">1.<span style="margin-left: 1em"></span>Random and unsorted resources<span style="margin-left: 1em"></span></h2>
     <ul>
       <li>
         <p>
-          The paper &ldquo;Purely Functional Incremental Computing&rdquo; (<a
-          href="http://firsov.ee/incremental/incremental.pdf">PDF</a>).
-        </p>
-      </li>
-      <li>
-        <p>
-          Talk on implementing Data-driven incremental UIs (in OCAML) (<a
-          href="https://www.youtube.com/watch?v=R3xX37RGJKE">youtube</a>). And a longer talk with more details (<a href="https://www.youtube.com/watch?v=G6a5G5i4gQU">youtube</a>).
-        </p>
-      </li>
-      <li>
-        <p>
-          A blog post at Jane Street (<a href="https://blog.janestreet.com/introducing-incremental/">URL</a>)
-        </p>
-      </li>
-      <li>
-        <p>
-          Adaptive computation library in JS (<a href="https://github.com/rkirov/adapt-comp">link</a>)
+          An interesting talk about open source community (<a href="https://www.youtube.com/watch?v=o_4EX4dPppA">video</a>).
         </p>
       </li>
     </ul>
@@ -84,11 +59,36 @@
           It is written in C/C++ with no external dependencies (as it is
           claimed) which make relatively easy an inclusion in TeXmacs. The
           github <a href="https://tree-sitter.github.io/tree-sitter/">link</a>, and a presentation <a href="https://www.youtube.com/watch?v=Jes3bD6P0To">talk</a> on
-          youtube. 
+          youtube.
+        </p>
+      </li>
+      <li>
+        <p>
+          The KDE project has a syntax-highlighting engine <a href="https://invent.kde.org/frameworks/syntax-highlighting/">here</a>
+          where languages descriptions comes in external XML files.  
         </p>
       </li>
     </ul>
-    <h2 id="auto-4">3.<span style="margin-left: 1em"></span>Spellchecking and grammar-checking<span
+    <h2 id="auto-4">3.<span style="margin-left: 1em"></span>Parsing Markdown and other languages<span
+    style="margin-left: 1em"></span></h2>
+    <p>
+      It could be useful for us to be able to parse the <a href="https://www.markdownguide.org">Markdown</a>
+      format. There are various available parsers which could be integrated as
+      plugins in the codebase, for example <a href="https://github.com/jgm/peg-markdown">PEG-markdown</a>, <a href="https://github.com/vmg/sundown">sundown</a>,
+      <a href="https://fossil.instinctive.eu/libsoldout/index">libsoldout</a>, <a href="https://github.com/mity/md4c">md4c</a> and also some native scheme
+      implementations like <a href="https://bitbucket.org/DerGuteMoritz/lowdown/src/master/">lowdown</a> for Chicken Scheme. Currently
+      in TeXmacs we do not have a generic way to parse external languages: for
+      example internally the parsing of HTML or TeX is done via C++ code
+      without any common parsing substrate (as far as I can see). There is
+      some support for packrat parsing but it is used only in the semantic
+      checking of math formulas and it seems that the packrat parser is not
+      capable of semantic actions, i.e. can only report if a string (or tree?)
+      belongs to some language or not. Tree-sitter could also be an option as
+      generic parsing mechanism. It could be useful to think how to factor and
+      restructure the parsing mechanisms in TeXmacs to avoid duplicating
+      code/efforts/know-how.
+    </p>
+    <h2 id="auto-5">4.<span style="margin-left: 1em"></span>Spellchecking and grammar-checking<span
     style="margin-left: 1em"></span></h2>
     <p>
       This could be an area where we can improve substantially over
@@ -124,7 +124,7 @@
         </p>
       </li>
     </ul>
-    <h2 id="auto-5">4.<span style="margin-left: 1em"></span>General plugin mechanisms<span style="margin-left: 1em"></span></h2>
+    <h2 id="auto-6">5.<span style="margin-left: 1em"></span>General plugin mechanisms<span style="margin-left: 1em"></span></h2>
     <p>
       A strategical goal would be to improve support for general mechanisms to
       talk to external programs:
@@ -140,7 +140,8 @@
           various plugins and allow easier maintenance. Moreover it could
           allow TeXmacs to be an alternative to Jupyter notebooks or <a href="https://github.com/mgubi/tm_jupyter">
           Jupyter Qt Console</a>. One can look to these projects to understand
-          which features have to be supported.
+          which features have to be supported. Jeroen has improved the
+          tm_jupyter plugin <a href="https://github.com/woutersj/tm_jupyter/commits/master">here</a>.  
         </p>
       </li>
       <li>
@@ -155,17 +156,85 @@
         </p>
       </li>
     </ul>
-    <h2 id="auto-6">5.<span style="margin-left: 1em"></span>Random and unsorted resources<span style="margin-left: 1em"></span></h2>
+    <h2 id="auto-7">6.<span style="margin-left: 1em"></span>General attachments to documents and to PDF
+    files<span style="margin-left: 1em"></span></h2>
+    <p>
+      PDF gives the possibility to embed arbitrary content within the document
+      as &ldquo;Embedded file&rdquo; streams. This possibility is exploited by
+      the LaTeX package <a href="https://mirror.ibcp.fr/pub/CTAN/macros/latex/contrib/attachfile/attachfile.pdf">attachfile</a> which allows to associate to
+      typesetted parts of the document arbitrary attachments with the
+      possibility to recover it. We could introduce a similar feature in
+      TeXmacs documents, i.e. include external content in the document.
+      Another possibility is to include a TeXmacs document within a generated
+      PDF file in such a way that it is possible to open the PDF from TeXmacs
+      and edit its source. Another use could be to include TeXmacs snippets in
+      copied PDF files so that they could be reopened in TeXmacs and modified.
+    </p>
+    <h2 id="auto-8">7.<span style="margin-left: 1em"></span>Zotero integration<span style="margin-left: 1em"></span></h2>
+    <p>
+      <class style="font-variant: small-caps">Zotero</class> is a widely used open source bibliographic
+      management tool. It would be interesting to have a good way to import
+      bibliography items from it. There are already various attemps to this:
+    </p>
     <ul>
       <li>
         <p>
-          An interesting talk about open source community (<a href="https://www.youtube.com/watch?v=o_4EX4dPppA">video</a>).
+          <class style="font-variant: small-caps">Zotexmacs</class> (<a href="https://github.com/slowphil/zotexmacs">github</a>) by Philippe
+          Joyez.
+        </p>
+      </li>
+      <li>
+        <p>
+          TeXmacs/Zotero integration (<a href="https://github.com/KarlHegbloom/zotero-texmacs-integration/blob/master/progs/tm-zotero.scm">github</a>) by Karl Hegbloom.
         </p>
       </li>
     </ul>
     <p>
-      
+      We maybe want to develop a more organic solution. Interesting links:
     </p>
+    <ul>
+      <li>
+        <p>
+          Zotero better BibTeX (<a href="https://github.com/retorquere/zotero-better-bibtex">github</a>), Zotero CLI (<a href="https://github.com/jbaiter/zotero-cli">github</a>),
+          Zotelo (Zotero/Emacs integration) (<a href="https://github.com/vspinu/zotelo">github</a>), Web
+          bibliographies with Zotero (<a href="https://github.com/davidswelt/zot_bib_web">github</a>), Zotero/LyX
+          integration (<a href="https://github.com/wshanks/lyz">github</a>).
+        </p>
+      </li>
+    </ul>
+    <h2 id="auto-9">8.<span style="margin-left: 1em"></span>Incremental computing<span style="margin-left: 1em"></span></h2>
+    <p>
+      Modifications to the documents are incremental, so one would like to
+      take this into account when recomputing both the typesetting and the
+      rendering onscreen. This problem is also relevant when syncronizing
+      live-editing document across a network connection. Some infrastructure
+      is already present in TeXmacs (details?). Here are gathered some
+      approaches to incremental computations in a general context.
+    </p>
+    <ul>
+      <li>
+        <p>
+          The paper &ldquo;Purely Functional Incremental Computing&rdquo; (<a
+          href="http://firsov.ee/incremental/incremental.pdf">PDF</a>).
+        </p>
+      </li>
+      <li>
+        <p>
+          Talk on implementing Data-driven incremental UIs (in OCAML) (<a
+          href="https://www.youtube.com/watch?v=R3xX37RGJKE">youtube</a>). And a longer talk with more details (<a href="https://www.youtube.com/watch?v=G6a5G5i4gQU">youtube</a>).
+        </p>
+      </li>
+      <li>
+        <p>
+          A blog post at Jane Street (<a href="https://blog.janestreet.com/introducing-incremental/">URL</a>)
+        </p>
+      </li>
+      <li>
+        <p>
+          Adaptive computation library in JS (<a href="https://github.com/rkirov/adapt-comp">link</a>)
+        </p>
+      </li>
+    </ul>
     <p>
       
     </p>

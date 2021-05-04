@@ -14,29 +14,13 @@
   <notes-abstract|This page contains idea and resources pertaining to the
   development of TeXmacs.>
 
-  [Last update 17.3.2021]
+  [Last update 22.3.2021]
 
-  <section|Incremental computing>
-
-  Modifications to the documents are incremental, so one would like to take
-  this into account when recomputing both the typesetting and the rendering
-  onscreen. This problem is also relevant when syncronizing live-editing
-  document across a network connection. Some infrastructure is already
-  present in TeXmacs (details?). Here are gathered some approaches to
-  incremental computations in a general context.
+  <section|Random and unsorted resources>
 
   <\itemize>
-    <item>The paper \PPurely Functional Incremental Computing\Q
-    (<hlink|PDF|http://firsov.ee/incremental/incremental.pdf>).
-
-    <item>Talk on implementing Data-driven incremental UIs (in OCAML)
-    (<hlink|youtube|https://www.youtube.com/watch?v=R3xX37RGJKE>). And a
-    longer talk with more details (<hlink|youtube|https://www.youtube.com/watch?v=G6a5G5i4gQU>).
-
-    <item>A blog post at Jane Street (<hlink|URL|https://blog.janestreet.com/introducing-incremental/>)
-
-    <item>Adaptive computation library in JS
-    (<hlink|link|https://github.com/rkirov/adapt-comp>)
+    <item>An interesting talk about open source
+    community<nbsp>(<hlink|video|https://www.youtube.com/watch?v=o_4EX4dPppA>).
   </itemize>
 
   <section|Syntax highlighting>
@@ -59,8 +43,33 @@
     make relatively easy an inclusion in TeXmacs. The github
     <hlink|link|https://tree-sitter.github.io/tree-sitter/>, and a
     presentation <hlink|talk|https://www.youtube.com/watch?v=Jes3bD6P0To> on
-    youtube.\ 
+    youtube.
+
+    <item>The KDE project has a syntax-highlighting engine
+    <hlink|here|https://invent.kde.org/frameworks/syntax-highlighting/> where
+    languages descriptions comes in external XML files. \ 
   </itemize>
+
+  <section|Parsing Markdown and other languages>
+
+  It could be useful for us to be able to parse the
+  <hlink|Markdown|https://www.markdownguide.org> format. There are various
+  available parsers which could be integrated as plugins in the codebase, for
+  example <hlink|PEG-markdown|https://github.com/jgm/peg-markdown>,
+  <hlink|sundown|https://github.com/vmg/sundown>,
+  <hlink|libsoldout|https://fossil.instinctive.eu/libsoldout/index>,
+  <hlink|md4c|https://github.com/mity/md4c> and also some native scheme
+  implementations like <hlink|lowdown|https://bitbucket.org/DerGuteMoritz/lowdown/src/master/>
+  for Chicken Scheme. Currently in TeXmacs we do not have a generic way to
+  parse external languages: for example internally the parsing of HTML or TeX
+  is done via C++ code without any common parsing substrate (as far as I can
+  see). There is some support for packrat parsing but it is used only in the
+  semantic checking of math formulas and it seems that the packrat parser is
+  not capable of semantic actions, i.e. can only report if a string (or
+  tree?) belongs to some language or not. Tree-sitter could also be an option
+  as generic parsing mechanism. It could be useful to think how to factor and
+  restructure the parsing mechanisms in TeXmacs to avoid duplicating
+  code/efforts/know-how.
 
   <section|Spellchecking and grammar-checking>
 
@@ -101,7 +110,9 @@
     allow easier maintenance. Moreover it could allow TeXmacs to be an
     alternative to Jupyter notebooks or <hlink| Jupyter Qt
     Console|https://github.com/mgubi/tm_jupyter>. One can look to these
-    projects to understand which features have to be supported.
+    projects to understand which features have to be supported. Jeroen has
+    improved the tm_jupyter plugin <hlink|here|https://github.com/woutersj/tm_jupyter/commits/master>.
+    \ 
 
     <item><hlink|Language Server Protocol|https://microsoft.github.io/language-server-protocol/>
     allows to connect to various programming language servers to obtain
@@ -112,14 +123,66 @@
     related to literate programming capabilities/projects.
   </itemize>
 
-  <section|Random and unsorted resources>
+  <section|General attachments to documents and to PDF files>
+
+  PDF gives the possibility to embed arbitrary content within the document as
+  \PEmbedded file\Q streams. This possibility is exploited by the <LaTeX>
+  package <hlink|attachfile|https://mirror.ibcp.fr/pub/CTAN/macros/latex/contrib/attachfile/attachfile.pdf>
+  which allows to associate to typesetted parts of the document arbitrary
+  attachments with the possibility to recover it. We could introduce a
+  similar feature in <TeXmacs> documents, i.e. include external content in
+  the document. Another possibility is to include a <TeXmacs> document within
+  a generated PDF file in such a way that it is possible to open the PDF from
+  <TeXmacs> and edit its source. Another use could be to include TeXmacs
+  snippets in copied PDF files so that they could be reopened in TeXmacs and
+  modified.
+
+  <section|Zotero integration>
+
+  <name|Zotero> is a widely used open source bibliographic management tool.
+  It would be interesting to have a good way to import bibliography items
+  from it. There are already various attemps to this:
 
   <\itemize>
-    <item>An interesting talk about open source
-    community<nbsp>(<hlink|video|https://www.youtube.com/watch?v=o_4EX4dPppA>).
+    <item><name|Zotexmacs> (<hlink|github|https://github.com/slowphil/zotexmacs>)
+    by Philippe Joyez.
+
+    <item>TeXmacs/Zotero integration (<hlink|github|https://github.com/KarlHegbloom/zotero-texmacs-integration/blob/master/progs/tm-zotero.scm>)
+    by Karl Hegbloom.
   </itemize>
 
-  \;
+  We maybe want to develop a more organic solution. Interesting links:
+
+  <\itemize>
+    <item>Zotero better BibTeX (<hlink|github|https://github.com/retorquere/zotero-better-bibtex>),
+    Zotero CLI (<hlink|github|https://github.com/jbaiter/zotero-cli>), Zotelo
+    (Zotero/Emacs integration) (<hlink|github|https://github.com/vspinu/zotelo>),
+    Web bibliographies with Zotero (<hlink|github|https://github.com/davidswelt/zot_bib_web>),
+    Zotero/LyX integration (<hlink|github|https://github.com/wshanks/lyz>).
+  </itemize>
+
+  <section|Incremental computing>
+
+  Modifications to the documents are incremental, so one would like to take
+  this into account when recomputing both the typesetting and the rendering
+  onscreen. This problem is also relevant when syncronizing live-editing
+  document across a network connection. Some infrastructure is already
+  present in TeXmacs (details?). Here are gathered some approaches to
+  incremental computations in a general context.
+
+  <\itemize>
+    <item>The paper \PPurely Functional Incremental Computing\Q
+    (<hlink|PDF|http://firsov.ee/incremental/incremental.pdf>).
+
+    <item>Talk on implementing Data-driven incremental UIs (in OCAML)
+    (<hlink|youtube|https://www.youtube.com/watch?v=R3xX37RGJKE>). And a
+    longer talk with more details (<hlink|youtube|https://www.youtube.com/watch?v=G6a5G5i4gQU>).
+
+    <item>A blog post at Jane Street (<hlink|URL|https://blog.janestreet.com/introducing-incremental/>)
+
+    <item>Adaptive computation library in JS
+    (<hlink|link|https://github.com/rkirov/adapt-comp>)
+  </itemize>
 
   \;
 </body>
@@ -139,6 +202,9 @@
     <associate|auto-4|<tuple|3|?>>
     <associate|auto-5|<tuple|4|?>>
     <associate|auto-6|<tuple|5|?>>
+    <associate|auto-7|<tuple|6|?>>
+    <associate|auto-8|<tuple|7|?>>
+    <associate|auto-9|<tuple|8|?>>
   </collection>
 </references>
 
@@ -156,9 +222,25 @@
       2.<space|2spc>Syntax highlighting <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3>
 
-      3.<space|2spc>Various random material
+      3.<space|2spc>Parsing Markdown and other languages
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>
+
+      4.<space|2spc>Spellchecking and grammar-checking
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5>
+
+      5.<space|2spc>General plugin mechanisms
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-6>
+
+      6.<space|2spc>General attachments to documents and to PDF files
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-7>
+
+      7.<space|2spc>Random and unsorted resources
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-8>
     </associate>
   </collection>
 </auxiliary>

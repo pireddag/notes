@@ -30,7 +30,9 @@
   <with|font-shape|italic|<small|These articles contain collections of stuff,
   additions are welcome.>>
 
-  <hlink|A list of development resources and ideas|dev-notes.tm>
+  <hlink|Some documents created with <TeXmacs>|./example-documents.tm>
+
+  <hlink|Some development resources and ideas|dev-notes.tm>
 
   <hlink|Wishlist and additional functionalities|./wishlist.tm>
 
@@ -46,6 +48,9 @@
 
   <with|font-shape|italic|<small|Self-contained, one shot, material on
   various topics. Roughly, most recent articles on top.>>
+
+  <hlink|<TeXmacs> and the art of mathematical
+  writing|./art-of-math-writing.tm>
 
   <hlink|The Macro Editor and Easy Macro Modification|macro-editor.tm>
 
